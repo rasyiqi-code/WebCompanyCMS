@@ -7,6 +7,12 @@ export async function generateMetadata(): Promise<Metadata> {
 
     return {
         title: pageData?.title || pageData?.data?.root?.props?.title || "Home",
+        description: pageData?.description,
+        openGraph: {
+            title: pageData?.title || "Home",
+            description: pageData?.description,
+            images: pageData?.imageUrl ? [{ url: pageData.imageUrl }] : undefined,
+        },
     };
 }
 

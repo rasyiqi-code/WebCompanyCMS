@@ -1,5 +1,10 @@
 import "./styles.css";
 import { Providers } from "./providers";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  metadataBase: process.env.NEXT_PUBLIC_APP_URL ? new URL(process.env.NEXT_PUBLIC_APP_URL) : undefined,
+};
 
 export default function RootLayout({
   children,

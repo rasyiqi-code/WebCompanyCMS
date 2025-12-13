@@ -26,6 +26,12 @@ export async function generateMetadata({
 
   return {
     title: pageData?.title || pageData?.data?.root?.props?.title,
+    description: pageData?.description,
+    openGraph: {
+      title: pageData?.title || pageData?.data?.root?.props?.title,
+      description: pageData?.description,
+      images: pageData?.imageUrl ? [{ url: pageData.imageUrl }] : undefined,
+    },
   };
 }
 

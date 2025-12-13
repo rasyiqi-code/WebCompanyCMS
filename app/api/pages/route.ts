@@ -32,7 +32,7 @@ export async function DELETE(req: Request) {
 export async function POST(req: Request) {
     try {
         const body = await req.json();
-        const { id, path, title, body: contentBody, isPublished } = body;
+        const { id, path, title, description, imageUrl, body: contentBody, isPublished } = body;
 
         if (!path) return NextResponse.json({ error: "Missing path" }, { status: 400 });
 
@@ -43,6 +43,8 @@ export async function POST(req: Request) {
                 .set({
                     path,
                     title,
+                    description,
+                    imageUrl,
                     body: contentBody,
                     isPublished,
                     updatedAt: new Date()
@@ -58,6 +60,8 @@ export async function POST(req: Request) {
             await db.insert(puckPages).values({
                 path,
                 title,
+                description,
+                imageUrl,
                 body: contentBody,
                 isPublished: isPublished ?? true,
                 data: {},

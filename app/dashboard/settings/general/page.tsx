@@ -67,6 +67,11 @@ export default function GeneralSettingsPage() {
                         <input name="siteName" value={settings.siteName || ""} onChange={handleChange} className="w-full px-3 py-2 border rounded-md" />
                     </div>
                     <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Logo URL</label>
+                        <input name="logoUrl" value={settings.logoUrl || ""} onChange={handleChange} placeholder="https://example.com/logo.png" className="w-full px-3 py-2 border rounded-md" />
+                        <p className="text-xs text-gray-500 mt-1">If set, this image will replace the Site Name text.</p>
+                    </div>
+                    <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1">Contact Email</label>
                         <input name="contactEmail" value={settings.contactEmail || ""} onChange={handleChange} className="w-full px-3 py-2 border rounded-md" />
                     </div>

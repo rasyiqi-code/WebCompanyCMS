@@ -6,7 +6,7 @@ import { ShoppingCart, ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 
-export default function ProductDetails({ product }: { product: any }) {
+export default function ProductDetails({ product, backUrl = "/dashboard/products" }: { product: any, backUrl?: string }) {
     const { addToCart } = useCart();
     const [selectedImage, setSelectedImage] = useState(product.images?.[0] || "");
 
@@ -23,8 +23,8 @@ export default function ProductDetails({ product }: { product: any }) {
     return (
         <div className="max-w-6xl mx-auto pb-10">
             <div className="mb-6">
-                <Link href="/dashboard/products" className="text-gray-500 hover:text-gray-900 inline-flex items-center">
-                    <ArrowLeft size={20} className="mr-2" /> Back to Market
+                <Link href={backUrl} className="text-gray-500 hover:text-gray-900 inline-flex items-center">
+                    <ArrowLeft size={20} className="mr-2" /> Back
                 </Link>
             </div>
 

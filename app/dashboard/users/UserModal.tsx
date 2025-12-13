@@ -1,46 +1,70 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { X, User, Mail, Shield, Save } from "lucide-react";
+
+type UserData = {
+    id: string;
+    name: string | null;
+    email: string | null;
+    role: string;
+};
 
 type Props = {
     isOpen: boolean;
     onClose: () => void;
     onSuccess: () => void;
+    initialData?: UserData | null;
 };
 
-export default function CreateUserModal({ isOpen, onClose, onSuccess }: Props) {
+export default function UserModal({ isOpen, onClose, onSuccess, initialData }: Props) {
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
     const [role, setRole] = useState("user");
     const [loading, setLoading] = useState(false);
 
+    useEffect(() => {
+        if (initialData) {
+            setName(initialData.name || "");
+            setEmail(initialData.email || "");
+            setRole(initialData.role);
+        } else {
+            setName("");
+            setEmail("");
+            setRole("user");
+        }
+    }, [initialData, isOpen]);
+
     if (!isOpen) return null;
+
+    const isEditing = !!initialData;
 
     async function handleSubmit(e: React.FormEvent) {
         e.preventDefault();
         setLoading(true);
 
         try {
+            const method = isEditing ? "PATCH" : "POST";
+            const body = isEditing
+                ? { userId: initialData.id, name, email, role }
+                : { name, email, role };
+
             const res = await fetch("/api/users", {
-                method: "POST",
+                method,
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ name, email, role }),
+                body: JSON.stringify(body),
             });
 
             if (res.ok) {
                 onSuccess();
                 onClose();
-                setName("");
-                setEmail("");
-                setRole("user");
             } else {
                 const data = await res.json();
-                alert(data.error || "Failed to create user");
+                alert(data.error || "Failed to save user");
             }
         } catch (error) {
             console.error(error);
-            alert("Error creating user");
+            alert("Error saving user");
         } finally {
             setLoading(false);
         }
@@ -50,7 +74,9 @@ export default function CreateUserModal({ isOpen, onClose, onSuccess }: Props) {
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
             <div className="bg-white rounded-xl shadow-xl w-full max-w-md overflow-hidden">
                 <div className="flex justify-between items-center p-4 border-b">
-                    <h3 className="text-lg font-semibold text-gray-900">Add New User</h3>
+                    <h3 className="text-lg font-semibold text-gray-900">
+                        {isEditing ? "Edit User" : "Add New User"}
+                    </h3>
                     <button onClick={onClose} className="text-gray-400 hover:text-gray-600">
                         <X size={20} />
                     </button>
@@ -116,7 +142,7 @@ export default function CreateUserModal({ isOpen, onClose, onSuccess }: Props) {
                             disabled={loading}
                             className="px-4 py-2 bg-purple-600 text-white font-medium rounded-lg hover:bg-purple-700 disabled:opacity-50 flex items-center"
                         >
-                            {loading ? "Creating..." : <><Save size={18} className="mr-2" /> Create User</>}
+                            {loading ? "Saving..." : <><Save size={18} className="mr-2" /> {isEditing ? "Update User" : "Create User"}</>}
                         </button>
                     </div>
                 </form>

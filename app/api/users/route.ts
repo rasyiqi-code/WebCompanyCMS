@@ -1,11 +1,18 @@
 
 import { db } from "@/lib/db";
-import { users } from "@/db/schema";
+import { users, posts } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import { NextResponse } from "next/server";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
 
 export async function GET() {
     try {
+        const session = await getServerSession(authOptions);
+        if (!session || session.user.role !== 'admin') {
+            return new NextResponse("Unauthorized", { status: 401 });
+        }
+
         const allUsers = await db.select().from(users);
         return NextResponse.json({ users: allUsers });
     } catch (error) {
@@ -15,6 +22,11 @@ export async function GET() {
 
 export async function POST(req: Request) {
     try {
+        const session = await getServerSession(authOptions);
+        if (!session || session.user.role !== 'admin') {
+            return new NextResponse("Unauthorized", { status: 401 });
+        }
+
         const body = await req.json();
         const { name, email, role } = body;
 
@@ -32,6 +44,7 @@ export async function POST(req: Request) {
         const newUser = await db.insert(users).values({
             name,
             email,
+            password: "change-me", // Set a default password or handle via email invite in real world
             role: role || 'user',
             image: `https://ui-avatars.com/api/?name=${encodeURIComponent(name || email)}&background=random`
         }).returning();
@@ -45,15 +58,58 @@ export async function POST(req: Request) {
 
 export async function PATCH(req: Request) {
     try {
+        const session = await getServerSession(authOptions);
+        if (!session || session.user.role !== 'admin') {
+            return new NextResponse("Unauthorized", { status: 401 });
+        }
+
         const body = await req.json();
-        const { userId, role } = body;
+        const { userId, role, name, email } = body;
+
+        // Construct update object dynamically
+        const updateData: any = {};
+        if (role) updateData.role = role;
+        if (name) updateData.name = name;
+        if (email) updateData.email = email;
 
         await db.update(users)
-            .set({ role })
+            .set(updateData)
             .where(eq(users.id, userId));
 
         return NextResponse.json({ success: true });
     } catch (e) {
         return NextResponse.json({ error: "Failed to update" }, { status: 500 });
+    }
+}
+
+export async function DELETE(req: Request) {
+    try {
+        const session = await getServerSession(authOptions);
+        if (!session || session.user.role !== 'admin') {
+            return new NextResponse("Unauthorized", { status: 401 });
+        }
+
+        const { searchParams } = new URL(req.url);
+        const userId = searchParams.get("id");
+
+        if (!userId) {
+            return new NextResponse("User ID required", { status: 400 });
+        }
+
+        // Prevent deleting self
+        if (userId === session.user.id) {
+            return NextResponse.json({ error: "Cannot delete yourself" }, { status: 400 });
+        }
+
+        // Manually cascade delete posts (since schema doesn't have cascade)
+        await db.delete(posts).where(eq(posts.authorId, userId));
+
+        // Delete user (Accounts/Sessions will cascade automatically per schema)
+        await db.delete(users).where(eq(users.id, userId));
+
+        return NextResponse.json({ success: true });
+    } catch (e) {
+        console.error("Delete User Error:", e);
+        return NextResponse.json({ error: "Failed to delete user. Check server logs." }, { status: 500 });
     }
 }

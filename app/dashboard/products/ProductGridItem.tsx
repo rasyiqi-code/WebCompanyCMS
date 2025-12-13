@@ -5,7 +5,7 @@ import { ShoppingCart } from "lucide-react";
 import { useCart } from "@/components/providers/cart-provider";
 import Link from "next/link";
 
-export function ProductGridItem({ product }: { product: any }) {
+export function ProductGridItem({ product, baseUrl = "/dashboard/products" }: { product: any, baseUrl?: string }) {
     const { addToCart } = useCart();
 
     const handleAddToCart = () => {
@@ -20,7 +20,7 @@ export function ProductGridItem({ product }: { product: any }) {
 
     return (
         <div className="bg-white rounded-xl border border-gray-200 overflow-hidden hover:shadow-md transition-all group">
-            <Link href={`/dashboard/products/${product.id}`} className="block aspect-square bg-gray-100 relative group-hover:opacity-90 transition-opacity">
+            <Link href={`${baseUrl}/${product.id}`} className="block aspect-square bg-gray-100 relative group-hover:opacity-90 transition-opacity">
                 {product.images && product.images[0] ? (
                     <img src={product.images[0]} alt={product.name} className="w-full h-full object-cover" />
                 ) : (
@@ -28,7 +28,7 @@ export function ProductGridItem({ product }: { product: any }) {
                 )}
             </Link>
             <div className="p-4">
-                <Link href={`/dashboard/products/${product.id}`} className="block">
+                <Link href={`${baseUrl}/${product.id}`} className="block">
                     <h3 className="font-bold text-gray-900 mb-1 hover:text-indigo-600 transition-colors">{product.name}</h3>
                 </Link>
                 <div className="flex items-center justify-between mt-3">

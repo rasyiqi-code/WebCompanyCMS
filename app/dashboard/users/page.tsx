@@ -1,8 +1,8 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { Search, Shield, User as UserIcon, MoreHorizontal, Plus } from "lucide-react";
-import CreateUserModal from "./CreateUserModal";
+import { Search, Shield, User as UserIcon, Plus, Edit, Trash2 } from "lucide-react";
+import UserModal from "./UserModal";
 
 type User = {
     id: string;
@@ -21,6 +21,7 @@ export default function UsersPage() {
     const [searchTerm, setSearchTerm] = useState("");
 
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [selectedUser, setSelectedUser] = useState<User | null>(null);
 
     useEffect(() => {
         fetchUsers();
@@ -40,24 +41,33 @@ export default function UsersPage() {
         }
     }
 
-    async function handleRoleChange(userId: string, newRole: string) {
-        // Optimistic update
-        setUsers(users.map(u => u.id === userId ? { ...u, role: newRole } : u));
+    async function handleDelete(userId: string) {
+        if (!confirm("Are you sure you want to delete this user? This action cannot be undone.")) return;
 
         try {
-            const res = await fetch("/api/users", {
-                method: "PATCH",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ userId, role: newRole })
+            const res = await fetch(`/api/users?id=${userId}`, {
+                method: "DELETE",
             });
 
-            if (!res.ok) throw new Error("Failed");
-
-            // Success toast could go here
+            if (res.ok) {
+                fetchUsers();
+            } else {
+                const data = await res.json();
+                alert(data.error || "Failed to delete user");
+            }
         } catch (e) {
-            alert("Failed to update role");
-            fetchUsers(); // Revert
+            alert("Failed to delete user");
         }
+    }
+
+    function handleEdit(user: User) {
+        setSelectedUser(user);
+        setIsModalOpen(true);
+    }
+
+    function handleCreate() {
+        setSelectedUser(null);
+        setIsModalOpen(true);
     }
 
     const filteredUsers = users.filter(user =>
@@ -67,10 +77,11 @@ export default function UsersPage() {
 
     return (
         <div className="p-6 max-w-7xl mx-auto">
-            <CreateUserModal
+            <UserModal
                 isOpen={isModalOpen}
                 onClose={() => setIsModalOpen(false)}
                 onSuccess={fetchUsers}
+                initialData={selectedUser}
             />
 
             <div className="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
@@ -81,7 +92,7 @@ export default function UsersPage() {
 
                 <div className="flex gap-2">
                     <button
-                        onClick={() => setIsModalOpen(true)}
+                        onClick={handleCreate}
                         className="flex items-center px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 font-medium text-sm transition-colors"
                     >
                         <Plus size={18} className="mr-2" />
@@ -148,15 +159,22 @@ export default function UsersPage() {
                                             {user._count?.posts || 0}
                                         </td>
                                         <td className="px-6 py-4 text-right">
-                                            <select
-                                                value={user.role}
-                                                onChange={(e) => handleRoleChange(user.id, e.target.value)}
-                                                className="text-sm border-gray-300 border rounded-md px-2 py-1 focus:ring-2 focus:ring-purple-500 outline-none cursor-pointer bg-white"
-                                            >
-                                                <option value="user">User</option>
-                                                <option value="editor">Editor</option>
-                                                <option value="admin">Admin</option>
-                                            </select>
+                                            <div className="flex justify-end gap-2">
+                                                <button
+                                                    onClick={() => handleEdit(user)}
+                                                    className="p-1.5 text-gray-500 hover:text-purple-600 hover:bg-purple-50 rounded-lg transition-colors"
+                                                    title="Edit User"
+                                                >
+                                                    <Edit size={16} />
+                                                </button>
+                                                <button
+                                                    onClick={() => handleDelete(user.id)}
+                                                    className="p-1.5 text-gray-500 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                                                    title="Delete User"
+                                                >
+                                                    <Trash2 size={16} />
+                                                </button>
+                                            </div>
                                         </td>
                                     </tr>
                                 ))

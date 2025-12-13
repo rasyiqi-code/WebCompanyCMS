@@ -110,6 +110,8 @@ export const puckPages = pgTable("PuckPage", {
         .$defaultFn(() => crypto.randomUUID()),
     path: text("path").unique().notNull(),
     title: text("title"),
+    description: text("description"), // Meta Description
+    imageUrl: text("imageUrl"), // Open Graph Image
     body: text("body"), // HTML Content
     isPublished: boolean("isPublished").default(true),
     data: json("data").notNull(),

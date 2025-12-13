@@ -17,6 +17,8 @@ function PageEditorContent() {
         id: "",
         path: "",
         title: "",
+        description: "",
+        imageUrl: "",
         body: "",
         isPublished: true
     });
@@ -32,6 +34,8 @@ function PageEditorContent() {
                             id: page.id,
                             path: page.path,
                             title: page.title || "",
+                            description: page.description || "",
+                            imageUrl: page.imageUrl || "",
                             body: page.body || "",
                             isPublished: page.isPublished
                         });
@@ -128,6 +132,31 @@ function PageEditorContent() {
                         <p className="text-xs text-gray-500 mt-1">
                             Must start with /. The final URL will be <strong>/page{formData.path}</strong>
                         </p>
+                    </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">SEO Description</label>
+                        <textarea
+                            name="description"
+                            value={formData.description || ""}
+                            onChange={handleChange}
+                            rows={3}
+                            className="w-full px-3 py-2 border rounded-md focus:ring-2 focus:ring-blue-500 outline-none text-sm"
+                            placeholder="Brief description for search engines..."
+                        />
+                    </div>
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Social Image URL</label>
+                        <input
+                            name="imageUrl"
+                            value={formData.imageUrl || ""}
+                            onChange={handleChange}
+                            className="w-full px-3 py-2 border rounded-md focus:ring-2 focus:ring-blue-500 outline-none"
+                            placeholder="https://example.com/image.jpg"
+                        />
+                        <p className="text-xs text-gray-500 mt-1">Image to show when shared on social media.</p>
                     </div>
                 </div>
 
