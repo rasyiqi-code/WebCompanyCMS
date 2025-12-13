@@ -1,11 +1,18 @@
+import { db } from "./db";
+import { puckPages } from "../db/schema";
+import { eq } from "drizzle-orm";
 import { Data } from "@measured/puck";
-import fs from "fs";
 
-// Replace with call to your database
-export const getPage = (path: string) => {
-  const allData: Record<string, Data> | null = fs.existsSync("database.json")
-    ? JSON.parse(fs.readFileSync("database.json", "utf-8"))
-    : null;
+export const getPage = async (path: string) => {
+  const [page] = await db.select()
+    .from(puckPages)
+    .where(eq(puckPages.path, path))
+    .limit(1);
 
-  return allData ? allData[path] : null;
+  if (!page) return null;
+
+  return {
+    ...page,
+    data: page.data as Data
+  };
 };

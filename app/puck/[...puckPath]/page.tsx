@@ -36,9 +36,9 @@ export default async function Page({
 }) {
   const { puckPath = [] } = await params;
   const path = `/${puckPath.join("/")}`;
-  const data = getPage(path);
+  const data = await getPage(path);
 
-  return <Client path={path} data={data || {}} />;
+  return <Client path={path} data={data?.data || {}} />;
 }
 
 export const dynamic = "force-dynamic";

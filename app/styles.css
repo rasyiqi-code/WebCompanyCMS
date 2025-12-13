@@ -1,3 +1,9 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: Helvetica, Arial, sans-serif;
+}
+
 body {
   margin: 0;
 }
