@@ -82,6 +82,30 @@ export default function GeneralSettingsPage() {
                 </div>
             </div>
 
+            {/* SEO Configuration */}
+            <div>
+                <h2 className="text-lg font-semibold text-gray-900 mb-4 border-b pb-2">SEO Configuration (Global)</h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Default Title Template</label>
+                        <input name="seoTitle" value={settings.seoTitle || ""} onChange={handleChange} placeholder="%s | My Site" className="w-full px-3 py-2 border rounded-md" />
+                        <p className="text-xs text-gray-500 mt-1">Use %s as a placeholder for the page title.</p>
+                    </div>
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Default Keywords</label>
+                        <input name="seoKeywords" value={settings.seoKeywords || ""} onChange={handleChange} placeholder="nextjs, builder, awesome" className="w-full px-3 py-2 border rounded-md" />
+                    </div>
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Calculated Favicon URL</label>
+                        <input name="faviconUrl" value={settings.faviconUrl || ""} onChange={handleChange} placeholder="https://example.com/favicon.ico" className="w-full px-3 py-2 border rounded-md" />
+                    </div>
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Default Social Image</label>
+                        <input name="seoImage" value={settings.seoImage || ""} onChange={handleChange} placeholder="https://example.com/og-image.jpg" className="w-full px-3 py-2 border rounded-md" />
+                    </div>
+                </div>
+            </div>
+
             {/* Social Media */}
             <div>
                 <h2 className="text-lg font-semibold text-gray-900 mb-4 border-b pb-2">Social Media Links</h2>

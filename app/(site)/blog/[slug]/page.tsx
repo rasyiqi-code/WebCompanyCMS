@@ -63,8 +63,26 @@ export default async function BlogPostPage({
     }
 
 
+    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+    const jsonLd = {
+        "@context": "https://schema.org",
+        "@type": "BlogPosting",
+        "headline": post.title,
+        "image": post.imageUrl ? [post.imageUrl] : undefined,
+        "datePublished": post.createdAt,
+        "dateModified": post.updatedAt,
+        "author": {
+            "@type": "Person",
+            "name": post.authorName || "Admin"
+        }
+    };
+
     return (
         <div className="min-h-screen bg-white pb-20">
+            <script
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+            />
             <div className="max-w-3xl mx-auto px-6 pt-12">
                 <Link
                     href="/"

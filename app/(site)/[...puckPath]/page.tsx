@@ -24,12 +24,15 @@ export async function generateMetadata({
   const path = `/${puckPath.join("/")}`;
   const pageData = await getPage(path);
 
+  const ogTitle = pageData?.title || pageData?.data?.root?.props?.title;
+  const ogDescription = pageData?.description;
+
   return {
-    title: pageData?.title || pageData?.data?.root?.props?.title,
-    description: pageData?.description,
+    title: ogTitle,
+    description: ogDescription,
     openGraph: {
-      title: pageData?.title || pageData?.data?.root?.props?.title,
-      description: pageData?.description,
+      ...(ogTitle && { title: ogTitle }),
+      ...(ogDescription && { description: ogDescription }),
       images: pageData?.imageUrl ? [{ url: pageData.imageUrl }] : undefined,
     },
   };
@@ -48,10 +51,26 @@ export default async function Page({
     return notFound();
   }
 
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    "headline": data.title || "Page",
+    "description": data.description,
+    "url": `${baseUrl}${path}`,
+    "image": data.imageUrl ? [data.imageUrl] : undefined,
+    "datePublished": data.createdAt,
+    "dateModified": data.updatedAt,
+  };
+
   // If we have a standard body (Not using Puck), render it directly
   if (data.body) {
     return (
       <div className="min-h-screen bg-white">
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
         <div className="max-w-4xl mx-auto px-6 py-12 lg:px-8">
           <header className="mb-10 text-center">
             {data.title && <h1 className="text-4xl font-extrabold text-gray-900 sm:text-5xl">{data.title}</h1>}
@@ -62,7 +81,15 @@ export default async function Page({
     );
   }
 
-  return <Client data={data.data} />;
+  return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <Client data={data.data} />
+    </>
+  );
 }
 
 // Force Next.js to produce static pages: https://nextjs.org/docs/app/api-reference/file-conventions/route-segment-config#dynamic

@@ -178,6 +178,11 @@ export const siteSettings = pgTable("SiteSettings", {
     siteName: text("siteName").default("My Awesome Site"),
     logoUrl: text("logoUrl"),
     description: text("description"),
+    // SEO Settings
+    seoTitle: text("seoTitle"), // Default title template
+    seoKeywords: text("seoKeywords"),
+    seoImage: text("seoImage"), // Default OG Image
+    faviconUrl: text("faviconUrl"),
     // Footer Content
     footerAddress: text("footerAddress"),
     footerCopyright: text("footerCopyright"),

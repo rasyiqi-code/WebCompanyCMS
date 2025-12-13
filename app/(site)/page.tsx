@@ -6,8 +6,8 @@ export async function generateMetadata(): Promise<Metadata> {
     const pageData = await getPage("/");
 
     return {
-        title: pageData?.title || pageData?.data?.root?.props?.title || "Home",
-        description: pageData?.description,
+        title: pageData?.title || pageData?.data?.root?.props?.title, // Will use template from layout if not absolute
+        description: pageData?.description, // Fallback to layout if undefined
         openGraph: {
             title: pageData?.title || "Home",
             description: pageData?.description,
