@@ -5,6 +5,7 @@ import { eq } from "drizzle-orm";
 import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
+import bcrypt from "bcryptjs";
 
 export async function GET() {
     try {
@@ -64,13 +65,16 @@ export async function PATCH(req: Request) {
         }
 
         const body = await req.json();
-        const { userId, role, name, email } = body;
+        const { userId, role, name, email, password } = body;
 
         // Construct update object dynamically
         const updateData: any = {};
         if (role) updateData.role = role;
         if (name) updateData.name = name;
         if (email) updateData.email = email;
+        if (password && password.trim() !== "") {
+            updateData.password = await bcrypt.hash(password, 10);
+        }
 
         await db.update(users)
             .set(updateData)

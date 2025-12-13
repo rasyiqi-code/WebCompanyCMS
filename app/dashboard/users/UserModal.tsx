@@ -21,6 +21,7 @@ export default function UserModal({ isOpen, onClose, onSuccess, initialData }: P
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
     const [role, setRole] = useState("user");
+    const [password, setPassword] = useState("");
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
@@ -28,10 +29,12 @@ export default function UserModal({ isOpen, onClose, onSuccess, initialData }: P
             setName(initialData.name || "");
             setEmail(initialData.email || "");
             setRole(initialData.role);
+            setPassword(""); // Always reset password field on edit
         } else {
             setName("");
             setEmail("");
             setRole("user");
+            setPassword("");
         }
     }, [initialData, isOpen]);
 
@@ -46,8 +49,8 @@ export default function UserModal({ isOpen, onClose, onSuccess, initialData }: P
         try {
             const method = isEditing ? "PATCH" : "POST";
             const body = isEditing
-                ? { userId: initialData.id, name, email, role }
-                : { name, email, role };
+                ? { userId: initialData.id, name, email, role, password }
+                : { name, email, role, password };
 
             const res = await fetch("/api/users", {
                 method,
@@ -127,6 +130,25 @@ export default function UserModal({ isOpen, onClose, onSuccess, initialData }: P
                                 <option value="admin">Admin (Full access)</option>
                             </select>
                         </div>
+                    </div>
+
+                    <div className="pt-2 border-t border-gray-100 mt-4">
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                            {isEditing ? "New Password (Optional)" : "Password (Optional)"}
+                        </label>
+                        <div className="relative">
+                            <Shield className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
+                            <input
+                                type="password"
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 outline-none"
+                                placeholder={isEditing ? "Leave blank to keep current" : "Set initial password"}
+                            />
+                        </div>
+                        <p className="text-xs text-gray-500 mt-1">
+                            {isEditing ? "Only enter to reset user's password." : "If blank, default is 'change-me'."}
+                        </p>
                     </div>
 
                     <div className="pt-4 flex justify-end gap-2">
