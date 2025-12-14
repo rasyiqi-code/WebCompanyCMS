@@ -12,7 +12,7 @@ export default function Header() {
     const [menuItems, setMenuItems] = useState<any[]>([]);
 
     // Mobile Menu Toggle State
-    const [showMobileMenu, setShowMobileMenu] = useState(true);
+    const [showMobileMenu, setShowMobileMenu] = useState(false);
 
     const [scrollDirection, setScrollDirection] = useState("up");
     const [lastScrollY, setLastScrollY] = useState(0);
@@ -70,7 +70,7 @@ export default function Header() {
                     <div className="flex-1 flex justify-start items-center">
                         <button
                             onClick={() => setShowMobileMenu(!showMobileMenu)}
-                            className="md:hidden p-2 -ml-2 rounded-md transition-colors hover:bg-black/5"
+                            className="md:hidden p-2 -ml-2 rounded-md transition-colors hover:bg-black/5 relative z-20"
                             style={{ color: textColor }}
                             aria-label="Toggle Menu"
                         >
@@ -79,7 +79,7 @@ export default function Header() {
                     </div>
 
                     {/* Logo Center */}
-                    <div className="absolute left-1/2 transform -translate-x-1/2">
+                    <div className="absolute left-1/2 transform -translate-x-1/2 z-10">
                         <Link href="/" className="flex items-center gap-2">
                             {settings?.logoUrl ? (
                                 <img src={settings.logoUrl} alt={settings.siteName || "Logo"} className="h-8 w-auto object-contain" />
@@ -159,7 +159,7 @@ export default function Header() {
                     {/* Hamburger: Visible on Mobile (default) OR Desktop (if Minimal) */}
                     <button
                         onClick={() => setShowMobileMenu(!showMobileMenu)}
-                        className={`${headerStyle === "minimal" ? "block" : "md:hidden"} text-gray-700 hover:opacity-75`}
+                        className={`${headerStyle === "minimal" ? "block" : "md:hidden"} text-gray-700 hover:opacity-75 relative z-20`}
                         style={{ color: textColor }}
                         aria-label="Toggle Menu"
                     >

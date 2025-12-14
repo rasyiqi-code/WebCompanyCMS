@@ -98,7 +98,7 @@ export default async function DashboardPage() {
                         <div className="p-2 bg-orange-200 rounded-lg text-orange-700">
                             <Image size={20} />
                         </div>
-                        <h3 className="font-bold text-orange-900">Cloudflare R2 Storage</h3>
+                        <h3 className="font-bold text-orange-900">File Storage</h3>
                     </div>
                     <p className="text-sm text-orange-800 mb-3">
                         Free Tier: Up to <strong>10GB storage</strong>, 1M Class A ops, 10M Class B ops / month.
