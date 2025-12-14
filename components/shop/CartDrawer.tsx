@@ -2,18 +2,18 @@
 
 import React from "react";
 import { X, Minus, Plus, Trash2, ShoppingBag } from "lucide-react";
-import { useCart } from "../../context/CartContext";
+import { useCart } from "../../components/providers/cart-provider";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
 export default function CartDrawer() {
-    const { items, removeFromCart, updateQuantity, cartTotal, drawerOpen, setDrawerOpen } = useCart();
+    const { items, removeFromCart, updateQuantity, cartTotal, isCartOpen, toggleCart } = useCart();
     const router = useRouter();
 
-    if (!drawerOpen) return null;
+    if (!isCartOpen) return null;
 
     const handleCheckout = () => {
-        setDrawerOpen(false);
+        toggleCart();
         router.push("/checkout");
     };
 
@@ -22,7 +22,7 @@ export default function CartDrawer() {
             {/* Backdrop */}
             <div
                 className="absolute inset-0 bg-black/50 backdrop-blur-sm transition-opacity"
-                onClick={() => setDrawerOpen(false)}
+                onClick={() => toggleCart()}
             />
 
             {/* Drawer */}
@@ -33,7 +33,7 @@ export default function CartDrawer() {
                         Your Cart ({items.length})
                     </h2>
                     <button
-                        onClick={() => setDrawerOpen(false)}
+                        onClick={() => toggleCart()}
                         className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-full transition-colors"
                     >
                         <X size={20} />
@@ -49,7 +49,7 @@ export default function CartDrawer() {
                             <h3 className="text-lg font-medium text-gray-900">Your cart is empty</h3>
                             <p className="text-gray-500 max-w-xs">Looks like you haven't added anything to your cart yet.</p>
                             <button
-                                onClick={() => setDrawerOpen(false)}
+                                onClick={() => toggleCart()}
                                 className="px-6 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 font-medium transition-colors"
                             >
                                 Start Shopping
@@ -114,7 +114,7 @@ export default function CartDrawer() {
                             Checkout Now
                         </button>
                         <div className="text-center mt-3">
-                            <button onClick={() => setDrawerOpen(false)} className="text-sm text-gray-500 hover:text-gray-800">
+                            <button onClick={() => toggleCart()} className="text-sm text-gray-500 hover:text-gray-800">
                                 Continue Shopping
                             </button>
                         </div>

@@ -8,9 +8,19 @@ export async function generateMetadata({ params }: { params: Promise<{ productId
     const { productId } = await params;
     const [product] = await db.select().from(products).where(eq(products.id, productId)).limit(1);
 
+    const title = product ? `${product.name} | Unived Press Shop` : "Product Not Found";
+    const description = product?.description || "Product Details";
+    const images = product?.images && product.images.length > 0 ? [product.images[0]] : [];
+
     return {
-        title: product ? `${product.name} - Shop` : "Product Not Found",
-        description: product?.description || "Product Details",
+        title: title,
+        description: description,
+        openGraph: {
+            title: title,
+            description: description,
+            images: images,
+            type: "website",
+        }
     };
 }
 
@@ -45,7 +55,7 @@ export default async function PublicProductPage({
     };
 
     return (
-        <div className="bg-white min-h-screen">
+        <main className="bg-white min-h-screen">
             <script
                 type="application/ld+json"
                 dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
@@ -55,6 +65,6 @@ export default async function PublicProductPage({
             <div className="pt-10 px-4">
                 <ProductDetails product={product} backUrl="/shop" />
             </div>
-        </div>
+        </main>
     );
 }

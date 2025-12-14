@@ -3,11 +3,11 @@
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { ShoppingBag, Menu, X } from "lucide-react";
-import { useCart } from "../../context/CartContext";
+import { useCart } from "../../components/providers/cart-provider";
 import { SiteSettings } from "../../lib/settings";
 
 export default function Header() {
-    const { setDrawerOpen, items } = useCart();
+    const { toggleCart, cartCount } = useCart();
     const [settings, setSettings] = useState<SiteSettings | null>(null);
     const [menuItems, setMenuItems] = useState<any[]>([]);
 
@@ -32,7 +32,7 @@ export default function Header() {
         }
     }, [scrollDirection, lastScrollY]);
 
-    const cartItemCount = items.reduce((acc, item) => acc + item.quantity, 0);
+    // const cartItemCount = items.reduce((acc, item) => acc + item.quantity, 0);
 
     useEffect(() => {
         // Fetch Settings
@@ -95,15 +95,15 @@ export default function Header() {
                     <div className="flex-1 flex justify-end items-center gap-4">
                         {(settings?.showCart !== false) && (
                             <button
-                                onClick={() => setDrawerOpen(true)}
+                                onClick={() => toggleCart()}
                                 className="relative rounded-full p-2 transition-colors hover:bg-black/5"
                                 style={{ color: textColor }}
                                 aria-label="Open Cart"
                             >
                                 <ShoppingBag className="h-5 w-5" />
-                                {cartItemCount > 0 && (
+                                {cartCount > 0 && (
                                     <span className="absolute right-0 top-0 flex h-4 w-4 items-center justify-center rounded-full bg-black text-[10px] font-bold text-white">
-                                        {cartItemCount}
+                                        {cartCount}
                                     </span>
                                 )}
                             </button>
@@ -205,15 +205,15 @@ export default function Header() {
                     <div className="flex items-center gap-4">
                         {(settings?.showCart !== false) && (
                             <button
-                                onClick={() => setDrawerOpen(true)}
+                                onClick={() => toggleCart()}
                                 className="relative rounded-full p-2 transition-colors hover:bg-black/5"
                                 style={{ color: textColor }}
                                 aria-label="Open Cart"
                             >
                                 <ShoppingBag className="h-5 w-5" />
-                                {cartItemCount > 0 && (
+                                {cartCount > 0 && (
                                     <span className="absolute right-0 top-0 flex h-4 w-4 items-center justify-center rounded-full bg-black text-[10px] font-bold text-white">
-                                        {cartItemCount}
+                                        {cartCount}
                                     </span>
                                 )}
                             </button>
