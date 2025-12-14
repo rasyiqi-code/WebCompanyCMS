@@ -28,10 +28,22 @@ export default function DashboardLayout({
     const { data: session } = useSession();
     const [isProfileOpen, setIsProfileOpen] = useState(false);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+    const [siteName, setSiteName] = useState("Builder CMS");
 
     // We can't use useCart directly here if DashboardLayout is a Server Component?
     // Wait, I made DashboardLayout "use client" earlier in Step 1493. So it is safe.
     const { toggleCart, cartCount } = useCart();
+
+    React.useEffect(() => {
+        fetch("/api/settings")
+            .then(res => res.json())
+            .then(data => {
+                if (data?.siteName) {
+                    setSiteName(data.siteName);
+                }
+            })
+            .catch(err => console.error(err));
+    }, []);
 
     const navItems = [
         {
@@ -75,7 +87,7 @@ export default function DashboardLayout({
         <>
             <div className="h-16 flex items-center px-6 border-b border-gray-200 justify-between">
                 <span className="text-xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
-                    Builder CMS
+                    {siteName}
                 </span>
                 {/* Close button for mobile */}
                 <button
@@ -154,7 +166,7 @@ export default function DashboardLayout({
                         >
                             <Menu size={24} />
                         </button>
-                        <span className="ml-4 text-lg font-bold text-gray-900">Builder CMS</span>
+                        <span className="ml-4 text-lg font-bold text-gray-900">{siteName}</span>
                     </div>
 
                     <div className="hidden md:flex items-center space-x-4">
