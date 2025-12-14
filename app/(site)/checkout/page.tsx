@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { useCart } from "../../../components/providers/cart-provider";
+import { useCart } from "@/components/providers/cart-provider";
 import { CreditCard, Truck, CheckCircle, ArrowRight } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";

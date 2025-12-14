@@ -2,7 +2,7 @@
 
 import React from "react";
 import { X, Minus, Plus, Trash2, ShoppingBag } from "lucide-react";
-import { useCart } from "../../components/providers/cart-provider";
+import { useCart } from "@/components/providers/cart-provider";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 

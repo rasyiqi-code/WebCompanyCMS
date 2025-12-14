@@ -51,18 +51,15 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     }, [items, isLoaded]);
 
     const addToCart = (newItem: CartItem) => {
-        console.log("Adding to cart:", newItem);
         setItems((prev) => {
             const existing = prev.find((i) => i.productId === newItem.productId);
             if (existing) {
-                console.log("Updating existing item");
                 return prev.map((i) =>
                     i.productId === newItem.productId
                         ? { ...i, quantity: i.quantity + newItem.quantity }
                         : i
                 );
             }
-            console.log("Adding new item");
             return [...prev, newItem];
         });
         setIsCartOpen(true); // Open cart when adding

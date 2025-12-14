@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { ShoppingBag, Menu, X } from "lucide-react";
-import { useCart } from "../../components/providers/cart-provider";
+import { useCart } from "@/components/providers/cart-provider";
 import { SiteSettings } from "../../lib/settings";
 
 export default function Header() {
