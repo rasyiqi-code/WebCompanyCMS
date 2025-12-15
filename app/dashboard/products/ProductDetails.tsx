@@ -2,13 +2,14 @@
 "use client";
 
 import { useCart } from "@/components/providers/cart-provider";
-import { ShoppingCart, ArrowLeft } from "lucide-react";
+import { ShoppingCart, ArrowLeft, CheckCircle } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 
 export default function ProductDetails({ product, backUrl = "/dashboard/products" }: { product: any, backUrl?: string }) {
     const { addToCart } = useCart();
     const [selectedImage, setSelectedImage] = useState(product.images?.[0] || "");
+    const [isAdded, setIsAdded] = useState(false);
 
     const handleAddToCart = () => {
         addToCart({
@@ -18,6 +19,8 @@ export default function ProductDetails({ product, backUrl = "/dashboard/products
             image: product.images?.[0],
             quantity: 1,
         });
+        setIsAdded(true);
+        setTimeout(() => setIsAdded(false), 2000);
     };
 
     return (
@@ -74,10 +77,23 @@ export default function ProductDetails({ product, backUrl = "/dashboard/products
                             </div>
                             <button
                                 onClick={handleAddToCart}
-                                className="w-full py-4 bg-indigo-600 text-white rounded-xl font-bold text-lg hover:bg-indigo-700 transition-colors flex items-center justify-center shadow-lg hover:shadow-xl transform active:scale-[0.99]"
+                                disabled={isAdded}
+                                className={`w-full py-4 rounded-xl font-bold text-lg transition-all flex items-center justify-center shadow-lg transform active:scale-[0.99] cursor-pointer ${isAdded
+                                    ? "bg-emerald-600 text-white hover:bg-emerald-700 shadow-emerald-500/30"
+                                    : "bg-indigo-600 text-white hover:bg-indigo-700 hover:shadow-xl"
+                                    }`}
                             >
-                                <ShoppingCart size={24} className="mr-3" />
-                                Add to Cart
+                                {isAdded ? (
+                                    <>
+                                        <CheckCircle size={24} className="mr-3" />
+                                        Added to Cart!
+                                    </>
+                                ) : (
+                                    <>
+                                        <ShoppingCart size={24} className="mr-3" />
+                                        Add to Cart
+                                    </>
+                                )}
                             </button>
                         </div>
                     </div>

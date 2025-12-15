@@ -1,14 +1,18 @@
 
 "use client";
 
-import { ShoppingCart } from "lucide-react";
+import React from 'react';
+import { ShoppingCart, Check } from "lucide-react";
 import { useCart } from "@/components/providers/cart-provider";
 import Link from "next/link";
 
 export function ProductGridItem({ product, baseUrl = "/dashboard/products" }: { product: any, baseUrl?: string }) {
     const { addToCart } = useCart();
 
-    const handleAddToCart = () => {
+    const [isAdded, setIsAdded] = React.useState(false);
+
+    const handleAddToCart = (e: React.MouseEvent) => {
+        e.preventDefault(); // Prevent link navigation
         addToCart({
             productId: product.id,
             name: product.name,
@@ -16,6 +20,8 @@ export function ProductGridItem({ product, baseUrl = "/dashboard/products" }: { 
             image: product.images?.[0],
             quantity: 1,
         });
+        setIsAdded(true);
+        setTimeout(() => setIsAdded(false), 2000);
     };
 
     return (
@@ -35,10 +41,14 @@ export function ProductGridItem({ product, baseUrl = "/dashboard/products" }: { 
                     <span className="text-lg font-bold text-emerald-600">${product.price}</span>
                     <button
                         onClick={handleAddToCart}
-                        className="p-2 bg-blue-50 text-blue-600 rounded-full hover:bg-blue-100 transition-colors active:scale-95 transform"
-                        title="Add to Cart"
+                        disabled={isAdded}
+                        className={`p-2 rounded-full transition-all active:scale-95 transform cursor-pointer ${isAdded
+                                ? "bg-emerald-100 text-emerald-600"
+                                : "bg-blue-50 text-blue-600 hover:bg-blue-100"
+                            }`}
+                        title={isAdded ? "Added!" : "Add to Cart"}
                     >
-                        <ShoppingCart size={18} />
+                        {isAdded ? <Check size={18} /> : <ShoppingCart size={18} />}
                     </button>
                 </div>
             </div>
