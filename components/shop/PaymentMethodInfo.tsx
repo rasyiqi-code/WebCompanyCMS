@@ -27,12 +27,14 @@ export default function PaymentMethodInfo() {
     };
 
     if (!settings) return (
-        <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200 opacity-60 pointer-events-none">
+        <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
             <h2 className="text-xl font-semibold mb-6 flex items-center">
                 <CreditCard className="mr-3 text-gray-500" />
-                Payment
+                Payment Method
             </h2>
-            <p className="text-sm text-gray-500">Payment is simulated for this demo. No card required.</p>
+            <div className="p-4 bg-yellow-50 text-yellow-800 rounded-lg text-sm">
+                No payment details configured. Please contact the store administrator.
+            </div>
         </div>
     );
 

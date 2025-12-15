@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Settings, Palette, LayoutTemplate, Share2 } from "lucide-react";
+import { Settings, Palette, LayoutTemplate, Share2, CreditCard } from "lucide-react";
 
 export default function SettingsLayout({ children }: { children: React.ReactNode }) {
     const pathname = usePathname();
@@ -12,6 +12,7 @@ export default function SettingsLayout({ children }: { children: React.ReactNode
         { name: "Branding", href: "/dashboard/settings/branding", icon: Palette },
         { name: "Header", href: "/dashboard/settings/header", icon: LayoutTemplate },
         { name: "Footer", href: "/dashboard/settings/footer", icon: LayoutTemplate },
+        { name: "Payment", href: "/dashboard/settings/payments", icon: CreditCard },
     ];
 
     return (
