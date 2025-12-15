@@ -2,12 +2,14 @@
 "use client";
 
 import { useCart } from "@/components/providers/cart-provider";
+import { useCurrency } from "@/hooks/use-currency";
 import { ShoppingCart, ArrowLeft, CheckCircle } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 
 export default function ProductDetails({ product, backUrl = "/dashboard/products" }: { product: any, backUrl?: string }) {
     const { addToCart } = useCart();
+    const { formatPrice } = useCurrency();
     const [selectedImage, setSelectedImage] = useState(product.images?.[0] || "");
     const [isAdded, setIsAdded] = useState(false);
 
@@ -60,7 +62,7 @@ export default function ProductDetails({ product, backUrl = "/dashboard/products
                     {/* Info */}
                     <div className="p-8 md:p-12 flex flex-col h-full">
                         <h1 className="text-3xl font-bold text-gray-900 mb-2">{product.name}</h1>
-                        <div className="text-2xl font-bold text-emerald-600 mb-6">${product.price}</div>
+                        <div className="text-2xl font-bold text-emerald-600 mb-6">{formatPrice(product.price)}</div>
 
                         <div className="prose prose-sm text-gray-600 mb-8 flex-1">
                             <p>{product.description || "No description available."}</p>

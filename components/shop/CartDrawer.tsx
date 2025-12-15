@@ -3,11 +3,13 @@
 import React from "react";
 import { X, Minus, Plus, Trash2, ShoppingBag } from "lucide-react";
 import { useCart } from "@/components/providers/cart-provider";
+import { useCurrency } from "@/hooks/use-currency";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
 export default function CartDrawer() {
     const { items, removeFromCart, updateQuantity, cartTotal, isCartOpen, toggleCart } = useCart();
+    const { formatPrice } = useCurrency();
     const router = useRouter();
 
     if (!isCartOpen) return null;
@@ -70,7 +72,7 @@ export default function CartDrawer() {
                                 <div className="flex-1 flex flex-col justify-between">
                                     <div>
                                         <h4 className="font-medium text-gray-900 line-clamp-1">{item.name}</h4>
-                                        <div className="text-emerald-600 font-bold">${item.price}</div>
+                                        <div className="text-emerald-600 font-bold">{formatPrice(item.price)}</div>
                                     </div>
                                     <div className="flex items-center justify-between mt-2">
                                         <div className="flex items-center border border-gray-200 rounded-lg bg-gray-50">
@@ -105,7 +107,7 @@ export default function CartDrawer() {
                     <div className="p-6 border-t border-gray-100 bg-gray-50">
                         <div className="flex items-center justify-between mb-4">
                             <span className="text-gray-500">Subtotal</span>
-                            <span className="text-xl font-bold text-gray-900">${cartTotal.toFixed(2)}</span>
+                            <span className="text-xl font-bold text-gray-900">{formatPrice(cartTotal)}</span>
                         </div>
                         <button
                             onClick={handleCheckout}

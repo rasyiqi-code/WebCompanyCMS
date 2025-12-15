@@ -4,10 +4,12 @@
 import React from 'react';
 import { ShoppingCart, Check } from "lucide-react";
 import { useCart } from "@/components/providers/cart-provider";
+import { useCurrency } from "@/hooks/use-currency";
 import Link from "next/link";
 
 export function ProductGridItem({ product, baseUrl = "/dashboard/products" }: { product: any, baseUrl?: string }) {
     const { addToCart } = useCart();
+    const { formatPrice } = useCurrency();
 
     const [isAdded, setIsAdded] = React.useState(false);
 
@@ -38,13 +40,13 @@ export function ProductGridItem({ product, baseUrl = "/dashboard/products" }: { 
                     <h3 className="font-bold text-gray-900 mb-1 hover:text-indigo-600 transition-colors">{product.name}</h3>
                 </Link>
                 <div className="flex items-center justify-between mt-3">
-                    <span className="text-lg font-bold text-emerald-600">${product.price}</span>
+                    <span className="text-lg font-bold text-emerald-600">{formatPrice(product.price)}</span>
                     <button
                         onClick={handleAddToCart}
                         disabled={isAdded}
                         className={`p-2 rounded-full transition-all active:scale-95 transform cursor-pointer ${isAdded
-                                ? "bg-emerald-100 text-emerald-600"
-                                : "bg-blue-50 text-blue-600 hover:bg-blue-100"
+                            ? "bg-emerald-100 text-emerald-600"
+                            : "bg-blue-50 text-blue-600 hover:bg-blue-100"
                             }`}
                         title={isAdded ? "Added!" : "Add to Cart"}
                     >

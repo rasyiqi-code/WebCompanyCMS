@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import { useCart } from "@/components/providers/cart-provider";
+import { useCurrency } from "@/hooks/use-currency";
 import { CreditCard, Truck, CheckCircle, ArrowRight } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -9,6 +10,7 @@ import PaymentMethodInfo from "../../../components/shop/PaymentMethodInfo";
 
 export default function CheckoutPage() {
     const { items, cartTotal, clearCart } = useCart();
+    const { formatPrice } = useCurrency();
     const router = useRouter();
     const [isProcessing, setIsProcessing] = useState(false);
 
@@ -143,7 +145,7 @@ export default function CheckoutPage() {
                                         <div className="flex-1">
                                             <div className="flex justify-between mb-1">
                                                 <h4 className="font-medium text-gray-900 text-sm line-clamp-1">{item.name}</h4>
-                                                <span className="font-bold text-gray-900 text-sm">${(item.price * item.quantity).toFixed(2)}</span>
+                                                <span className="font-bold text-gray-900 text-sm">{formatPrice(item.price * item.quantity)}</span>
                                             </div>
                                             <p className="text-xs text-gray-500">Qty: {item.quantity}</p>
                                         </div>
@@ -154,7 +156,7 @@ export default function CheckoutPage() {
                             <div className="space-y-3 pt-4 border-t border-gray-200">
                                 <div className="flex justify-between text-gray-600 text-sm">
                                     <span>Subtotal</span>
-                                    <span>${cartTotal.toFixed(2)}</span>
+                                    <span>{formatPrice(cartTotal)}</span>
                                 </div>
                                 <div className="flex justify-between text-gray-600 text-sm">
                                     <span>Shipping</span>
@@ -162,7 +164,7 @@ export default function CheckoutPage() {
                                 </div>
                                 <div className="flex justify-between text-gray-900 font-bold text-lg pt-2">
                                     <span>Total</span>
-                                    <span>${cartTotal.toFixed(2)}</span>
+                                    <span>{formatPrice(cartTotal)}</span>
                                 </div>
                             </div>
 
