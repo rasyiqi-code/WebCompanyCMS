@@ -190,7 +190,7 @@ export const HeroYoga: ComponentConfig<HeroYogaProps> = {
         btnRadius, imageRadius,
         gap, paddingTop, paddingBottom, btnPaddingHorizontal, btnPaddingVertical
     }) => {
-        const id = useId();
+        const id = "yoga-" + useId().replace(/:/g, "");
 
         const getVal = (obj: { desktop?: number; tablet?: number; mobile?: number } | undefined, key: 'desktop' | 'tablet' | 'mobile') => {
             if (key === 'mobile' && obj && !obj.mobile && obj.desktop) {

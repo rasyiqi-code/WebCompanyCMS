@@ -196,7 +196,7 @@ export const HeroAgency: ComponentConfig<HeroAgencyProps> = {
         projectGap, projectRadius, projectShadow,
         paddingTop, paddingBottom
     }) => {
-        const id = useId();
+        const id = "agency-" + useId().replace(/:/g, "");
         const getVal = (obj: { desktop?: number; tablet?: number; mobile?: number } | undefined, key: 'desktop' | 'tablet' | 'mobile') => {
             if (key === 'mobile' && obj && !obj.mobile && obj.desktop) {
                 return obj.desktop * 0.5; // Auto-scale down to 50% for mobile if not set

@@ -168,6 +168,7 @@ export const testimonials = pgTable("Testimonial", {
     role: text("role"),
     avatarUrl: text("avatarUrl"),
     rating: integer("rating").default(5),
+    isApproved: boolean("isApproved").default(false),
     createdAt: timestamp("createdAt").defaultNow().notNull(),
     updatedAt: timestamp("updatedAt").defaultNow().notNull(),
 });

@@ -180,7 +180,7 @@ export const HeroWedding: ComponentConfig<HeroWeddingProps> = {
         backgroundColor, accentColor, secondaryColor, btnPaddingVertical, btnPaddingHorizontal,
         paddingTop, paddingBottom, imageOverlap
     }) => {
-        const id = useId();
+        const id = "wedding-" + useId().replace(/:/g, "");
         const getVal = (obj: { desktop?: number; tablet?: number; mobile?: number } | undefined, key: 'desktop' | 'tablet' | 'mobile') => {
             return obj?.[key] ?? obj?.desktop ?? 0;
         };

@@ -176,7 +176,7 @@ export const HeroMedical: ComponentConfig<HeroMedicalProps> = {
         btnRadius, imageRadius,
         gap, paddingTop, paddingBottom, btnPaddingHorizontal, btnPaddingVertical
     }) => {
-        const id = useId();
+        const id = "medical-" + useId().replace(/:/g, "");
 
         // Smart scaling helper
         const getVal = (obj: { desktop?: number; tablet?: number; mobile?: number } | undefined, key: 'desktop' | 'tablet' | 'mobile') => {

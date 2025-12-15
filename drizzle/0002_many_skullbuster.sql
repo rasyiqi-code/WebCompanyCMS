@@ -1,0 +1,1 @@
+ALTER TABLE "Testimonial" ADD COLUMN "isApproved" boolean DEFAULT false;

@@ -139,7 +139,7 @@ export const HeroPublisherTwo: ComponentConfig<HeroPublisherTwoProps> = {
         gap, paddingTop, paddingBottom,
         titleFont = 'inherit', descFont = 'inherit'
     }) => {
-        const id = useId();
+        const id = "publisher-two-" + useId().replace(/:/g, "");
 
         // Smart scaling helper
         const getVal = (obj: { desktop?: number; tablet?: number; mobile?: number } | undefined, key: 'desktop' | 'tablet' | 'mobile') => {

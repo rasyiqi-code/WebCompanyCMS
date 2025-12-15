@@ -113,7 +113,7 @@ export const PricingGradient: ComponentConfig<PricingGradientProps> = {
         ],
     },
     render: ({ title, description, items, columnsDesktop, columnsTablet, columnsMobile, titleFont = 'inherit', bodyFont = 'inherit', mainColor }) => {
-        const id = useId();
+        const id = "gradient-pricing-" + useId().replace(/:/g, "");
         const primaryColor = mainColor || '#8b5cf6'; // Default Purple
 
         const PricingCard = ({ item, i }: any) => {

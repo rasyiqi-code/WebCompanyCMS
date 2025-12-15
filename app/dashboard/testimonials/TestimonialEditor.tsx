@@ -13,6 +13,7 @@ interface TestimonialEditorProps {
         author: string;
         role?: string;
         rating: number;
+        isApproved?: boolean;
     };
     isEditMode?: boolean;
 }
@@ -25,7 +26,8 @@ export default function TestimonialEditor({ initialData, isEditMode = false }: T
         author: initialData?.author || "",
         role: initialData?.role || "",
         quote: initialData?.quote || "",
-        rating: initialData?.rating || 5
+        rating: initialData?.rating || 5,
+        isApproved: initialData?.isApproved ?? true // Default to true for admin creations
     });
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -128,6 +130,18 @@ export default function TestimonialEditor({ initialData, isEditMode = false }: T
                         className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none h-32 resize-none"
                         placeholder="What did they say?"
                     />
+                </div>
+
+                <div>
+                    <label className="flex items-center space-x-3 p-4 border rounded-lg hover:bg-gray-50 cursor-pointer">
+                        <input
+                            type="checkbox"
+                            checked={formData.isApproved}
+                            onChange={(e) => setFormData({ ...formData, isApproved: e.target.checked })}
+                            className="w-5 h-5 text-blue-600 rounded focus:ring-blue-500"
+                        />
+                        <span className="text-gray-900 font-medium">Approved (Visible on public site)</span>
+                    </label>
                 </div>
 
                 <div className="pt-4">

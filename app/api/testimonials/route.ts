@@ -6,9 +6,21 @@ import { desc, eq } from "drizzle-orm";
 import { authOptions } from "../../../lib/auth";
 import { getServerSession } from "next-auth";
 
+export const dynamic = 'force-dynamic';
+
 export async function GET(request: Request) {
     try {
-        const allTestimonials = await db.select().from(testimonials).orderBy(desc(testimonials.createdAt));
+        const { searchParams } = new URL(request.url);
+        const status = searchParams.get('status');
+
+        let allTestimonials;
+
+        if (status === 'all') {
+            allTestimonials = await db.select().from(testimonials).orderBy(desc(testimonials.createdAt));
+        } else {
+            allTestimonials = await db.select().from(testimonials).where(eq(testimonials.isApproved, true)).orderBy(desc(testimonials.createdAt));
+        }
+
         return NextResponse.json({ success: true, testimonials: allTestimonials });
     } catch (error) {
         console.error("Error fetching testimonials:", error);
@@ -19,13 +31,7 @@ export async function GET(request: Request) {
 export async function POST(request: Request) {
     try {
         const session = await getServerSession(authOptions);
-        console.log("DEBUG: Testimonials API Session:", JSON.stringify(session, null, 2));
-
-        // Check if user is admin or editor - for now simple check
-        // if (!session?.user) {
-        //    console.log("DEBUG: Unauthorized access attempt. Session is null or user missing.");
-        //    return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 401 });
-        // }
+        const isAdmin = !!session?.user;
 
         const body = await request.json();
         const { quote, author, role, rating } = body;
@@ -39,6 +45,7 @@ export async function POST(request: Request) {
             author,
             role: role || "",
             rating: rating || 5,
+            isApproved: isAdmin, // Approve immediately if admin
             updatedAt: new Date(),
         }).returning();
 
@@ -58,20 +65,23 @@ export async function PUT(request: Request) {
         // }
 
         const body = await request.json();
-        const { id, quote, author, role, rating } = body;
+        const { id, quote, author, role, rating, isApproved } = body;
 
-        if (!id || !quote || !author) {
-            return NextResponse.json({ success: false, error: "ID, Quote and Author are required" }, { status: 400 });
+        if (!id) {
+            return NextResponse.json({ success: false, error: "ID is required" }, { status: 400 });
         }
 
+        const updateData: any = {
+            updatedAt: new Date(),
+        };
+        if (quote !== undefined) updateData.quote = quote;
+        if (author !== undefined) updateData.author = author;
+        if (role !== undefined) updateData.role = role;
+        if (rating !== undefined) updateData.rating = rating;
+        if (isApproved !== undefined) updateData.isApproved = isApproved;
+
         const [updatedTestimonial] = await db.update(testimonials)
-            .set({
-                quote,
-                author,
-                role: role || "",
-                rating: rating || 5,
-                updatedAt: new Date(),
-            })
+            .set(updateData)
             .where(eq(testimonials.id, id))
             .returning();
 

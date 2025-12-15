@@ -185,7 +185,7 @@ export const HeroFitness: ComponentConfig<HeroFitnessProps> = {
         backgroundColor, accentColor1, accentColor2,
         paddingTop, paddingBottom, gap
     }) => {
-        const id = useId();
+        const id = "fitness-" + useId().replace(/:/g, "");
         const getVal = (obj: { desktop?: number; tablet?: number; mobile?: number } | undefined, key: 'desktop' | 'tablet' | 'mobile') => {
             if (key === 'mobile' && obj && !obj.mobile && obj.desktop) {
                 return obj.desktop * 0.5;

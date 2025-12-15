@@ -119,7 +119,7 @@ export const Stats: ComponentConfig<StatsProps> = {
         paddingTop = '60px',
         paddingBottom = '60px'
     }) => {
-        const id = useId();
+        const id = "stats-" + useId().replace(/:/g, "");
 
         return (
             <section className={id}>

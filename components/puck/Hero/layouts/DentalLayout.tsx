@@ -213,7 +213,7 @@ export const HeroDental: ComponentConfig<HeroDentalProps> = {
         backgroundColor, accentColor, serviceCardBg,
         paddingTop, paddingBottom
     }) => {
-        const id = useId();
+        const id = "dental-" + useId().replace(/:/g, "");
         const getVal = (obj: { desktop?: number; tablet?: number; mobile?: number } | undefined, key: 'desktop' | 'tablet' | 'mobile') => {
             return obj?.[key] ?? obj?.desktop ?? 0;
         };

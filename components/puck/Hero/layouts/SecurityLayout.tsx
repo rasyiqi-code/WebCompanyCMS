@@ -208,7 +208,7 @@ export const HeroSecurity: ComponentConfig<HeroSecurityProps> = {
         btnRadius, cardRadius,
         gap, paddingTop, paddingBottom, btnPaddingHorizontal, btnPaddingVertical
     }) => {
-        const id = useId();
+        const id = "security-" + useId().replace(/:/g, "");
 
         // Smart scaling helper
         const getVal = (obj: { desktop?: number; tablet?: number; mobile?: number } | undefined, key: 'desktop' | 'tablet' | 'mobile') => {

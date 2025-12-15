@@ -129,7 +129,7 @@ export const PricingModern: ComponentConfig<PricingModernProps> = {
         ],
     },
     render: ({ title, description, items, columnsDesktop, columnsTablet, columnsMobile, titleFont = 'inherit', bodyFont = 'inherit', mainColor }) => {
-        const id = useId();
+        const id = "modern-pricing-" + useId().replace(/:/g, "");
 
         const themeColors: Record<string, { bg: string, text: string, accent: string }> = {
             blue: { bg: 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)', text: '#ffffff', accent: '#2563eb' },

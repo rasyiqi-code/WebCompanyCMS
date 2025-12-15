@@ -112,7 +112,7 @@ export const PricingBox: ComponentConfig<PricingBoxProps> = {
         ],
     },
     render: ({ title, description, items, columnsDesktop, columnsTablet, columnsMobile, titleFont = 'inherit', bodyFont = 'inherit', mainColor }) => {
-        const id = useId();
+        const id = "box-pricing-" + useId().replace(/:/g, "");
         const primaryColor = mainColor || '#2563eb'; // Default Blue
 
         const PricingCard = ({ item, i }: any) => {

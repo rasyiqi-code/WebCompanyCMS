@@ -121,7 +121,7 @@ export const PricingSimple: ComponentConfig<PricingSimpleProps> = {
         ],
     },
     render: ({ title, scrollMode, columnsDesktop, columnsTablet, columnsMobile, items, titleFont = 'inherit', bodyFont = 'inherit', mainColor }) => {
-        const id = useId();
+        const id = "simple-pricing-" + useId().replace(/:/g, "");
         const isHorizontal = scrollMode === "horizontal";
         const primaryColor = mainColor || '#dc2626'; // Default red
 
