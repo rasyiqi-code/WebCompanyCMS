@@ -2,7 +2,7 @@
 
 import React from "react";
 import { ShoppingCart } from "lucide-react";
-import { useCart, CartItem } from "../../context/CartContext";
+import { useCart, CartItem } from "../providers/cart-provider";
 
 export default function AddToCartButton({ product }: { product: any }) {
     const { addToCart } = useCart();
