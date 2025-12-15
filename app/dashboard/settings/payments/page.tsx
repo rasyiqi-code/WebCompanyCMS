@@ -10,6 +10,7 @@ export default function PaymentSettingsPage() {
         bankName: "",
         accountNumber: "",
         accountHolder: "",
+        currency: "USD",
         instructions: "",
     });
 
@@ -23,6 +24,7 @@ export default function PaymentSettingsPage() {
                         bankName: data.bankName,
                         accountNumber: data.accountNumber,
                         accountHolder: data.accountHolder,
+                        currency: data.currency || "USD",
                         instructions: data.instructions || "",
                     });
                 }
@@ -74,6 +76,24 @@ export default function PaymentSettingsPage() {
                 </p>
 
                 <form onSubmit={handleSubmit} className="space-y-4">
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Store Currency</label>
+                        <select
+                            name="currency"
+                            value={formData.currency}
+                            onChange={(e) => setFormData({ ...formData, currency: e.target.value })}
+                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none bg-white"
+                        >
+                            <option value="USD">USD ($)</option>
+                            <option value="IDR">IDR (Rp)</option>
+                            <option value="EUR">EUR (€)</option>
+                            <option value="GBP">GBP (£)</option>
+                            <option value="SGD">SGD (S$)</option>
+                            <option value="AUD">AUD (A$)</option>
+                        </select>
+                        <p className="text-xs text-gray-500 mt-1">This currency will be used for all products.</p>
+                    </div>
+
                     <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1">Bank Name</label>
                         <input

@@ -154,6 +154,7 @@ export const paymentSettings = pgTable("PaymentSettings", {
     bankName: text("bankName").notNull(),
     accountNumber: text("accountNumber").notNull(),
     accountHolder: text("accountHolder").notNull(),
+    currency: text("currency").default("USD"),
     instructions: text("instructions"),
     updatedAt: timestamp("updatedAt").defaultNow().notNull(),
 });

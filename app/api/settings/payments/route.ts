@@ -19,7 +19,7 @@ export async function GET() {
 export async function POST(req: Request) {
     try {
         const body = await req.json();
-        const { bankName, accountNumber, accountHolder, instructions } = body;
+        const { bankName, accountNumber, accountHolder, instructions, currency } = body;
 
         // Check if settings exist
         const [existing] = await db.select().from(paymentSettings).limit(1);
@@ -30,6 +30,7 @@ export async function POST(req: Request) {
                     bankName,
                     accountNumber,
                     accountHolder,
+                    currency,
                     instructions,
                     updatedAt: new Date(),
                 })
@@ -39,6 +40,7 @@ export async function POST(req: Request) {
                 bankName,
                 accountNumber,
                 accountHolder,
+                currency,
                 instructions
             });
         }
