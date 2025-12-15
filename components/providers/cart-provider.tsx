@@ -30,17 +30,30 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     const [isCartOpen, setIsCartOpen] = useState(false);
     const [isLoaded, setIsLoaded] = useState(false);
 
-    // Load from LocalStorage
+    // Load from LocalStorage and sync across tabs
     useEffect(() => {
-        const saved = localStorage.getItem("cart");
-        if (saved) {
-            try {
-                setItems(JSON.parse(saved));
-            } catch (e) {
-                console.error("Failed to parse cart", e);
+        const loadCart = () => {
+            const saved = localStorage.getItem("cart");
+            if (saved) {
+                try {
+                    setItems(JSON.parse(saved));
+                } catch (e) {
+                    console.error("Failed to parse cart", e);
+                }
             }
-        }
+        };
+
+        loadCart();
         setIsLoaded(true);
+
+        const handleStorageChange = (e: StorageEvent) => {
+            if (e.key === "cart") {
+                loadCart();
+            }
+        };
+
+        window.addEventListener("storage", handleStorageChange);
+        return () => window.removeEventListener("storage", handleStorageChange);
     }, []);
 
     // Save to LocalStorage
