@@ -23,6 +23,7 @@ import {
   PricingModern, type PricingModernProps,
   PricingBox, type PricingBoxProps,
   PricingGradient, type PricingGradientProps,
+  PricingImage, type PricingImageProps,
 
   BlogList, type BlogListProps,
   AboutCompany, type AboutCompanyProps,
@@ -51,6 +52,7 @@ type Props = {
   PricingModern: PricingModernProps;
   PricingBox: PricingBoxProps;
   PricingGradient: PricingGradientProps;
+  PricingImage: PricingImageProps;
   BlogList: BlogListProps;
   Gallery: GalleryProps;
   Accordion: AccordionProps;
@@ -96,7 +98,7 @@ export const config: Config<Props> = {
       components: ["Stats", "Testimonials", "LogoMarquee", "Accordion", "IconGrid", "BlogList", "AboutCompany", "Portfolio", "ContactForm"],
     },
     "🎯 Marketing": {
-      components: ["CTA", "Pricing", "PricingModern", "PricingBox", "PricingGradient", "Gallery", "ProductList"],
+      components: ["CTA", "Pricing", "PricingModern", "PricingBox", "PricingGradient", "PricingImage", "Gallery", "ProductList"],
     },
     "📐 Layout": {
       components: ["Container"],
@@ -154,6 +156,7 @@ export const config: Config<Props> = {
     PricingModern,
     PricingBox,
     PricingGradient,
+    PricingImage,
     BlogList,
     Gallery,
     Accordion,

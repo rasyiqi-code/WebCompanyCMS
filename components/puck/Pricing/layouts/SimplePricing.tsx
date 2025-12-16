@@ -1,16 +1,23 @@
 import type { ComponentConfig } from "@measured/puck";
 import { ColorPickerField } from "../../fields/ColorPickerField";
+import { ResponsiveSliderField, ResponsiveValue } from "../../fields/ResponsiveSliderField";
 import React, { useId } from "react";
 
 export type PricingSimpleProps = {
     title: string;
     mainColor?: string;
+    sectionBg?: string;
+    cardBg?: string;
     titleFont?: string;
     bodyFont?: string;
     scrollMode: "grid" | "horizontal";
     columnsDesktop?: number;
     columnsTablet?: number;
     columnsMobile?: number;
+    gap?: ResponsiveValue;
+    cardFontSize?: ResponsiveValue;
+    titleColor?: string;
+    textColor?: string;
     items: {
         name: string;
         subtitle?: string;
@@ -21,7 +28,7 @@ export type PricingSimpleProps = {
         buttonText?: string;
         buttonUrl?: string;
         buttonDesc?: string;
-        features: { feature: string }[]
+        features: { feature: string; available?: boolean }[]
     }[];
 };
 
@@ -32,6 +39,26 @@ export const PricingSimple: ComponentConfig<PricingSimpleProps> = {
         mainColor: {
             type: "custom",
             label: "🎨 Main Color",
+            render: ({ value, onChange }) => <ColorPickerField value={value} onChange={onChange} />
+        },
+        sectionBg: {
+            type: "custom",
+            label: "Background Section",
+            render: ({ value, onChange }) => <ColorPickerField value={value} onChange={onChange} />
+        },
+        cardBg: {
+            type: "custom",
+            label: "Background Card",
+            render: ({ value, onChange }) => <ColorPickerField value={value} onChange={onChange} />
+        },
+        titleColor: {
+            type: "custom",
+            label: "Title Color",
+            render: ({ value, onChange }) => <ColorPickerField value={value} onChange={onChange} />
+        },
+        textColor: {
+            type: "custom",
+            label: "Text Color",
             render: ({ value, onChange }) => <ColorPickerField value={value} onChange={onChange} />
         },
         titleFont: {
@@ -69,6 +96,16 @@ export const PricingSimple: ComponentConfig<PricingSimpleProps> = {
         columnsDesktop: { type: "number", label: "🖥️ Columns (Desktop)", placeholder: "3" },
         columnsTablet: { type: "number", label: "📱 Columns (Tablet)", placeholder: "2" },
         columnsMobile: { type: "number", label: "📱 Columns (Mobile)", placeholder: "1" },
+        gap: {
+            type: "custom",
+            label: "Gap (Spacing)",
+            render: (props) => <ResponsiveSliderField {...props} unit="px" max={100} min={0} step={4} defaultValue={{ desktop: 30, tablet: 20, mobile: 16 }} />
+        },
+        cardFontSize: {
+            type: "custom",
+            label: "Card Font Size",
+            render: (props) => <ResponsiveSliderField {...props} unit="px" max={24} min={12} step={1} defaultValue={{ desktop: 16, tablet: 16, mobile: 14 }} />
+        },
         items: {
             type: "array",
             arrayFields: {
@@ -85,6 +122,14 @@ export const PricingSimple: ComponentConfig<PricingSimpleProps> = {
                     type: "array",
                     arrayFields: {
                         feature: { type: "text", label: "Feature" },
+                        available: {
+                            type: "radio",
+                            label: "Status",
+                            options: [
+                                { label: "Available (✓)", value: true },
+                                { label: "Unavailable (✕)", value: false }
+                            ]
+                        }
                     },
                 },
             },
@@ -97,6 +142,8 @@ export const PricingSimple: ComponentConfig<PricingSimpleProps> = {
         columnsDesktop: 3,
         columnsTablet: 2,
         columnsMobile: 1,
+        gap: { desktop: 28, tablet: 24, mobile: 16 },
+        cardFontSize: { desktop: 16, tablet: 16, mobile: 16 },
         items: [
             {
                 name: "Paket Majapahit",
@@ -105,7 +152,7 @@ export const PricingSimple: ComponentConfig<PricingSimpleProps> = {
                 priceSuffix: "/naskah",
                 buttonText: "Pilih Majapahit",
                 buttonUrl: "#",
-                features: [{ feature: "ISBN + Barcode" }]
+                features: [{ feature: "ISBN + Barcode", available: true }]
             },
             {
                 highlightLabel: "Terpopuler",
@@ -116,14 +163,16 @@ export const PricingSimple: ComponentConfig<PricingSimpleProps> = {
                 buttonText: "Pilih Nusantara",
                 buttonUrl: "#",
                 buttonDesc: "* Slot terbatas bulan ini",
-                features: [{ feature: "Semua di Majapahit" }]
+                features: [{ feature: "Semua di Majapahit", available: true }]
             },
         ],
     },
-    render: ({ title, scrollMode, columnsDesktop, columnsTablet, columnsMobile, items, titleFont = 'inherit', bodyFont = 'inherit', mainColor }) => {
+    render: ({ title, scrollMode, columnsDesktop, columnsTablet, columnsMobile, items, titleFont = 'inherit', bodyFont = 'inherit', mainColor, gap, cardFontSize, sectionBg, cardBg, titleColor, textColor }) => {
         const id = "simple-pricing-" + useId().replace(/:/g, "");
         const isHorizontal = scrollMode === "horizontal";
         const primaryColor = mainColor || '#dc2626'; // Default red
+        const defaultTextColor = '#64748b';
+        const activeTextColor = textColor || defaultTextColor;
 
         const PricingCard = ({ item, i }: any) => {
             const ButtonComponent = item.buttonUrl ? 'a' : 'button';
@@ -134,17 +183,19 @@ export const PricingSimple: ComponentConfig<PricingSimpleProps> = {
                     key={i}
                     className="pricing-card"
                     style={{
-                        backgroundColor: 'white',
+                        backgroundColor: cardBg || 'white',
                         borderRadius: '20px',
-                        padding: 'clamp(28px, 5vw, 40px) clamp(20px, 4vw, 30px)',
+                        padding: '2em',
                         textAlign: 'center',
                         boxShadow: item.highlightLabel ? `0 20px 40px ${primaryColor}40` : '0 4px 6px rgba(0,0,0,0.05)',
                         border: item.highlightLabel ? `2px solid ${primaryColor}` : '2px solid #f1f5f9',
                         fontFamily: bodyFont !== 'inherit' ? `"${bodyFont}", sans-serif` : 'inherit',
+                        fontSize: 'var(--card-font-size, 16px)',
                         transition: 'transform 0.3s, box-shadow 0.3s, border-color 0.3s',
                         cursor: 'default',
                         position: 'relative',
-                        overflow: 'visible', // Changed to visible for Badge
+                        zIndex: item.highlightLabel ? 2 : 1, // Ensure highlighted card is above
+                        overflow: 'visible',
                         marginTop: item.highlightLabel ? '0' : '20px', // Offset for alignment
                         ...(isHorizontal && {
                             flexShrink: 0,
@@ -176,9 +227,9 @@ export const PricingSimple: ComponentConfig<PricingSimpleProps> = {
                             transform: 'translateX(-50%)',
                             backgroundColor: primaryColor,
                             color: 'white',
-                            padding: '6px 16px',
+                            padding: '0.4em 1em',
                             borderRadius: '999px',
-                            fontSize: '0.85rem',
+                            fontSize: '0.85em',
                             fontWeight: '700',
                             textTransform: 'uppercase',
                             letterSpacing: '0.05em',
@@ -202,7 +253,7 @@ export const PricingSimple: ComponentConfig<PricingSimpleProps> = {
                     }} />
 
                     <h3 style={{
-                        fontSize: 'clamp(1.35rem, 3vw, 1.75rem)',
+                        fontSize: '1.5em',
                         marginBottom: '0.5rem',
                         color: primaryColor,
                         fontWeight: '700',
@@ -212,9 +263,9 @@ export const PricingSimple: ComponentConfig<PricingSimpleProps> = {
 
                     {item.subtitle && (
                         <div style={{
-                            color: '#64748b',
-                            fontSize: '0.95rem',
-                            marginBottom: '1.5rem',
+                            color: activeTextColor,
+                            fontSize: '0.95em',
+                            marginBottom: '1.5em',
                             fontWeight: '500'
                         }}>
                             {item.subtitle}
@@ -223,12 +274,12 @@ export const PricingSimple: ComponentConfig<PricingSimpleProps> = {
 
                     <div style={{ marginBottom: '2rem' }}>
                         {item.pricePrefix && (
-                            <div style={{ fontSize: '0.9rem', color: '#94a3b8', marginBottom: '4px' }}>
+                            <div style={{ fontSize: '0.9em', color: activeTextColor, opacity: 0.8, marginBottom: '4px' }}>
                                 {item.pricePrefix}
                             </div>
                         )}
                         <div style={{
-                            fontSize: 'clamp(1.75rem, 5vw, 2.5rem)',
+                            fontSize: '2.5em',
                             fontWeight: '800',
                             background: `linear-gradient(135deg, ${primaryColor} 0%, ${primaryColor}CC 100%)`,
                             WebkitBackgroundClip: 'text',
@@ -239,7 +290,7 @@ export const PricingSimple: ComponentConfig<PricingSimpleProps> = {
                             {item.price}
                         </div>
                         {item.priceSuffix && (
-                            <div style={{ fontSize: '0.9rem', color: '#64748b', marginTop: '4px', fontWeight: '500' }}>
+                            <div style={{ fontSize: '0.9em', color: activeTextColor, marginTop: '4px', fontWeight: '500' }}>
                                 {item.priceSuffix}
                             </div>
                         )}
@@ -251,23 +302,34 @@ export const PricingSimple: ComponentConfig<PricingSimpleProps> = {
                         textAlign: 'left',
                         marginBottom: '2rem',
                     }}>
-                        {(item.features || []).map((f: any, j: number) => (
-                            <li
-                                key={j}
-                                style={{
-                                    padding: '12px 0',
-                                    borderBottom: j < item.features.length - 1 ? '1px solid #f1f5f9' : 'none',
-                                    color: '#475569',
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    gap: '10px',
-                                    fontSize: 'clamp(0.9rem, 2vw, 1rem)',
-                                }}
-                            >
-                                <span style={{ color: primaryColor, fontSize: '1.2rem', flexShrink: 0 }}>✓</span>
-                                <span>{f.feature}</span>
-                            </li>
-                        ))}
+                        {(item.features || []).map((f: any, j: number) => {
+                            const isAvailable = f.available !== false; // Default to true if undefined
+                            return (
+                                <li
+                                    key={j}
+                                    style={{
+                                        padding: '12px 0',
+                                        borderBottom: j < item.features.length - 1 ? '1px solid #f1f5f9' : 'none',
+                                        color: isAvailable ? activeTextColor : (textColor ? textColor : '#94a3b8'), // If unavailable, use grey unless custom text color is set (then maybe use opacity?) - actually let's just use activeTextColor but maybe opacity if unavail
+                                        opacity: isAvailable ? 1 : 0.6,
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        gap: '10px',
+                                        fontSize: '0.95em',
+                                    }}
+                                >
+                                    <span style={{
+                                        color: isAvailable ? primaryColor : (textColor || '#94a3b8'),
+                                        fontSize: '1.2em',
+                                        flexShrink: 0,
+                                        fontWeight: 'bold'
+                                    }}>
+                                        {isAvailable ? '✓' : '✕'}
+                                    </span>
+                                    <span>{f.feature}</span>
+                                </li>
+                            );
+                        })}
                     </ul>
 
                     <div>
@@ -286,7 +348,7 @@ export const PricingSimple: ComponentConfig<PricingSimpleProps> = {
                                 border: `2px solid ${primaryColor}`,
                                 borderRadius: '9999px',
                                 fontWeight: '700',
-                                fontSize: 'clamp(0.95rem, 2vw, 1rem)',
+                                fontSize: '1em',
                                 cursor: 'pointer',
                                 transition: 'all 0.2s',
                                 textDecoration: 'none',
@@ -308,8 +370,8 @@ export const PricingSimple: ComponentConfig<PricingSimpleProps> = {
                         {item.buttonDesc && (
                             <div style={{
                                 marginTop: '12px',
-                                fontSize: '0.8rem',
-                                color: '#64748b',
+                                fontSize: '0.8em',
+                                color: activeTextColor,
                                 fontStyle: 'italic'
                             }}>
                                 {item.buttonDesc}
@@ -321,20 +383,40 @@ export const PricingSimple: ComponentConfig<PricingSimpleProps> = {
         };
 
         return (
-            <section className={id} style={{ padding: 'clamp(50px, 8vw, 80px) 20px', backgroundColor: '#f8fafc' }} >
+            <section className={id} style={{ padding: 'clamp(50px, 8vw, 80px) 20px', backgroundColor: sectionBg || '#f8fafc' }} >
                 <style dangerouslySetInnerHTML={{
                     __html: `
+                    .${id} {
+                        --gap-desktop: ${gap?.desktop || 28}px;
+                        --gap-tablet: ${gap?.tablet || 24}px;
+                        --gap-mobile: ${gap?.mobile || 16}px;
+                        
+                        --font-desktop: ${cardFontSize?.desktop || 16}px;
+                        --font-tablet: ${cardFontSize?.tablet || 16}px;
+                        --font-mobile: ${cardFontSize?.mobile || 16}px;
+
+                        --gap: var(--gap-desktop);
+                        --card-font-size: var(--font-desktop);
+                    }
                     .${id} .grid-container {
                         display: grid;
                         grid-template-columns: repeat(${columnsDesktop || 3}, 1fr);
-                        gap: clamp(20px, 4vw, 30px);
+                        gap: var(--gap);
                     }
                     @media (max-width: 1024px) {
+                        .${id} { 
+                            --gap: var(--gap-tablet);
+                            --card-font-size: var(--font-tablet);
+                        }
                         .${id} .grid-container {
                             grid-template-columns: repeat(${columnsTablet || 2}, 1fr);
                         }
                     }
                     @media (max-width: 768px) {
+                        .${id} { 
+                            --gap: var(--gap-mobile);
+                            --card-font-size: var(--font-mobile);
+                        }
                         .${id} .grid-container {
                             grid-template-columns: repeat(${columnsMobile || 1}, 1fr);
                         }
@@ -347,14 +429,14 @@ export const PricingSimple: ComponentConfig<PricingSimpleProps> = {
                         fontSize: 'clamp(1.75rem, 5vw, 3rem)',
                         marginBottom: '1rem',
                         fontWeight: '800',
-                        color: '#1e293b',
+                        color: titleColor || '#1e293b',
                         fontFamily: titleFont !== 'inherit' ? `"${titleFont}", sans-serif` : 'inherit'
                     }}>
                         {title}
                     </h2>
                     <p style={{
                         textAlign: 'center',
-                        color: '#64748b',
+                        color: activeTextColor,
                         marginBottom: 'clamp(2.5rem, 5vw, 4rem)',
                         fontSize: 'clamp(1rem, 2vw, 1.1rem)',
                     }}>
@@ -364,7 +446,7 @@ export const PricingSimple: ComponentConfig<PricingSimpleProps> = {
                     {isHorizontal ? (
                         <div style={{
                             overflowX: 'auto',
-                            overflowY: 'hidden',
+                            overflowY: 'visible',
                             scrollSnapType: 'x mandatory',
                             WebkitOverflowScrolling: 'touch',
                             scrollbarWidth: 'thin',
@@ -376,8 +458,9 @@ export const PricingSimple: ComponentConfig<PricingSimpleProps> = {
                         }}>
                             <div style={{
                                 display: 'flex',
-                                gap: 'clamp(20px, 4vw, 30px)',
+                                gap: 'var(--gap)',
                                 minWidth: 'min-content',
+                                paddingTop: '20px', // Space for highlight label top offset
                             }}>
                                 {items.map((item, i) => <PricingCard key={i} item={item} i={i} />)}
                             </div>

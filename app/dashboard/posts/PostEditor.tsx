@@ -4,9 +4,9 @@ import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Save, ArrowLeft } from "lucide-react";
 import Link from "next/link";
+import TiptapEditor from "@/components/TiptapEditor";
 
-// In a real implementation, we would use Tiptap or similar here.
-// For now, a simple textarea suffices for the MVP.
+// Tiptap is now fully implemented.
 
 export default function PostEditor({ postId, initialData }: { postId?: string, initialData?: any }) {
     const router = useRouter();
@@ -14,7 +14,7 @@ export default function PostEditor({ postId, initialData }: { postId?: string, i
     const [title, setTitle] = useState(initialData?.title || "");
     const [slug, setSlug] = useState(initialData?.slug || "");
     const [imageUrl, setImageUrl] = useState(initialData?.imageUrl || "");
-    const [content, setContent] = useState(JSON.stringify(initialData?.content) || ""); // Storing as string for raw JSON/Text
+    const [content, setContent] = useState(JSON.stringify(initialData?.content) || ""); // Storing as string for Editor State
     const [status, setStatus] = useState(initialData?.published ? "published" : "draft");
 
     // Auto-generate slug from title if slug is not manually edited
@@ -33,13 +33,23 @@ export default function PostEditor({ postId, initialData }: { postId?: string, i
         setIsLoading(true);
 
         try {
+            // Parse content string back to object if possible, to avoid double-stringification
+            // if the API expects an object.
+            let parsedContent = content;
+            try {
+                parsedContent = JSON.parse(content);
+            } catch (e) {
+                // If it's already a string or invalid JSON, keep it as is.
+                // But normally Tiptap onChange gives us a JSON string.
+            }
+
             const res = await fetch("/api/posts", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
                     title,
                     slug,
-                    content,
+                    content: parsedContent,
                     status,
                     imageUrl,
                     postId: initialData?.id
@@ -109,15 +119,7 @@ export default function PostEditor({ postId, initialData }: { postId?: string, i
                         <label className="block text-sm font-medium text-gray-700 mb-2">
                             Content
                         </label>
-                        <textarea
-                            value={content}
-                            onChange={(e) => setContent(e.target.value)}
-                            placeholder="Write your content here..."
-                            className="w-full h-[350px] px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all resize-none font-mono text-sm"
-                        />
-                        <p className="mt-2 text-xs text-gray-500">
-                            * This will be replaced by a proper text editor (Tiptap) soon.
-                        </p>
+                        <TiptapEditor content={content} onChange={setContent} />
                     </div>
                 </div>
 

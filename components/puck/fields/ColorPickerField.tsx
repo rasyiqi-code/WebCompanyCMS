@@ -22,7 +22,11 @@ export const ColorPickerField = ({ value, onChange }: ColorPickerFieldProps) => 
                 <input
                     type="color"
                     value={safeValue.startsWith("#") ? safeValue : "#000000"} // Input color needs hex
-                    onChange={(e) => onChange(e.target.value)}
+                    onChange={(e) => {
+                        if (e.target.value !== value) {
+                            onChange(e.target.value);
+                        }
+                    }}
                     style={{
                         position: "absolute",
                         top: "-50%",
