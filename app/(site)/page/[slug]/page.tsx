@@ -3,6 +3,7 @@ import { puckPages } from "../../../../db/schema";
 import { eq } from "drizzle-orm";
 import { notFound } from "next/navigation";
 import { Metadata } from "next";
+import TiptapRenderer from "@/components/TiptapRenderer";
 
 export async function generateMetadata({
     params,
@@ -47,7 +48,7 @@ export default async function StandardPage({
                 <header className="mb-10 text-center">
                     {page.title && <h1 className="text-4xl font-extrabold text-gray-900 sm:text-5xl">{page.title}</h1>}
                 </header>
-                <div className="prose prose-lg mx-auto text-gray-600" dangerouslySetInnerHTML={{ __html: page.body }} />
+                <TiptapRenderer content={page.body || ""} />
             </div>
         </div>
     );

@@ -3,6 +3,7 @@ import { Metadata } from "next";
 import { getPost } from "../../../../lib/get-post";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
+import TiptapRenderer from "@/components/TiptapRenderer";
 
 export async function generateMetadata({
     params,
@@ -37,30 +38,7 @@ export default async function BlogPostPage({
         return notFound();
     }
 
-    // Handle content rendering
-    // The content might be a JSON string (from early Tiptap/Puck versions) or plain text/HTML
-    let contentHtml = "";
-    try {
-        // If it looks like JSON, we might need to parse it or just dump it for now.
-        // For this MVP, let's assume it could be a simple string or stringified JSON.
-        if (typeof post.content === 'string') {
-            // specific check for JSON-like string
-            if (post.content.trim().startsWith('{') || post.content.trim().startsWith('[')) {
-                // It's likely JSON. For now, just display a placeholder or raw text
-                // In a real app, you'd render Tiptap JSON here.
-                const parsed = JSON.parse(post.content);
-                // simplistic render if it has a 'content' array (tiptap) or similar
-                contentHtml = `<pre class="whitespace-pre-wrap font-mono text-sm bg-gray-50 p-4 rounded">${JSON.stringify(parsed, null, 2)}</pre>`;
-            } else {
-                contentHtml = post.content;
-            }
-        } else {
-            // If it's already an object (drizzle json type)
-            contentHtml = `<pre class="whitespace-pre-wrap font-mono text-sm bg-gray-50 p-4 rounded">${JSON.stringify(post.content, null, 2)}</pre>`;
-        }
-    } catch (e) {
-        contentHtml = String(post.content);
-    }
+    // Content rendering is now handled by TiptapRenderer which supports both JSON and legacy HTML
 
 
     const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
@@ -116,11 +94,7 @@ export default async function BlogPostPage({
                 </header>
 
                 <article className="prose prose-lg prose-blue max-w-none">
-                    {/* 
-              Security Note: deeply sanitizing HTML is important in production.
-              For MVP internal usage, `dangerouslySetInnerHTML` is acceptable if we trust the source.
-            */}
-                    <div dangerouslySetInnerHTML={{ __html: contentHtml }} />
+                    <TiptapRenderer content={post.content as string} />
                 </article>
             </div>
         </div>
