@@ -2,25 +2,18 @@ import React from "react";
 import Link from "next/link";
 import { Plus, Edit, Trash2, Globe } from "lucide-react";
 import { db } from "../../../lib/db";
-import { posts, users } from "../../../db/schema";
-import { desc, eq } from "drizzle-orm";
 
 export const dynamic = 'force-dynamic';
 
 export default async function PostsPage() {
-    const allPosts = await db.select({
-        id: posts.id,
-        title: posts.title,
-        slug: posts.slug,
-        published: posts.published,
-        createdAt: posts.createdAt,
-        author: {
-            name: users.name
+    const allPosts = await db.post.findMany({
+        orderBy: { createdAt: 'desc' },
+        include: {
+            author: {
+                select: { name: true }
+            }
         }
-    })
-        .from(posts)
-        .leftJoin(users, eq(posts.authorId, users.id))
-        .orderBy(desc(posts.createdAt));
+    });
 
     return (
         <div>

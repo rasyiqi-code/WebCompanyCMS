@@ -1,7 +1,5 @@
 
 import { db } from "@/lib/db";
-import { users, posts } from "@/db/schema";
-import { eq } from "drizzle-orm";
 import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
@@ -14,7 +12,7 @@ export async function GET() {
             return new NextResponse("Unauthorized", { status: 401 });
         }
 
-        const allUsers = await db.select().from(users);
+        const allUsers = await db.user.findMany();
         return NextResponse.json({ users: allUsers });
     } catch (error) {
         return NextResponse.json({ error: "Failed to fetch users" }, { status: 500 });
@@ -37,20 +35,24 @@ export async function POST(req: Request) {
         }
 
         // Check if user exists
-        const existingUser = await db.select().from(users).where(eq(users.email, email));
-        if (existingUser.length > 0) {
+        const existingUser = await db.user.findUnique({
+            where: { email }
+        });
+        if (existingUser) {
             return NextResponse.json({ error: "User already exists" }, { status: 409 });
         }
 
-        const newUser = await db.insert(users).values({
-            name,
-            email,
-            password: "change-me", // Set a default password or handle via email invite in real world
-            role: role || 'user',
-            image: `https://ui-avatars.com/api/?name=${encodeURIComponent(name || email)}&background=random`
-        }).returning();
+        const newUser = await db.user.create({
+            data: {
+                name,
+                email,
+                password: "change-me", // Set a default password or handle via email invite in real world
+                role: role || 'user',
+                image: `https://ui-avatars.com/api/?name=${encodeURIComponent(name || email)}&background=random`
+            }
+        });
 
-        return NextResponse.json({ success: true, user: newUser[0] });
+        return NextResponse.json({ success: true, user: newUser });
     } catch (error) {
         console.error("Create User Error:", error);
         return NextResponse.json({ error: "Failed to create user" }, { status: 500 });
@@ -76,9 +78,10 @@ export async function PATCH(req: Request) {
             updateData.password = await bcrypt.hash(password, 10);
         }
 
-        await db.update(users)
-            .set(updateData)
-            .where(eq(users.id, userId));
+        await db.user.update({
+            where: { id: userId },
+            data: updateData
+        });
 
         return NextResponse.json({ success: true });
     } catch (e) {
@@ -106,10 +109,14 @@ export async function DELETE(req: Request) {
         }
 
         // Manually cascade delete posts (since schema doesn't have cascade)
-        await db.delete(posts).where(eq(posts.authorId, userId));
+        await db.post.deleteMany({
+            where: { authorId: userId }
+        });
 
         // Delete user (Accounts/Sessions will cascade automatically per schema)
-        await db.delete(users).where(eq(users.id, userId));
+        await db.user.delete({
+            where: { id: userId }
+        });
 
         return NextResponse.json({ success: true });
     } catch (e) {

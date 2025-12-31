@@ -13,7 +13,9 @@ export type HeroPublisherTwoProps = {
     titleSize: { desktop?: number; tablet?: number; mobile?: number };
     titleWeight: string;
     titleFont?: string;
+
     descFont?: string;
+    subtitleSize: { desktop?: number; tablet?: number; mobile?: number };
 
     // Colors
     backgroundColor: string;
@@ -26,6 +28,7 @@ export type HeroPublisherTwoProps = {
     paddingBottom: { desktop?: number; tablet?: number; mobile?: number };
     gap: { desktop?: number; tablet?: number; mobile?: number };
     imageRadius: number;
+    imageWidth?: string; // Changed to string for flexibility
 };
 
 export const HeroPublisherTwo: ComponentConfig<HeroPublisherTwoProps> = {
@@ -39,6 +42,10 @@ export const HeroPublisherTwo: ComponentConfig<HeroPublisherTwoProps> = {
         titleSize: {
             type: "custom", label: "Title Size",
             render: ({ value, onChange }) => <ResponsiveSliderField value={value} onChange={onChange} unit="rem" max={6} step={0.1} defaultValue={3.5} />
+        },
+        subtitleSize: {
+            type: "custom", label: "Subtitle Size",
+            render: ({ value, onChange }) => <ResponsiveSliderField value={value} onChange={onChange} unit="rem" max={4} step={0.1} defaultValue={1.1} />
         },
         titleFont: {
             type: "select",
@@ -92,10 +99,14 @@ export const HeroPublisherTwo: ComponentConfig<HeroPublisherTwoProps> = {
             render: ({ value, onChange }) => <ColorPickerField value={value} onChange={onChange} />
         },
 
-        // Shapes
+        // Shapes & Image
         imageRadius: {
             type: "custom", label: "Image Radius",
             render: ({ value, onChange }) => <SliderField value={value} onChange={onChange} unit="px" max={100} defaultValue={0} />
+        },
+        imageWidth: {
+            type: "text",
+            label: "Image Width (e.g. 500px, 100%, 120%)"
         },
 
         // Spacing
@@ -118,6 +129,7 @@ export const HeroPublisherTwo: ComponentConfig<HeroPublisherTwoProps> = {
         imageUrl: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=800",
 
         titleSize: { desktop: 3.5 },
+        subtitleSize: { desktop: 1.1 },
         titleWeight: "800",
 
         backgroundColor: "#dc2626", // Red base
@@ -126,6 +138,7 @@ export const HeroPublisherTwo: ComponentConfig<HeroPublisherTwoProps> = {
         waveColor: "#ffffff",
 
         imageRadius: 0,
+        imageWidth: "100%",
 
         gap: { desktop: 60 },
         paddingTop: { desktop: 100 },
@@ -133,24 +146,31 @@ export const HeroPublisherTwo: ComponentConfig<HeroPublisherTwoProps> = {
     },
     render: ({
         title, description, imageUrl,
-        titleSize, titleWeight,
+        titleSize, titleWeight, subtitleSize,
         backgroundColor, textColor, descriptionColor, waveColor,
-        imageRadius,
+        imageRadius, imageWidth = "100%",
         gap, paddingTop, paddingBottom,
         titleFont = 'inherit', descFont = 'inherit'
     }) => {
-        const id = "publisher-two-" + useId().replace(/:/g, "");
+        const id = "publisher-two-" + React.useId().replace(/:/g, "");
 
         // Smart scaling helper
         const getVal = (obj: { desktop?: number; tablet?: number; mobile?: number } | undefined, key: 'desktop' | 'tablet' | 'mobile') => {
             if (key === 'mobile' && obj && !obj.mobile && obj.desktop) {
-                return obj.desktop * 0.6;
+                return obj.desktop * 0.6; // Scale down fallback
             }
             if (key === 'tablet' && obj && !obj.tablet && obj.desktop) {
-                return obj.desktop * 0.8;
+                return obj.desktop * 0.8; // Scale down fallback
             }
             return obj?.[key] ?? obj?.desktop ?? 0;
         };
+
+        // Handle legacy responsive object if present
+        let finalWidth = imageWidth;
+        if (typeof imageWidth === 'object') {
+            // @ts-ignore
+            finalWidth = `${imageWidth.desktop ?? 100}%`;
+        }
 
         return (
             <section className={id}>
@@ -184,22 +204,21 @@ export const HeroPublisherTwo: ComponentConfig<HeroPublisherTwoProps> = {
                     font-family: ${titleFont !== 'inherit' ? `"${titleFont}", sans-serif` : 'inherit'};
                 }
                 .${id} .description {
-                    font-size: 1.1rem;
+                    font-size: ${getVal(subtitleSize, 'desktop')}rem;
                     color: ${descriptionColor};
                     line-height: 1.6;
                     max-width: 500px;
                     font-family: ${descFont !== 'inherit' ? `"${descFont}", sans-serif` : 'inherit'};
                 }
                 .${id} .image-container {
-                     border-radius: ${imageRadius}px;
                      overflow: hidden;
                      display: flex;
                      justify-content: flex-end;
                 }
                 .${id} img {
-                    width: 100%;
+                    width: ${finalWidth};
                     height: auto;
-                    max-width: 100%;
+                    border-radius: ${imageRadius}px;
                 }
                 .${id} .wave-divider {
                     position: absolute;
@@ -230,6 +249,9 @@ export const HeroPublisherTwo: ComponentConfig<HeroPublisherTwoProps> = {
                     .${id} h1 {
                         font-size: ${getVal(titleSize, 'tablet')}rem;
                     }
+                    .${id} .description {
+                        font-size: ${getVal(subtitleSize, 'tablet')}rem;
+                    }
                      .${id} .container {
                         gap: ${getVal(gap, 'tablet')}px;
                     }
@@ -253,11 +275,22 @@ export const HeroPublisherTwo: ComponentConfig<HeroPublisherTwoProps> = {
                         word-break: break-word;
                     }
                     .${id} .description {
+                        font-size: ${getVal(subtitleSize, 'mobile')}rem;
                         margin: 0 auto;
                         text-align: center;
                     }
                     .${id} .image-container {
                         justify-content: center;
+                    }
+                    .${id} img {
+                        width: 100%; /* Default to full width on mobile unless overridden by inline style if we wanted, but let's keep it safe */
+                        max-width: ${finalWidth}; /* Respect the setting as max-width on mobile? Or just apply it directly? Applying directly might break mobile. */
+                        /* Let's actally just apply finalWidth, assuming user knows what they are doing, OR default directly. 
+                           If user sets 500px, on mobile 500px is too big.
+                           SAFE BET: max-width: 100%; on mobile always. width: finalWidth.
+                        */
+                        width: ${finalWidth};
+                        max-width: 100%;
                     }
                      /* Image top or bottom? User image shows text Left, Image Right. 
                         Usually mobile puts Image First or Text First.

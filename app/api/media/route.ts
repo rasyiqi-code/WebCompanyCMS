@@ -1,15 +1,18 @@
-
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
-import { mediaItems } from "@/db/schema";
-import { desc, eq } from "drizzle-orm";
-import { uploadToR2 } from "@/lib/r2";
+import { uploadToR2, deleteFromR2 } from "@/lib/r2";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
+import sharp from "sharp";
+import path from "path";
+
+export const dynamic = 'force-dynamic';
 
 export async function GET() {
     try {
-        const items = await db.select().from(mediaItems).orderBy(desc(mediaItems.createdAt));
+        const items = await db.mediaItem.findMany({
+            orderBy: { createdAt: 'desc' }
+        });
         return NextResponse.json(items);
     } catch (error) {
         return new NextResponse("Internal Error", { status: 500 });
@@ -42,15 +45,46 @@ export async function POST(req: Request) {
             return new NextResponse("Invalid file type. Only images are allowed.", { status: 400 });
         }
 
-        const buffer = Buffer.from(await file.arrayBuffer());
-        const url = await uploadToR2(buffer, file.name, file.type);
+        let buffer: Buffer = Buffer.from(await file.arrayBuffer());
+        let filename = file.name;
+        let mimeType = file.type;
+        let size = file.size;
 
-        const [newItem] = await db.insert(mediaItems).values({
-            filename: file.name,
-            url: url,
-            mimeType: file.type,
-            size: file.size,
-        }).returning();
+        // Optimization: Convert ANY image (except SVG/GIF/WEBP) to WebP
+        const shouldConvert = file.type.startsWith('image/') &&
+            !['image/svg+xml', 'image/gif', 'image/webp'].includes(file.type);
+
+        if (shouldConvert) {
+            try {
+                // Ensure we have a valid buffer
+                if (buffer.length === 0) {
+                    throw new Error("Buffer is empty");
+                }
+
+                buffer = await sharp(buffer)
+                    .webp({ quality: 80 })
+                    .toBuffer();
+
+                const parse = path.parse(file.name);
+                filename = `${parse.name}.webp`;
+                mimeType = 'image/webp';
+                size = buffer.length;
+            } catch (sharpError) {
+                console.error("Sharp optimization failed:", sharpError);
+                // Fallback to original file
+            }
+        }
+
+        const url = await uploadToR2(buffer, filename, mimeType);
+
+        const newItem = await db.mediaItem.create({
+            data: {
+                filename: filename,
+                url: url,
+                mimeType: mimeType,
+                size: size,
+            }
+        });
 
         return NextResponse.json(newItem);
     } catch (error) {
@@ -71,11 +105,23 @@ export async function DELETE(req: Request) {
 
         if (!id) return new NextResponse("ID required", { status: 400 });
 
-        // Ideally we should also delete from R2, but for now we just delete DB record
-        await db.delete(mediaItems).where(eq(mediaItems.id, id));
+        const item = await db.mediaItem.findUnique({
+            where: { id: id }
+        });
+
+        if (!item) {
+            return new NextResponse("Item not found", { status: 404 });
+        }
+
+        await deleteFromR2(item.url);
+
+        await db.mediaItem.delete({
+            where: { id: id }
+        });
 
         return NextResponse.json({ success: true });
     } catch (error) {
+        console.error("Delete Error:", error);
         return new NextResponse("Internal Error", { status: 500 });
     }
 }

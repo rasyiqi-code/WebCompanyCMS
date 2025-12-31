@@ -1,12 +1,12 @@
 
 import { NextResponse } from "next/server";
 import { db } from "../../../lib/db";
-import { puckPages } from "../../../db/schema";
-import { eq, desc } from "drizzle-orm";
 
 export async function GET() {
     try {
-        const pages = await db.select().from(puckPages).orderBy(desc(puckPages.updatedAt));
+        const pages = await db.puckPage.findMany({
+            orderBy: { updatedAt: 'desc' }
+        });
         return NextResponse.json(pages);
     } catch (error) {
         console.error("Error fetching pages:", error);
@@ -21,7 +21,9 @@ export async function DELETE(req: Request) {
 
         if (!path) return NextResponse.json({ error: "Missing path" }, { status: 400 });
 
-        await db.delete(puckPages).where(eq(puckPages.path, path));
+        await db.puckPage.delete({
+            where: { path: path }
+        });
 
         return NextResponse.json({ success: true });
     } catch (error) {
@@ -39,8 +41,9 @@ export async function POST(req: Request) {
         // Upsert logic
         if (id) {
             // Update existing by ID
-            await db.update(puckPages)
-                .set({
+            await db.puckPage.update({
+                where: { id: id },
+                data: {
                     path,
                     title,
                     description,
@@ -48,23 +51,27 @@ export async function POST(req: Request) {
                     body: contentBody,
                     isPublished,
                     updatedAt: new Date()
-                })
-                .where(eq(puckPages.id, id));
+                }
+            });
         } else {
             // Check if path exists (conflict check for new pages)
-            const existing = await db.select().from(puckPages).where(eq(puckPages.path, path)).limit(1);
-            if (existing.length > 0) {
+            const existing = await db.puckPage.findUnique({
+                where: { path: path }
+            });
+            if (existing) {
                 return NextResponse.json({ error: "Path already exists" }, { status: 409 });
             }
 
-            await db.insert(puckPages).values({
-                path,
-                title,
-                description,
-                imageUrl,
-                body: contentBody,
-                isPublished: isPublished ?? true,
-                data: {},
+            await db.puckPage.create({
+                data: {
+                    path,
+                    title,
+                    description,
+                    imageUrl,
+                    body: contentBody,
+                    isPublished: isPublished ?? true,
+                    data: {},
+                }
             });
         }
 

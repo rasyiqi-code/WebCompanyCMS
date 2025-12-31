@@ -1,28 +1,25 @@
 import { revalidatePath } from "next/cache";
 import { NextResponse } from "next/server";
 import { db } from "../../../lib/db";
-import { puckPages } from "../../../db/schema";
-import { eq } from "drizzle-orm";
 
 export async function POST(request: Request) {
   const payload = await request.json();
   const { path, data } = payload;
 
   try {
-    // Drizzle upsert using onConflictDoUpdate
-    await db.insert(puckPages)
-      .values({
-        path,
-        data,
+    // Prisma upsert
+    await db.puckPage.upsert({
+      where: { path },
+      update: {
+        data: data as any,
         updatedAt: new Date(),
-      })
-      .onConflictDoUpdate({
-        target: puckPages.path,
-        set: {
-          data,
-          updatedAt: new Date()
-        }
-      });
+      },
+      create: {
+        path,
+        data: data as any,
+        updatedAt: new Date(),
+      }
+    });
 
     // Purge Next.js cache
     revalidatePath(path);
@@ -39,10 +36,9 @@ export async function GET(request: Request) {
   const path = searchParams.get("path") || "/";
 
   try {
-    const [page] = await db.select()
-      .from(puckPages)
-      .where(eq(puckPages.path, path))
-      .limit(1);
+    const page = await db.puckPage.findUnique({
+      where: { path }
+    });
 
     return NextResponse.json(page?.data || {});
   } catch (error) {

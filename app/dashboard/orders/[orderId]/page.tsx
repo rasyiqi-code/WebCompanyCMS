@@ -1,7 +1,5 @@
 
 import { db } from "../../../../lib/db";
-import { orders, orderItems, products } from "../../../../db/schema";
-import { eq } from "drizzle-orm";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, User, MapPin, Mail, Package, CreditCard } from "lucide-react";
@@ -14,23 +12,34 @@ export default async function OrderDetailPage({
 }) {
     const { orderId } = await params;
 
-    const [order] = await db.select().from(orders).where(eq(orders.id, orderId)).limit(1);
+    const order = await db.order.findUnique({
+        where: { id: orderId }
+    });
 
     if (!order) {
         return notFound();
     }
 
     // Fetch items with product details
-    const items = await db.select({
-        id: orderItems.id,
-        quantity: orderItems.quantity,
-        price: orderItems.price,
-        productName: products.name,
-        productImage: products.images,
-    })
-        .from(orderItems)
-        .leftJoin(products, eq(orderItems.productId, products.id))
-        .where(eq(orderItems.orderId, orderId));
+    const items = await db.orderItem.findMany({
+        where: { orderId: orderId },
+        include: {
+            product: {
+                select: {
+                    name: true,
+                    images: true
+                }
+            }
+        }
+    });
+
+    const formattedItems = items.map(item => ({
+        id: item.id,
+        quantity: item.quantity,
+        price: item.price,
+        productName: item.product?.name,
+        productImage: item.product?.images,
+    }));
 
     return (
         <div className="max-w-5xl mx-auto">
@@ -50,7 +59,7 @@ export default async function OrderDetailPage({
                     </div>
                     <div className="text-right">
                         <div className="text-sm text-gray-500">Total Amount</div>
-                        <div className="text-3xl font-bold text-gray-900">${order.total}</div>
+                        <div className="text-3xl font-bold text-gray-900">${Number(order.total).toFixed(2)}</div>
                     </div>
                 </div>
             </div>
@@ -65,7 +74,7 @@ export default async function OrderDetailPage({
                             <h3 className="font-semibold text-gray-700">Order Items</h3>
                         </div>
                         <ul className="divide-y divide-gray-100">
-                            {items.map((item) => (
+                            {formattedItems.map((item) => (
                                 <li key={item.id} className="p-6 flex items-center">
                                     <div className="w-16 h-16 bg-gray-100 rounded-lg overflow-hidden border border-gray-100 flex-shrink-0 mr-4">
                                         {item.productImage && item.productImage[0] ? (
@@ -76,7 +85,7 @@ export default async function OrderDetailPage({
                                     </div>
                                     <div className="flex-1">
                                         <h4 className="font-medium text-gray-900">{item.productName || "Unknown Product"}</h4>
-                                        <p className="text-sm text-gray-500">${item.price} x {item.quantity}</p>
+                                        <p className="text-sm text-gray-500">${Number(item.price)} x {item.quantity}</p>
                                     </div>
                                     <div className="font-bold text-gray-900">
                                         ${(Number(item.price) * item.quantity).toFixed(2)}

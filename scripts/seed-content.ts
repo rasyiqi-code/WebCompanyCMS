@@ -1,7 +1,5 @@
 import "dotenv/config";
 import { db } from "@/lib/db";
-import { puckPages, menus, menuItems } from "@/db/schema";
-import { eq } from "drizzle-orm";
 
 const portfolioData = {
     content: [
@@ -54,9 +52,13 @@ async function seed() {
     ];
 
     for (const page of pages) {
-        const existing = await db.select().from(puckPages).where(eq(puckPages.path, page.path));
-        if (existing.length === 0) {
-            await db.insert(puckPages).values({ ...page, data: page.data as any });
+        const existing = await db.puckPage.findUnique({
+            where: { path: page.path }
+        });
+        if (!existing) {
+            await db.puckPage.create({
+                data: { ...page, data: page.data as any }
+            });
             console.log(`Created page: ${page.path}`);
         } else {
             console.log(`Page already exists: ${page.path}`);
@@ -64,13 +66,15 @@ async function seed() {
     }
 
     // 2. Add to Main Menu
-    let mainMenu = await db.query.menus.findFirst({
-        where: eq(menus.slug, "main")
+    let mainMenu = await db.menu.findUnique({
+        where: { slug: "main" }
     });
 
     if (!mainMenu) {
         console.log("Creating 'main' menu...");
-        [mainMenu] = await db.insert(menus).values({ name: "Main Menu", slug: "main" }).returning();
+        mainMenu = await db.menu.create({
+            data: { name: "Main Menu", slug: "main" }
+        });
     }
 
     const menuLinks = [
@@ -79,19 +83,21 @@ async function seed() {
     ];
 
     for (const link of menuLinks) {
-        const existingItem = await db.query.menuItems.findFirst({
-            where: (items, { and, eq }) => and(
-                eq(items.menuId, mainMenu!.id),
-                eq(items.url, link.url)
-            )
+        const existingItem = await db.menuItem.findFirst({
+            where: {
+                menuId: mainMenu.id,
+                url: link.url
+            }
         });
 
         if (!existingItem) {
-            await db.insert(menuItems).values({
-                menuId: mainMenu!.id,
-                label: link.label,
-                url: link.url,
-                order: link.order
+            await db.menuItem.create({
+                data: {
+                    menuId: mainMenu.id,
+                    label: link.label,
+                    url: link.url,
+                    order: link.order
+                }
             });
             console.log(`Added menu link: ${link.label}`);
         } else {

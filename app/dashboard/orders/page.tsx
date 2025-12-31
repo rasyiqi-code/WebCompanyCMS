@@ -1,6 +1,4 @@
 import { db } from "../../../lib/db";
-import { orders } from "../../../db/schema";
-import { desc, eq } from "drizzle-orm";
 import Link from "next/link";
 import { Eye, Package, Clock, CheckCircle, Truck, XCircle } from "lucide-react";
 import { getServerSession } from "next-auth";
@@ -16,9 +14,14 @@ export default async function OrderListPage() {
     let orderList;
 
     if (userRole === "admin") {
-        orderList = await db.select().from(orders).orderBy(desc(orders.createdAt));
+        orderList = await db.order.findMany({
+            orderBy: { createdAt: 'desc' }
+        });
     } else {
-        orderList = await db.select().from(orders).where(eq(orders.customerEmail, userEmail || "")).orderBy(desc(orders.createdAt));
+        orderList = await db.order.findMany({
+            where: { customerEmail: userEmail || "" },
+            orderBy: { createdAt: 'desc' }
+        });
     }
 
     const getStatusBadge = (status: string) => {

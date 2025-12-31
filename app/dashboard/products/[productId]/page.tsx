@@ -1,7 +1,5 @@
 
 import { db } from "../../../../lib/db";
-import { products } from "../../../../db/schema";
-import { eq } from "drizzle-orm";
 import ProductEditor from "../ProductEditor";
 import ProductDetails from "../ProductDetails";
 import { getServerSession } from "next-auth";
@@ -19,8 +17,16 @@ export default async function ProductPage({
     let initialData = null;
 
     if (productId !== "new") {
-        const [product] = await db.select().from(products).where(eq(products.id, productId)).limit(1);
-        initialData = product;
+        const product = await db.product.findUnique({
+            where: { id: productId }
+        });
+
+        if (product) {
+            initialData = {
+                ...product,
+                price: product.price.toString()
+            };
+        }
     }
 
     if (!isAdminOrEditor && productId !== "new" && initialData) {

@@ -1,12 +1,10 @@
 import { db } from "./db";
-import { posts } from "../db/schema";
-import { eq, desc } from "drizzle-orm";
 
 export const getPosts = async () => {
-    const allPosts = await db.select()
-        .from(posts)
-        .where(eq(posts.published, true))
-        .orderBy(desc(posts.createdAt));
+    const allPosts = await db.post.findMany({
+        where: { published: true },
+        orderBy: { createdAt: 'desc' }
+    });
 
     return allPosts;
 };

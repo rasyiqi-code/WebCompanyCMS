@@ -2,16 +2,14 @@ import React from "react";
 import Link from "next/link";
 import { Plus, ExternalLink } from "lucide-react";
 import { db } from "../../../lib/db";
-import { testimonials } from "../../../db/schema";
-import { desc } from "drizzle-orm";
 import TestimonialCard from "./TestimonialCard";
 
 export const dynamic = 'force-dynamic';
 
 export default async function TestimonialsPage() {
-    const allTestimonials = await db.select()
-        .from(testimonials)
-        .orderBy(desc(testimonials.createdAt));
+    const allTestimonials = await db.testimonial.findMany({
+        orderBy: { createdAt: 'desc' }
+    });
 
     return (
         <div className="max-w-6xl mx-auto py-8 px-4">

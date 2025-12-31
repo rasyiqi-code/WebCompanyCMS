@@ -5,20 +5,23 @@ import Footer from "../../components/layout/Footer";
 import CartDrawer from "../../components/shop/CartDrawer";
 import FloatingChat from "../../components/ui/FloatingChat";
 
-export default function SiteLayout({
+import { getSiteSettings } from "../../lib/settings";
+
+export default async function SiteLayout({
     children,
 }: {
     children: React.ReactNode;
 }) {
+    const settings = await getSiteSettings();
     return (
         <div className="flex flex-col min-h-screen">
-            <Header />
+            <Header initialSettings={settings} />
             <main className="flex-grow">
                 {children}
             </main>
-            <Footer />
+            <Footer initialSettings={settings} />
             <CartDrawer />
-            <FloatingChat />
+            <FloatingChat settings={settings} />
         </div>
     );
 }

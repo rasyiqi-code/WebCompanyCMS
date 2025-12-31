@@ -2,30 +2,9 @@ import React from "react";
 import { FileText, ShoppingBag, Users, Eye, MessageSquare, Image, Briefcase, Plus, Settings } from "lucide-react";
 import Link from "next/link";
 import { db } from "@/lib/db";
-import {
-    posts,
-    products,
-    orders,
-    users,
-    siteStatistics,
-    contactSubmissions,
-    galleryItems,
-    portfolioItems,
-    mediaItems
-} from "@/db/schema";
-import { desc, sql } from "drizzle-orm";
 
 async function getCounts() {
-    // Helper to get count from table
-    const getCount = async (table: any) => {
-        try {
-            const res = await db.select({ count: sql<number>`count(*)` }).from(table);
-            return Number(res[0].count);
-        } catch (e) {
-            return 0;
-        }
-    };
-
+    // Parallelize queries
     const [
         postsCount,
         productsCount,
@@ -38,16 +17,20 @@ async function getCounts() {
         stats,
         mediaSize
     ] = await Promise.all([
-        getCount(posts),
-        getCount(products),
-        getCount(orders),
-        getCount(users),
-        getCount(mediaItems),
-        getCount(galleryItems),
-        getCount(portfolioItems),
-        getCount(contactSubmissions),
-        db.select().from(siteStatistics).limit(1),
-        db.select({ totalSize: sql<number>`sum(size)` }).from(mediaItems)
+        db.post.count(),
+        db.product.count(),
+        db.order.count(),
+        db.user.count(),
+        db.mediaItem.count(),
+        db.galleryItem.count(),
+        db.portfolioItem.count(),
+        db.contactSubmission.count(),
+        db.siteStatistics.findFirst(),
+        db.mediaItem.aggregate({
+            _sum: {
+                size: true
+            }
+        })
     ]);
 
     return {
@@ -59,15 +42,21 @@ async function getCounts() {
         galleryCount,
         portfolioCount,
         messagesCount,
-        views: stats[0]?.totalViews || 0,
-        todayViews: stats[0]?.todayViews || 0,
-        storageUsed: Number(mediaSize[0]?.totalSize || 0)
+        views: stats?.totalViews || 0,
+        todayViews: stats?.todayViews || 0,
+        storageUsed: Number(mediaSize._sum.size || 0)
     };
 }
 
 async function getRecentActivity() {
-    const recentOrders = await db.select().from(orders).orderBy(desc(orders.createdAt)).limit(3);
-    const recentMessages = await db.select().from(contactSubmissions).orderBy(desc(contactSubmissions.createdAt)).limit(3);
+    const recentOrders = await db.order.findMany({
+        orderBy: { createdAt: 'desc' },
+        take: 3
+    });
+    const recentMessages = await db.contactSubmission.findMany({
+        orderBy: { createdAt: 'desc' },
+        take: 3
+    });
 
     return { recentOrders, recentMessages };
 }

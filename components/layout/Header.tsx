@@ -6,9 +6,14 @@ import { ShoppingBag, Menu, X } from "lucide-react";
 import { useCart } from "@/components/providers/cart-provider";
 import { SiteSettings } from "../../lib/settings";
 
-export default function Header() {
+
+interface HeaderProps {
+    initialSettings?: SiteSettings | null;
+}
+
+export default function Header({ initialSettings }: HeaderProps) {
     const { toggleCart, cartCount } = useCart();
-    const [settings, setSettings] = useState<SiteSettings | null>(null);
+    const [settings, setSettings] = useState<SiteSettings | null>(initialSettings || null);
     const [menuItems, setMenuItems] = useState<any[]>([]);
 
     // Mobile Menu Toggle State

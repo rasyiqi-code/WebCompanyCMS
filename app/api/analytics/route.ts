@@ -1,24 +1,25 @@
 
 import { NextResponse } from "next/server";
+
 import { db } from "@/lib/db";
-import { siteStatistics } from "@/db/schema";
-import { eq, sql } from "drizzle-orm";
 
 export async function GET() {
     try {
-        const stats = await db.select().from(siteStatistics).limit(1);
+        const stats = await db.siteStatistics.findFirst();
 
-        if (stats.length === 0) {
+        if (!stats) {
             // Initialize if not exists
-            const newStats = await db.insert(siteStatistics).values({
-                totalViews: 1,
-                todayViews: 1,
-                lastUpdated: new Date(),
-            }).returning();
-            return NextResponse.json(newStats[0]);
+            const newStats = await db.siteStatistics.create({
+                data: {
+                    totalViews: 1,
+                    todayViews: 1,
+                    lastUpdated: new Date(),
+                }
+            });
+            return NextResponse.json(newStats);
         }
 
-        const currentStats = stats[0];
+        const currentStats = stats;
         const lastDate = new Date(currentStats.lastUpdated);
         const today = new Date();
         const isSameDay = lastDate.getDate() === today.getDate() &&
@@ -28,26 +29,26 @@ export async function GET() {
         let updatedStats;
 
         if (isSameDay) {
-            updatedStats = await db.update(siteStatistics)
-                .set({
-                    totalViews: sql`${siteStatistics.totalViews} + 1`,
-                    todayViews: sql`${siteStatistics.todayViews} + 1`,
+            updatedStats = await db.siteStatistics.update({
+                where: { id: currentStats.id },
+                data: {
+                    totalViews: { increment: 1 },
+                    todayViews: { increment: 1 },
                     lastUpdated: new Date()
-                })
-                .where(eq(siteStatistics.id, currentStats.id))
-                .returning();
+                }
+            });
         } else {
-            updatedStats = await db.update(siteStatistics)
-                .set({
-                    totalViews: sql`${siteStatistics.totalViews} + 1`,
+            updatedStats = await db.siteStatistics.update({
+                where: { id: currentStats.id },
+                data: {
+                    totalViews: { increment: 1 },
                     todayViews: 1, // Reset for new day
                     lastUpdated: new Date()
-                })
-                .where(eq(siteStatistics.id, currentStats.id))
-                .returning();
+                }
+            });
         }
 
-        return NextResponse.json(updatedStats[0]);
+        return NextResponse.json(updatedStats);
 
     } catch (error) {
         console.error("Analytics Error:", error);

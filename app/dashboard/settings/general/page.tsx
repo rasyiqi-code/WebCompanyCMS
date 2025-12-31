@@ -103,6 +103,15 @@ export default function GeneralSettingsPage() {
                         <label className="block text-sm font-medium text-gray-700 mb-1">Default Social Image</label>
                         <input name="seoImage" value={settings.seoImage || ""} onChange={handleChange} placeholder="https://example.com/og-image.jpg" className="w-full px-3 py-2 border rounded-md" />
                     </div>
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Google Site Verification ID</label>
+                        <input name="googleSiteVerificationId" value={settings.googleSiteVerificationId || ""} onChange={handleChange} placeholder="e.g. A1B2C3D4..." className="w-full px-3 py-2 border rounded-md" />
+                        <p className="text-xs text-gray-500 mt-1">Found in your Google Search Console verification meta tag (content="...").</p>
+                    </div>
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Google Analytics ID</label>
+                        <input name="googleAnalyticsId" value={settings.googleAnalyticsId || ""} onChange={handleChange} placeholder="G-XXXXXXXXXX" className="w-full px-3 py-2 border rounded-md" />
+                    </div>
                 </div>
             </div>
 

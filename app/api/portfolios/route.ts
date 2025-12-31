@@ -1,12 +1,11 @@
-
 import { db } from "@/lib/db";
-import { portfolioItems } from "@/db/schema";
 import { NextResponse } from "next/server";
-import { desc, eq } from "drizzle-orm";
 
 export async function GET(req: Request) {
     try {
-        const items = await db.select().from(portfolioItems).orderBy(desc(portfolioItems.createdAt));
+        const items = await db.portfolioItem.findMany({
+            orderBy: { createdAt: 'desc' }
+        });
         return NextResponse.json(items);
     } catch (error) {
         return new NextResponse("Internal Error", { status: 500 });
@@ -22,13 +21,15 @@ export async function POST(req: Request) {
             return new NextResponse("Missing required fields", { status: 400 });
         }
 
-        const [newItem] = await db.insert(portfolioItems).values({
-            title,
-            category,
-            imageUrl,
-            link,
-            description
-        }).returning();
+        const newItem = await db.portfolioItem.create({
+            data: {
+                title,
+                category,
+                imageUrl,
+                link,
+                description
+            }
+        });
 
         return NextResponse.json(newItem);
     } catch (error) {
@@ -43,7 +44,9 @@ export async function DELETE(req: Request) {
 
         if (!id) return new NextResponse("ID required", { status: 400 });
 
-        await db.delete(portfolioItems).where(eq(portfolioItems.id, id));
+        await db.portfolioItem.delete({
+            where: { id: id }
+        });
         return NextResponse.json({ success: true });
     } catch (error) {
         return new NextResponse("Internal Error", { status: 500 });

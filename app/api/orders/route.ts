@@ -2,7 +2,6 @@
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/db";
-import { orders, orderItems } from "@/db/schema";
 import { NextResponse } from "next/server";
 
 export async function POST(req: Request) {
@@ -21,24 +20,27 @@ export async function POST(req: Request) {
 
         const total = items.reduce((acc: number, item: any) => acc + (item.price * item.quantity), 0);
 
-        const [newOrder] = await db.insert(orders).values({
-            customerName: session.user.name || "Customer",
-            customerEmail: session.user.email,
-            customerAddress: "Default Address",
-            total: total.toString(),
-            status: "pending",
-            paymentStatus: "pending",
-            fulfillmentStatus: "unfulfilled"
-        }).returning();
-
-        await db.insert(orderItems).values(
-            items.map((item: any) => ({
-                orderId: newOrder.id,
-                productId: item.productId,
-                quantity: item.quantity,
-                price: item.price.toString()
-            }))
-        );
+        const newOrder = await db.order.create({
+            data: {
+                customerName: session.user.name || "Customer",
+                customerEmail: session.user.email,
+                customerAddress: "Default Address",
+                total: total.toString(),
+                status: "pending",
+                paymentStatus: "pending",
+                fulfillmentStatus: "unfulfilled",
+                items: {
+                    create: items.map((item: any) => ({
+                        productId: item.productId,
+                        quantity: item.quantity,
+                        price: item.price.toString()
+                    }))
+                }
+            },
+            include: {
+                items: true
+            }
+        });
 
         return NextResponse.json(newOrder);
     } catch (error) {

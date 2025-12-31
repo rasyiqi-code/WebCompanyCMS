@@ -1,12 +1,11 @@
 
 import { NextResponse } from "next/server";
+
 import { db } from "../../../../lib/db";
-import { paymentSettings } from "../../../../db/schema";
-import { eq } from "drizzle-orm";
 
 export async function GET() {
     try {
-        const [settings] = await db.select().from(paymentSettings).limit(1);
+        const settings = await db.paymentSettings.findFirst();
         return NextResponse.json(settings || {});
     } catch (error) {
         return NextResponse.json(
@@ -22,26 +21,29 @@ export async function POST(req: Request) {
         const { bankName, accountNumber, accountHolder, instructions, currency } = body;
 
         // Check if settings exist
-        const [existing] = await db.select().from(paymentSettings).limit(1);
+        const existing = await db.paymentSettings.findFirst();
 
         if (existing) {
-            await db.update(paymentSettings)
-                .set({
+            await db.paymentSettings.update({
+                where: { id: existing.id },
+                data: {
                     bankName,
                     accountNumber,
                     accountHolder,
                     currency,
                     instructions,
                     updatedAt: new Date(),
-                })
-                .where(eq(paymentSettings.id, existing.id));
+                }
+            });
         } else {
-            await db.insert(paymentSettings).values({
-                bankName,
-                accountNumber,
-                accountHolder,
-                currency,
-                instructions
+            await db.paymentSettings.create({
+                data: {
+                    bankName,
+                    accountNumber,
+                    accountHolder,
+                    currency,
+                    instructions
+                }
             });
         }
 

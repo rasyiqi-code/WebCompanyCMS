@@ -62,7 +62,7 @@ export const LogoMarquee: ComponentConfig<LogoMarqueeProps> = {
         padding: "60px 0",
         titleColor: "#64748b",
         titleSize: "1.5rem",
-        grayscale: true,
+        grayscale: false,
     },
     render: ({
         title,
@@ -72,7 +72,7 @@ export const LogoMarquee: ComponentConfig<LogoMarqueeProps> = {
         padding = "60px 0",
         titleColor = "#64748b",
         titleSize = "1.5rem",
-        grayscale = true,
+        grayscale = false,
     }) => {
         // Duplicate logos to create seamless loop
         const displayLogos = [...logos, ...logos];

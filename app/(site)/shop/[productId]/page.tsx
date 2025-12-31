@@ -1,12 +1,12 @@
 
 import { db } from "@/lib/db";
-import { products } from "@/db/schema";
-import { eq } from "drizzle-orm";
 import ProductDetails from "@/app/dashboard/products/ProductDetails";
 
 export async function generateMetadata({ params }: { params: Promise<{ productId: string }> }) {
     const { productId } = await params;
-    const [product] = await db.select().from(products).where(eq(products.id, productId)).limit(1);
+    const product = await db.product.findUnique({
+        where: { id: productId }
+    });
 
     const title = product ? `${product.name} | Unived Press Shop` : "Product Not Found";
     const description = product?.description || "Product Details";
@@ -30,7 +30,9 @@ export default async function PublicProductPage({
     params: Promise<{ productId: string }>;
 }) {
     const { productId } = await params;
-    const [product] = await db.select().from(products).where(eq(products.id, productId)).limit(1);
+    const product = await db.product.findUnique({
+        where: { id: productId }
+    });
 
     if (!product) {
         return <div className="p-20 text-center">Product not found</div>;

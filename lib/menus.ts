@@ -1,33 +1,34 @@
-
 import { db } from "./db";
-import { menus, menuItems } from "../db/schema";
-import { eq, asc } from "drizzle-orm";
+import { Prisma } from "@prisma/client";
 
-export type MenuWithItems = typeof menus.$inferSelect & {
-    items: (typeof menuItems.$inferSelect)[];
-};
+export type MenuWithItems = Prisma.MenuGetPayload<{
+    include: { items: true }
+}>;
 
 export const getMenu = async (slug: string): Promise<MenuWithItems | null> => {
-    const menu = await db.query.menus.findFirst({
-        where: eq(menus.slug, slug),
-        with: {
+    const menu = await db.menu.findUnique({
+        where: { slug },
+        include: {
             items: {
-                orderBy: asc(menuItems.order),
-            },
-        },
-    }) as unknown as MenuWithItems | undefined;
+                orderBy: { order: 'asc' }
+            }
+        }
+    });
 
     // If menu doesn't exist, create it dynamically (lazy init for 'main' and 'footer')
     if (!menu && (slug === 'main' || slug === 'footer')) {
-        const [newMenu] = await db.insert(menus).values({
-            name: slug === 'main' ? 'Main Menu' : 'Footer Menu',
-            slug
-        }).returning();
+        const newMenu = await db.menu.create({
+            data: {
+                name: slug === 'main' ? 'Main Menu' : 'Footer Menu',
+                slug
+            },
+            include: { items: true } // Return empty items
+        });
 
-        return { ...newMenu, items: [] };
+        return newMenu;
     }
 
-    return menu || null;
+    return menu;
 };
 
 export const updateMenu = async (slug: string, items: { label: string; url: string; order: number; target?: string }[]) => {
@@ -35,26 +36,33 @@ export const updateMenu = async (slug: string, items: { label: string; url: stri
 
     if (!menu) {
         // should have been created by getMenu if it was a default one, otherwise create it
-        const [newMenu] = await db.insert(menus).values({ name: slug, slug }).returning();
-        menu = { ...newMenu, items: [] };
+        const newMenu = await db.menu.create({
+            data: { name: slug, slug },
+            include: { items: true }
+        });
+        menu = newMenu;
     }
 
-    // Transaction-like replacement: Delete all items, insert new ones
-    // Transaction-like replacement: Delete all items, insert new ones
-    // Note: neon-http driver doesn't support interactive transactions easily, so we do it sequentially.
-    await db.delete(menuItems).where(eq(menuItems.menuId, menu!.id));
+    // Transaction-like replacement
+    await db.$transaction(async (tx) => {
+        // Delete all items
+        await tx.menuItem.deleteMany({
+            where: { menuId: menu!.id }
+        });
 
-    if (items.length > 0) {
-        await db.insert(menuItems).values(
-            items.map(item => ({
-                menuId: menu!.id,
-                label: item.label,
-                url: item.url,
-                order: item.order,
-                target: item.target || "_self"
-            }))
-        );
-    }
+        // Insert new items
+        if (items.length > 0) {
+            await tx.menuItem.createMany({
+                data: items.map(item => ({
+                    menuId: menu!.id,
+                    label: item.label,
+                    url: item.url,
+                    order: item.order,
+                    target: item.target || "_self"
+                }))
+            });
+        }
+    });
 
     return getMenu(slug);
 };

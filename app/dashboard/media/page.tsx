@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { Trash2, Copy, Upload, Image as ImageIcon } from "lucide-react";
+import { Trash2, Copy, Upload, Image as ImageIcon, Loader2 } from "lucide-react";
 
 type MediaItem = {
     id: string;
@@ -12,10 +12,13 @@ type MediaItem = {
     createdAt: string;
 };
 
+const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
+
 export default function MediaPage() {
     const [items, setItems] = useState<MediaItem[]>([]);
     const [loading, setLoading] = useState(true);
     const [uploading, setUploading] = useState(false);
+    const [deletingId, setDeletingId] = useState<string | null>(null);
 
     useEffect(() => {
         fetchMedia();
@@ -33,21 +36,32 @@ export default function MediaPage() {
 
     const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
         if (!e.target.files?.length) return;
+        const file = e.target.files[0];
+
+        if (file.size > MAX_FILE_SIZE) {
+            alert("File too large. Max size is 5MB.");
+            return;
+        }
+
         setUploading(true);
 
         const formData = new FormData();
-        formData.append("file", e.target.files[0]);
+        formData.append("file", file);
 
         try {
             const res = await fetch("/api/media", {
                 method: "POST",
                 body: formData,
             });
-            if (res.ok) {
-                fetchMedia();
+
+            if (!res.ok) {
+                const error = await res.text();
+                throw new Error(error || "Upload failed");
             }
-        } catch (error) {
-            alert("Upload failed");
+
+            fetchMedia();
+        } catch (error: any) {
+            alert(error.message || "Upload failed");
         } finally {
             setUploading(false);
         }
@@ -55,8 +69,16 @@ export default function MediaPage() {
 
     const handleDelete = async (id: string) => {
         if (!confirm("Delete this image?")) return;
-        await fetch(`/api/media?id=${id}`, { method: "DELETE" });
-        fetchMedia();
+        setDeletingId(id);
+
+        try {
+            await fetch(`/api/media?id=${id}`, { method: "DELETE" });
+            fetchMedia();
+        } catch (error) {
+            alert("Failed to delete image");
+        } finally {
+            setDeletingId(null);
+        }
     };
 
     const copyToClipboard = (url: string) => {
@@ -76,7 +98,7 @@ export default function MediaPage() {
                         flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg cursor-pointer hover:bg-blue-700 transition-colors
                         ${uploading ? "opacity-50 cursor-not-allowed" : ""}
                     `}>
-                        <Upload size={20} />
+                        {uploading ? <Loader2 size={20} className="animate-spin" /> : <Upload size={20} />}
                         {uploading ? "Uploading..." : "Upload Image"}
                         <input
                             type="file"
@@ -119,8 +141,13 @@ export default function MediaPage() {
                                         onClick={() => handleDelete(item.id)}
                                         className="p-2 bg-white rounded-full hover:bg-red-50 transition-colors"
                                         title="Delete"
+                                        disabled={deletingId === item.id}
                                     >
-                                        <Trash2 size={16} className="text-red-600" />
+                                        {deletingId === item.id ? (
+                                            <Loader2 size={16} className="animate-spin text-red-600" />
+                                        ) : (
+                                            <Trash2 size={16} className="text-red-600" />
+                                        )}
                                     </button>
                                 </div>
                             </div>

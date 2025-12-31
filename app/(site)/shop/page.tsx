@@ -1,7 +1,5 @@
 
 import { db } from "@/lib/db";
-import { products } from "@/db/schema";
-import { desc } from "drizzle-orm";
 import { ProductGridItem } from "@/app/dashboard/products/ProductGridItem";
 import { ShoppingCart } from "@/components/shopping-cart";
 
@@ -16,7 +14,10 @@ export const metadata = {
 };
 
 export default async function ShopPage() {
-    const allProducts = await db.select().from(products).orderBy(desc(products.createdAt));
+    const allProducts = await db.product.findMany({
+        where: { isArchived: false },
+        orderBy: { createdAt: 'desc' }
+    });
 
     return (
         <div className="bg-white">

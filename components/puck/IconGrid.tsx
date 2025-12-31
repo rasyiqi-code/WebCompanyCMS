@@ -292,7 +292,11 @@ export const IconGrid: ComponentConfig<IconGridProps> = {
                                     marginBottom: '1.5rem',
                                     filter: 'drop-shadow(0 4px 6px rgba(0,0,0,0.2))',
                                 }}>
-                                    {item.icon}
+                                    {item.icon && (item.icon.includes('fa-') || item.icon.includes('fas ') || item.icon.includes('far ') || item.icon.includes('fab ')) ? (
+                                        <i className={item.icon}></i>
+                                    ) : (
+                                        item.icon
+                                    )}
                                 </div>
                                 <h3 className="grid-item-title" style={{
                                     marginBottom: '1rem',

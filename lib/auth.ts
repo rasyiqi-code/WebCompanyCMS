@@ -1,18 +1,11 @@
 import NextAuth, { NextAuthOptions } from "next-auth";
-import { DrizzleAdapter } from "@auth/drizzle-adapter";
+import { PrismaAdapter } from "@auth/prisma-adapter";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { db } from "./db";
-import { eq } from "drizzle-orm";
-import { accounts, sessions, users, verificationTokens } from "../db/schema";
 import bcrypt from "bcryptjs";
 
 export const authOptions: NextAuthOptions = {
-    adapter: DrizzleAdapter(db, {
-        usersTable: users,
-        accountsTable: accounts,
-        sessionsTable: sessions,
-        verificationTokensTable: verificationTokens,
-    }),
+    adapter: PrismaAdapter(db),
     session: {
         strategy: "jwt",
     },
@@ -32,7 +25,9 @@ export const authOptions: NextAuthOptions = {
                     return null;
                 }
 
-                const [user] = await db.select().from(users).where(eq(users.email, credentials.email)).limit(1);
+                const user = await db.user.findUnique({
+                    where: { email: credentials.email }
+                });
 
                 if (!user || !user.password) {
                     console.log("[AUTH] User not found or no password:", user ? "No PWD" : "No User");

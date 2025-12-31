@@ -5,8 +5,13 @@ import Link from "next/link";
 import { Facebook, Twitter, Instagram, Linkedin, Mail, Phone, MapPin, Eye, Share2 } from "lucide-react";
 import { SiteSettings } from "../../lib/settings";
 
-export default function Footer() {
-    const [settings, setSettings] = useState<SiteSettings | null>(null);
+
+interface FooterProps {
+    initialSettings?: SiteSettings | null;
+}
+
+export default function Footer({ initialSettings }: FooterProps) {
+    const [settings, setSettings] = useState<SiteSettings | null>(initialSettings || null);
     const [menuItems, setMenuItems] = useState<any[]>([]);
     const [stats, setStats] = useState({ totalViews: 0, todayViews: 0 });
 
@@ -54,7 +59,7 @@ export default function Footer() {
                     {/* Logo Area */}
                     <div className="flex-shrink-0">
                         {settings?.logoUrl ? (
-                            <img src={settings.logoUrl} alt={settings.siteName || "Logo"} className="h-12 object-contain bg-white p-1 rounded" />
+                            <img src={settings.logoUrl} alt={settings.siteName || "Logo"} className="h-12 object-contain" />
                         ) : (
                             <span className="text-2xl font-bold">{settings?.siteName || "Logo"}</span>
                         )}

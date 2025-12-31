@@ -1,12 +1,12 @@
 
 import { db } from "@/lib/db";
-import { galleryItems } from "@/db/schema";
 import { NextResponse } from "next/server";
-import { desc, eq } from "drizzle-orm";
 
 export async function GET(req: Request) {
     try {
-        const items = await db.select().from(galleryItems).orderBy(desc(galleryItems.createdAt));
+        const items = await db.galleryItem.findMany({
+            orderBy: { createdAt: 'desc' }
+        });
         return NextResponse.json(items);
     } catch (error) {
         return new NextResponse("Internal Error", { status: 500 });
@@ -22,11 +22,13 @@ export async function POST(req: Request) {
             return new NextResponse("URL is required", { status: 400 });
         }
 
-        const [newItem] = await db.insert(galleryItems).values({
-            title,
-            url,
-            description,
-        }).returning();
+        const newItem = await db.galleryItem.create({
+            data: {
+                title,
+                url,
+                description,
+            }
+        });
 
         return NextResponse.json(newItem);
     } catch (error) {
@@ -41,7 +43,9 @@ export async function DELETE(req: Request) {
 
         if (!id) return new NextResponse("ID required", { status: 400 });
 
-        await db.delete(galleryItems).where(eq(galleryItems.id, id));
+        await db.galleryItem.delete({
+            where: { id: id }
+        });
         return NextResponse.json({ success: true });
     } catch (error) {
         return new NextResponse("Internal Error", { status: 500 });

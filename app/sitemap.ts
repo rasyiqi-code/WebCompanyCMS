@@ -1,8 +1,6 @@
 
 import { MetadataRoute } from 'next';
 import { db } from '../lib/db';
-import { puckPages, products, posts } from '../db/schema';
-import { desc, eq } from 'drizzle-orm';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     const baseUrl = process.env.NEXT_PUBLIC_APP_URL;
@@ -12,13 +10,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     }
 
     // Fetch all published pages
-    const pagesData = await db.select({
-        path: puckPages.path,
-        updatedAt: puckPages.updatedAt,
-    })
-        .from(puckPages)
-        .where(eq(puckPages.isPublished, true))
-        .orderBy(desc(puckPages.updatedAt));
+    const pagesData = await db.puckPage.findMany({
+        where: { isPublished: true },
+        orderBy: { updatedAt: 'desc' },
+        select: {
+            path: true,
+            updatedAt: true
+        }
+    });
 
     const pages = pagesData.map((page) => ({
         url: `${baseUrl}/page${page.path}`,

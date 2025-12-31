@@ -3,16 +3,22 @@ import React from "react";
 import Link from "next/link";
 import { Plus, Edit, Trash2, ShoppingCart } from "lucide-react";
 import { ProductGridItem } from "./ProductGridItem";
+import { ArchiveProductButton } from "@/components/ArchiveProductButton";
 import { db } from "../../../lib/db";
-import { products } from "../../../db/schema";
-import { desc } from "drizzle-orm";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 
 export default async function ProductsPage() {
     const session = await getServerSession(authOptions);
     const isAdminOrEditor = session?.user?.role === "admin" || session?.user?.role === "editor";
-    const allProducts = await db.select().from(products).orderBy(desc(products.createdAt));
+
+    // Admin sees ALL (including archived). Users see only NON-archived.
+    const whereCondition = isAdminOrEditor ? {} : { isArchived: false };
+
+    const allProducts = await db.product.findMany({
+        where: whereCondition,
+        orderBy: { createdAt: 'desc' }
+    });
 
     return (
         <div>
@@ -64,7 +70,7 @@ export default async function ProductsPage() {
                                 </tr>
                             ) : (
                                 allProducts.map((product) => (
-                                    <tr key={product.id} className="hover:bg-gray-50 transition-colors group">
+                                    <tr key={product.id} className={`hover:bg-gray-50 transition-colors group ${product.isArchived ? 'bg-gray-50/50 grayscale-[0.5]' : ''}`}>
                                         <td className="px-6 py-4">
                                             <div className="flex items-center">
                                                 {// Optional: Thumbnail
@@ -75,13 +81,20 @@ export default async function ProductsPage() {
                                                     )
                                                 }
                                                 <div>
-                                                    <div className="font-medium text-gray-900">{product.name}</div>
+                                                    <div className="flex items-center gap-2">
+                                                        <div className="font-medium text-gray-900">{product.name}</div>
+                                                        {product.isArchived && (
+                                                            <span className="px-1.5 py-0.5 rounded text-[10px] font-bold bg-gray-200 text-gray-600 border border-gray-300">
+                                                                ARCHIVED
+                                                            </span>
+                                                        )}
+                                                    </div>
                                                     <div className="text-xs text-gray-500 font-mono">/{product.slug}</div>
                                                 </div>
                                             </div>
                                         </td>
                                         <td className="px-6 py-4 text-sm font-medium text-gray-900">
-                                            ${product.price}
+                                            ${Number(product.price)}
                                         </td>
                                         <td className="px-6 py-4 text-sm text-gray-500">
                                             <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${(product.stock || 0) > 0 ? "bg-emerald-100 text-emerald-800" : "bg-red-100 text-red-800"
@@ -94,9 +107,15 @@ export default async function ProductsPage() {
                                                 <Link
                                                     href={`/dashboard/products/${product.id}`}
                                                     className="p-1 text-gray-400 hover:text-blue-600 transition-colors"
+                                                    title="Edit Product"
                                                 >
                                                     <Edit size={16} />
                                                 </Link>
+                                                <ArchiveProductButton
+                                                    productId={product.id}
+                                                    productName={product.name}
+                                                    isArchived={product.isArchived}
+                                                />
                                             </div>
                                         </td>
                                     </tr>

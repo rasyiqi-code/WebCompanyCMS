@@ -1,6 +1,4 @@
 import { db } from "../../../../lib/db";
-import { puckPages } from "../../../../db/schema";
-import { eq } from "drizzle-orm";
 import { notFound } from "next/navigation";
 import { Metadata } from "next";
 import TiptapRenderer from "@/components/TiptapRenderer";
@@ -13,10 +11,10 @@ export async function generateMetadata({
     const { slug } = await params;
     const path = `/${slug}`;
 
-    const [page] = await db.select()
-        .from(puckPages)
-        .where(eq(puckPages.path, path))
-        .limit(1);
+    const [page] = await db.puckPage.findMany({
+        where: { path: path },
+        take: 1
+    });
 
     if (!page) return {};
 
@@ -33,10 +31,10 @@ export default async function StandardPage({
     const { slug } = await params;
     const path = `/${slug}`;
 
-    const [page] = await db.select()
-        .from(puckPages)
-        .where(eq(puckPages.path, path))
-        .limit(1);
+    const [page] = await db.puckPage.findMany({
+        where: { path: path },
+        take: 1
+    });
 
     if (!page) {
         return notFound();

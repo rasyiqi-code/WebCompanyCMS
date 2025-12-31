@@ -2,8 +2,6 @@
 import React from "react";
 import TestimonialEditor from "../TestimonialEditor";
 import { db } from "../../../../lib/db";
-import { testimonials } from "../../../../db/schema";
-import { eq } from "drizzle-orm";
 import { notFound } from "next/navigation";
 
 export default async function EditTestimonialPage({ params }: { params: Promise<{ id: string }> }) {
@@ -14,7 +12,9 @@ export default async function EditTestimonialPage({ params }: { params: Promise<
         return <TestimonialEditor />;
     }
 
-    const [testimonial] = await db.select().from(testimonials).where(eq(testimonials.id, id)).limit(1);
+    const testimonial = await db.testimonial.findUnique({
+        where: { id: id }
+    });
 
     if (!testimonial) {
         return notFound();

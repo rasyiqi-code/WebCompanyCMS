@@ -1,8 +1,5 @@
-
 import { NextResponse } from "next/server";
 import { db } from "../../../lib/db";
-import { testimonials } from "../../../db/schema";
-import { desc, eq } from "drizzle-orm";
 import { authOptions } from "../../../lib/auth";
 import { getServerSession } from "next-auth";
 
@@ -16,9 +13,14 @@ export async function GET(request: Request) {
         let allTestimonials;
 
         if (status === 'all') {
-            allTestimonials = await db.select().from(testimonials).orderBy(desc(testimonials.createdAt));
+            allTestimonials = await db.testimonial.findMany({
+                orderBy: { createdAt: 'desc' }
+            });
         } else {
-            allTestimonials = await db.select().from(testimonials).where(eq(testimonials.isApproved, true)).orderBy(desc(testimonials.createdAt));
+            allTestimonials = await db.testimonial.findMany({
+                where: { isApproved: true },
+                orderBy: { createdAt: 'desc' }
+            });
         }
 
         return NextResponse.json({ success: true, testimonials: allTestimonials });
@@ -40,14 +42,16 @@ export async function POST(request: Request) {
             return NextResponse.json({ success: false, error: "Quote and Author are required" }, { status: 400 });
         }
 
-        const [newTestimonial] = await db.insert(testimonials).values({
-            quote,
-            author,
-            role: role || "",
-            rating: rating || 5,
-            isApproved: isAdmin, // Approve immediately if admin
-            updatedAt: new Date(),
-        }).returning();
+        const newTestimonial = await db.testimonial.create({
+            data: {
+                quote,
+                author,
+                role: role || "",
+                rating: rating || 5,
+                isApproved: isAdmin, // Approve immediately if admin
+                updatedAt: new Date(),
+            }
+        });
 
         return NextResponse.json({ success: true, testimonial: newTestimonial });
     } catch (error) {
@@ -80,10 +84,10 @@ export async function PUT(request: Request) {
         if (rating !== undefined) updateData.rating = rating;
         if (isApproved !== undefined) updateData.isApproved = isApproved;
 
-        const [updatedTestimonial] = await db.update(testimonials)
-            .set(updateData)
-            .where(eq(testimonials.id, id))
-            .returning();
+        const updatedTestimonial = await db.testimonial.update({
+            where: { id: id },
+            data: updateData
+        });
 
         return NextResponse.json({ success: true, testimonial: updatedTestimonial });
     } catch (error) {
@@ -107,7 +111,9 @@ export async function DELETE(request: Request) {
             return NextResponse.json({ success: false, error: "Testimonial ID is required" }, { status: 400 });
         }
 
-        await db.delete(testimonials).where(eq(testimonials.id, id));
+        await db.testimonial.delete({
+            where: { id: id }
+        });
 
         return NextResponse.json({ success: true, message: "Deleted successfully" });
     } catch (error) {

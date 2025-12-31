@@ -1,6 +1,4 @@
-
 import { db } from "@/lib/db";
-import { contactSubmissions } from "@/db/schema";
 import { NextResponse } from "next/server";
 
 export async function POST(req: Request) {
@@ -12,11 +10,13 @@ export async function POST(req: Request) {
             return new NextResponse("Missing required fields", { status: 400 });
         }
 
-        await db.insert(contactSubmissions).values({
-            name,
-            email,
-            subject,
-            message,
+        await db.contactSubmission.create({
+            data: {
+                name,
+                email,
+                subject,
+                message,
+            }
         });
 
         return NextResponse.json({ success: true });
@@ -29,7 +29,9 @@ export async function POST(req: Request) {
 export async function GET(req: Request) {
     try {
         // Authenticate admin here if needed
-        const submissions = await db.select().from(contactSubmissions).orderBy(contactSubmissions.createdAt);
+        const submissions = await db.contactSubmission.findMany({
+            orderBy: { createdAt: 'asc' }
+        });
         return NextResponse.json(submissions);
     } catch (error) {
         return new NextResponse("Internal Error", { status: 500 });

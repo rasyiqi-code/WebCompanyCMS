@@ -4,19 +4,35 @@ import React, { useEffect, useState } from "react";
 import { MessageCircle } from "lucide-react";
 import { SiteSettings } from "../../lib/settings";
 
-export default function FloatingChat() {
-    const [settings, setSettings] = useState<SiteSettings | null>(null);
+
+interface FloatingChatProps {
+    settings?: SiteSettings | null;
+}
+
+export default function FloatingChat({ settings }: FloatingChatProps) {
+    // Logic simplified: receive settings from parent, no internal fetch needed if parent provides it. 
+    // However, keeping fetch as fallback would require useEffect, but we want to avoid double fetch.
+    // If settings are passed, use them. If not, return null or fetch? 
+    // Given the architecture, I'll assume parent provides it, or if missing, it simply doesn't show (which is safer than layout shift).
+    // Actually, I'll keep the internal fetch as fallback for robustness but prefer props.
+
+    const [internalSettings, setInternalSettings] = useState<SiteSettings | null>(settings || null);
 
     useEffect(() => {
-        fetch("/api/settings")
-            .then(res => res.json())
-            .then(data => setSettings(data))
-            .catch(err => console.error(err));
-    }, []);
+        if (!settings && !internalSettings) {
+            fetch("/api/settings")
+                .then(res => res.json())
+                .then(data => setInternalSettings(data))
+                .catch(err => console.error(err));
+        }
+    }, [settings, internalSettings]);
 
-    if (!settings?.showFloatingChat || !settings?.whatsappNumber) return null;
+    const activeSettings = settings || internalSettings;
 
-    const whatsappUrl = `https://wa.me/${settings.whatsappNumber}`;
+
+    if (!activeSettings?.showFloatingChat || !activeSettings?.whatsappNumber) return null;
+
+    const whatsappUrl = `https://wa.me/${activeSettings.whatsappNumber}`;
 
     return (
         <a

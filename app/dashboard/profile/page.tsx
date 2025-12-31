@@ -2,8 +2,6 @@
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/db";
-import { users } from "@/db/schema";
-import { eq } from "drizzle-orm";
 import { redirect } from "next/navigation";
 import { ProfileForm } from "./profile-form";
 
@@ -14,7 +12,9 @@ export default async function ProfilePage() {
         redirect("/login");
     }
 
-    const [user] = await db.select().from(users).where(eq(users.email, session.user.email)).limit(1);
+    const user = await db.user.findUnique({
+        where: { email: session.user.email }
+    });
 
     if (!user) {
         redirect("/login");

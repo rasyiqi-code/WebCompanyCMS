@@ -1,8 +1,6 @@
 
 import { NextResponse } from "next/server";
 import { db } from "../../../../lib/db";
-import { orders } from "../../../../db/schema";
-import { eq } from "drizzle-orm";
 
 export async function PATCH(
     req: Request,
@@ -17,9 +15,10 @@ export async function PATCH(
         if (paymentStatus) updateData.paymentStatus = paymentStatus;
         if (fulfillmentStatus) updateData.fulfillmentStatus = fulfillmentStatus;
 
-        await db.update(orders)
-            .set(updateData)
-            .where(eq(orders.id, orderId));
+        await db.order.update({
+            where: { id: orderId },
+            data: updateData
+        });
 
         return NextResponse.json({ success: true });
     } catch (error) {

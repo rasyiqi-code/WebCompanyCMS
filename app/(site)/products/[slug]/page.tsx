@@ -14,7 +14,7 @@ export async function generateMetadata({
     const { slug } = await params;
     const product = await getProduct(slug);
 
-    if (!product) {
+    if (!product || product.isArchived) {
         return {
             title: "Product Not Found",
         };
@@ -34,7 +34,7 @@ export default async function ProductDetailPage({
     const { slug } = await params;
     const product = await getProduct(slug);
 
-    if (!product) {
+    if (!product || product.isArchived) {
         return notFound();
     }
 
@@ -82,7 +82,7 @@ export default async function ProductDetailPage({
                 {/* Right Column: Product Info */}
                 <div>
                     <h1 className="text-4xl font-extrabold text-gray-900 mb-4">{product.name}</h1>
-                    <div className="text-3xl font-bold text-emerald-600 mb-6 font-mono">${product.price}</div>
+                    <div className="text-3xl font-bold text-emerald-600 mb-6 font-mono">${product.price.toString()}</div>
 
                     <div className="prose prose-gray mb-8 text-gray-600">
                         <p>{product.description}</p>
