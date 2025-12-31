@@ -3,15 +3,19 @@ import { db } from "@/lib/db";
 import { ProductGridItem } from "@/app/dashboard/products/ProductGridItem";
 import { ShoppingCart } from "@/components/shopping-cart";
 
-export const metadata = {
-    title: "Shop - Premium Collection | Unived Press",
-    description: "Discover our premium collection of products. Quality you can trust, curated just for you.",
-    openGraph: {
-        title: "Shop - Premium Collection | Unived Press",
+import { Metadata } from "next";
+
+export async function generateMetadata(): Promise<Metadata> {
+    return {
+        title: "Shop",
         description: "Discover our premium collection of products. Quality you can trust, curated just for you.",
-        type: "website",
-    }
-};
+        openGraph: {
+            title: "Shop",
+            description: "Discover our premium collection of products. Quality you can trust, curated just for you.",
+            type: "website",
+        }
+    };
+}
 
 export default async function ShopPage() {
     const allProducts = await db.product.findMany({

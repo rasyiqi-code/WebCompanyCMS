@@ -12,7 +12,7 @@ export async function generateMetadata(): Promise<Metadata> {
     metadataBase: new URL(baseUrl),
     title: {
       default: settings.siteName || "Builder",
-      template: settings.seoTitle || `%s | ${settings.siteName || "Builder"}`,
+      template: settings.seoTitle || `%s - ${settings.siteName || "Builder"}`,
     },
     description: settings.description || "Built with Builder",
     keywords: settings.seoKeywords ? settings.seoKeywords.split(",") : [],
@@ -42,6 +42,7 @@ export default async function RootLayout({
     "@context": "https://schema.org",
     "@type": "WebSite",
     "name": settings.siteName || "Builder",
+    "alternateName": settings.tagline || undefined,
     "url": baseUrl,
     "description": settings.description,
     "publisher": {
@@ -51,6 +52,14 @@ export default async function RootLayout({
         "@type": "ImageObject",
         "url": settings.logoUrl || `${baseUrl}/logo.png`
       }
+    },
+    "potentialAction": {
+      "@type": "SearchAction",
+      "target": {
+        "@type": "EntryPoint",
+        "urlTemplate": `${baseUrl}/search?q={search_term_string}`
+      },
+      "query-input": "required name=search_term_string"
     }
   };
 

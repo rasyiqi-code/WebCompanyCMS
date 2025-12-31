@@ -4,7 +4,7 @@ import { Prisma } from "@prisma/client";
 export type SiteSettings = Prisma.SiteSettingsGetPayload<{}>;
 export type SiteSettingsUpdate = Partial<Omit<SiteSettings, "id" | "updatedAt">>;
 
-// Force TS update v3
+// Force TS update v4
 
 export const getSiteSettings = async (): Promise<SiteSettings> => {
     const settings = await db.siteSettings.findFirst();

@@ -151,6 +151,7 @@ model Testimonial {
 model SiteSettings {
   id                          String   @id @default(cuid())
   siteName                    String?  @default("My Awesome Site")
+  tagline                     String?
   logoUrl                     String?
   description                 String?
   seoTitle                    String?

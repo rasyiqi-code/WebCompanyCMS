@@ -4,7 +4,7 @@ import { ArrowRight, Calendar, User } from "lucide-react";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-    title: "Blog - Latest News & Updates",
+    title: "Blog",
     description: "Read the latest articles, tutorials, and updates from the Builder team.",
 };
 

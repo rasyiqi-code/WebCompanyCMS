@@ -2,16 +2,30 @@ import { Client } from "./[...puckPath]/client";
 import { Metadata } from "next";
 import { getPage } from "../../lib/get-page";
 
+import { getSiteSettings } from "../../lib/settings";
+
 export async function generateMetadata(): Promise<Metadata> {
     const pageData = await getPage("/");
+    const settings = await getSiteSettings();
+
+    const title = pageData?.title || pageData?.data?.root?.props?.title;
+    const siteTitle = settings.siteName || "Builder";
+    const tagline = settings.tagline || settings.description;
+
+    // For homepage: "SiteName - Tagline"
+    // Ideally user inputs this. If tagline exists, use it.
+    const absoluteTitle = tagline ? `${siteTitle} - ${tagline}` : siteTitle;
 
     return {
-        title: pageData?.title || pageData?.data?.root?.props?.title, // Will use template from layout if not absolute
-        description: pageData?.description, // Fallback to layout if undefined
+        title: {
+            absolute: tagline ? `${siteTitle} - ${tagline}` : siteTitle
+        },
+
+        description: pageData?.description || settings.description,
         openGraph: {
-            title: pageData?.title || "Home",
-            description: pageData?.description,
-            images: pageData?.imageUrl ? [{ url: pageData.imageUrl }] : undefined,
+            title: tagline ? `${siteTitle} - ${tagline}` : siteTitle,
+            description: pageData?.description || settings.description,
+            images: pageData?.imageUrl ? [{ url: pageData.imageUrl }] : (settings.seoImage ? [{ url: settings.seoImage }] : undefined),
         },
     };
 }
