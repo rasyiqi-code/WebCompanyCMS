@@ -3,7 +3,8 @@
 
 import { useEffect, useState } from "react";
 import Image from "next/image";
-import { Loader2, Trash2, Plus, Image as ImageIcon } from "lucide-react";
+import { Loader2, Trash2, Plus, Image as ImageIcon, ExternalLink } from "lucide-react";
+import Link from "next/link";
 
 type GalleryItem = {
     id: string;
@@ -59,12 +60,22 @@ export default function GalleryDashboard() {
         <div className="space-y-6">
             <div className="flex justify-between items-center">
                 <h1 className="text-2xl font-bold text-gray-900">Gallery Management</h1>
-                <button
-                    onClick={() => setIsCreating(true)}
-                    className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
-                >
-                    <Plus size={18} /> Add Image
-                </button>
+                <div className="flex items-center gap-3">
+                    <Link
+                        href="/gallery"
+                        target="_blank"
+                        className="flex items-center gap-2 bg-white border border-gray-300 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-50 transition"
+                    >
+                        <ExternalLink size={18} />
+                        View Public Page
+                    </Link>
+                    <button
+                        onClick={() => setIsCreating(true)}
+                        className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
+                    >
+                        <Plus size={18} /> Add Image
+                    </button>
+                </div>
             </div>
 
             {isCreating && (

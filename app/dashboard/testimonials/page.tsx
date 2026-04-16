@@ -18,13 +18,23 @@ export default async function TestimonialsPage() {
                     <h1 className="text-3xl font-bold text-gray-900">Testimonials</h1>
                     <p className="text-gray-500 mt-1">Manage what people say about you.</p>
                 </div>
-                <Link
-                    href="/dashboard/testimonials/new"
-                    className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition"
-                >
-                    <Plus size={20} />
-                    Add Testimonial
-                </Link>
+                <div className="flex items-center gap-3">
+                    <Link
+                        href="/testimonials"
+                        target="_blank"
+                        className="flex items-center gap-2 bg-white border border-gray-300 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-50 transition"
+                    >
+                        <ExternalLink size={18} />
+                        View Public Page
+                    </Link>
+                    <Link
+                        href="/dashboard/testimonials/new"
+                        className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition"
+                    >
+                        <Plus size={20} />
+                        Add Testimonial
+                    </Link>
+                </div>
             </div>
 
             <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-8 flex items-start gap-3">

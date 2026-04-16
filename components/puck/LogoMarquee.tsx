@@ -62,6 +62,7 @@ const LogoMarqueeRender = ({
                                     src={logo.src}
                                     alt={logo.alt}
                                     fill
+                                    sizes="200px"
                                     className="object-contain"
                                     unoptimized
                                     style={{

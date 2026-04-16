@@ -18,14 +18,20 @@ export function useCurrency() {
 
         // Fetch authoritative setting from server
         fetch("/api/settings/payments")
-            .then(res => res.json())
+            .then(res => {
+                const contentType = res.headers.get("content-type");
+                if (res.ok && contentType && contentType.includes("application/json")) {
+                    return res.json();
+                }
+                return null;
+            })
             .then(data => {
-                if (data.currency) {
+                if (data && data.currency) {
                     setCurrency(data.currency);
                     localStorage.setItem("storeCurrency", data.currency);
                 }
             })
-            .catch(err => console.error(err))
+            .catch(err => console.error("Currency fetch error:", err))
             .finally(() => setLoading(false));
     }, []);
 

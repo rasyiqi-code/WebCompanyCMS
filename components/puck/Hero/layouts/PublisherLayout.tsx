@@ -133,7 +133,15 @@ const HeroPublisherRender = ({
                     </svg>
                 </div>
                 <div className="image-container" style={{ position: 'relative', borderRadius: '20px', overflow: 'hidden', aspectRatio: '4/3' }}>
-                    <Image src={imageUrl} alt="Hero" fill className="object-cover" unoptimized />
+                    <Image 
+                        src={imageUrl} 
+                        alt="Hero" 
+                        fill 
+                        priority={true}
+                        sizes="(max-width: 768px) 100vw, 50vw"
+                        className="object-cover" 
+                        unoptimized 
+                    />
                 </div>
             </div>
         </section>

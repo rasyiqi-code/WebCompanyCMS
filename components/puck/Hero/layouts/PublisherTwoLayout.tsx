@@ -198,7 +198,15 @@ const HeroPublisherTwoRender = ({
                                         imageShadow === 'xl' ? '0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1)' :
                                             'none'
                         }}>
-                            <Image src={imageUrl} alt="Publisher" fill className={imageObjectFit === 'cover' ? 'object-cover' : 'object-contain'} unoptimized />
+                            <Image 
+                                src={imageUrl} 
+                                alt="Publisher" 
+                                fill 
+                                priority={true}
+                                sizes="(max-width: 768px) 100vw, 50vw"
+                                className={imageObjectFit === 'cover' ? 'object-cover' : 'object-contain'} 
+                                unoptimized 
+                            />
                         </div>
                     ) : (
                         <div style={{ height: '300px', width: '100%', background: 'rgba(255,255,255,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '4rem' }}>📚</div>

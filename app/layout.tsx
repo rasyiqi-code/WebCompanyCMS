@@ -73,21 +73,21 @@ export default async function RootLayout({
 
   return (
     <html lang="en" className={`${inter.variable} ${lato.variable} ${montserrat.variable} ${playfair.variable} ${roboto.variable}`}>
-      <style dangerouslySetInnerHTML={{
-        __html: `
-          :root {
-            --font-inter: ${inter.style.fontFamily};
-            --font-lato: ${lato.style.fontFamily};
-            --font-montserrat: ${montserrat.style.fontFamily};
-            --font-playfair: ${playfair.style.fontFamily};
-            --font-roboto: ${roboto.style.fontFamily};
-          }
-          body {
-            font-family: var(--font-inter), sans-serif;
-          }
-        `
-      }} />
       <body className="min-h-screen">
+        <style precedence="default" dangerouslySetInnerHTML={{
+          __html: `
+            :root {
+              --font-inter: ${inter.style.fontFamily};
+              --font-lato: ${lato.style.fontFamily};
+              --font-montserrat: ${montserrat.style.fontFamily};
+              --font-playfair: ${playfair.style.fontFamily};
+              --font-roboto: ${roboto.style.fontFamily};
+            }
+            body {
+              font-family: var(--font-inter), sans-serif;
+            }
+          `
+        }} />
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
         <script
           type="application/ld+json"

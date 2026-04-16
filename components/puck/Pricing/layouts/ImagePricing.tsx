@@ -19,11 +19,41 @@ export type PricingImageProps = {
         altText?: string;
         link?: string;
     }[];
+
+    // Card & Image settings
+    cardRadius?: number;
+    cardAspectRatio?: string;
+    cardObjectFit?: "cover" | "contain";
+    cardShadow?: "none" | "sm" | "md" | "lg";
+    hoverLift?: number;
 };
 
-const ImageCard = ({ item, isHorizontal }: { item: any; isHorizontal: boolean }) => {
+const ImageCard = ({
+    item,
+    isHorizontal,
+    cardRadius = 16,
+    cardAspectRatio = "2/3",
+    cardObjectFit = "cover",
+    cardShadow = "none",
+    hoverLift = 6
+}: {
+    item: any;
+    isHorizontal: boolean;
+    cardRadius?: number;
+    cardAspectRatio?: string;
+    cardObjectFit?: "cover" | "contain";
+    cardShadow?: "none" | "sm" | "md" | "lg";
+    hoverLift?: number;
+}) => {
     const Wrapper = item.link ? 'a' : 'div';
     const wrapperProps = item.link ? { href: item.link } : {};
+
+    const shadows = {
+        none: 'none',
+        sm: '0 1px 3px 0 rgb(0 0 0 / 0.1)',
+        md: '0 4px 6px -1px rgb(0 0 0 / 0.1)',
+        lg: '0 10px 15px -3px rgb(0 0 0 / 0.1)'
+    };
 
     return (
         <Wrapper
@@ -31,12 +61,13 @@ const ImageCard = ({ item, isHorizontal }: { item: any; isHorizontal: boolean })
             className="pricing-image-card"
             style={{
                 display: 'block',
-                borderRadius: '16px',
+                borderRadius: `${cardRadius}px`,
                 overflow: 'hidden',
                 cursor: item.link ? 'pointer' : 'default',
                 transition: 'transform 0.3s, box-shadow 0.3s',
                 textDecoration: 'none',
                 position: 'relative',
+                boxShadow: shadows[cardShadow],
                 ...(isHorizontal && {
                     flexShrink: 0,
                     width: 'clamp(260px, 35vw, 350px)',
@@ -44,24 +75,30 @@ const ImageCard = ({ item, isHorizontal }: { item: any; isHorizontal: boolean })
                 }),
             }}
             onMouseOver={(e) => {
-                if (item.link) {
-                    e.currentTarget.style.transform = 'translateY(-6px)';
+                e.currentTarget.style.transform = `translateY(-${hoverLift}px)`;
+                if (cardShadow === 'none') {
                     e.currentTarget.style.boxShadow = '0 10px 20px rgba(0,0,0,0.1)';
                 }
             }}
             onMouseOut={(e) => {
-                if (item.link) {
-                    e.currentTarget.style.transform = 'translateY(0)';
-                    e.currentTarget.style.boxShadow = 'none';
-                }
+                e.currentTarget.style.transform = 'translateY(0)';
+                e.currentTarget.style.boxShadow = shadows[cardShadow];
             }}
         >
-            <div style={{ position: 'relative', width: '100%', aspectRatio: '2/3' }}>
+            <div style={{ 
+                position: 'relative', 
+                width: '100%', 
+                aspectRatio: cardAspectRatio === 'auto' ? 'unset' : cardAspectRatio,
+            }}>
                 <Image
                     src={item.imageUrl}
                     alt={item.altText || "Pricing Package"}
-                    fill
-                    className="object-cover"
+                    fill={cardAspectRatio !== 'auto'}
+                    width={cardAspectRatio === 'auto' ? 800 : undefined}
+                    height={cardAspectRatio === 'auto' ? 800 : undefined}
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                    className={cardObjectFit === 'cover' ? 'object-cover' : 'object-contain'}
+                    style={cardAspectRatio === 'auto' ? { width: '100%', height: 'auto', display: 'block' } : {}}
                     unoptimized
                 />
             </div>
@@ -69,9 +106,19 @@ const ImageCard = ({ item, isHorizontal }: { item: any; isHorizontal: boolean })
     );
 };
 
-const PricingImageRender = ({ title, scrollMode, columnsDesktop, columnsTablet, columnsMobile, items, titleFont = 'inherit', sectionBg, gap, titleColor }: PricingImageProps) => {
+const PricingImageRender = (props: PricingImageProps) => {
+    const { title, scrollMode, columnsDesktop, columnsTablet, columnsMobile, items, titleFont = 'inherit', sectionBg, gap, titleColor } = props;
     const id = "image-pricing-" + useId().replace(/:/g, "");
     const isHorizontal = scrollMode === "horizontal";
+
+    const commonCardProps = {
+        isHorizontal,
+        cardRadius: props.cardRadius,
+        cardAspectRatio: props.cardAspectRatio,
+        cardObjectFit: props.cardObjectFit,
+        cardShadow: props.cardShadow,
+        hoverLift: props.hoverLift
+    };
 
     return (
         <section className={id} style={{ padding: 'clamp(50px, 8vw, 80px) 20px', backgroundColor: sectionBg || '#f8fafc' }} >
@@ -133,12 +180,12 @@ const PricingImageRender = ({ title, scrollMode, columnsDesktop, columnsTablet, 
                             minWidth: 'min-content',
                             padding: '10px 0'
                         }}>
-                            {items.map((item, i) => <ImageCard key={i} item={item} isHorizontal={isHorizontal} />)}
+                            {items.map((item, i) => <ImageCard key={i} item={item} {...commonCardProps} />)}
                         </div>
                     </div>
                 ) : (
                     <div className="grid-container">
-                        {items.map((item, i) => <ImageCard key={i} item={item} isHorizontal={isHorizontal} />)}
+                        {items.map((item, i) => <ImageCard key={i} item={item} {...commonCardProps} />)}
                     </div>
                 )}
             </div>
@@ -197,6 +244,71 @@ export const PricingImage: ComponentConfig<PricingImageProps> = {
             },
             getItemSummary: (item) => item.altText || "Image Package",
         },
+
+        // Card settings
+        cardRadius: {
+            type: "custom",
+            label: "Card Border Radius",
+            render: ({ value, onChange }) => (
+                <div style={{ padding: "0 8px" }}>
+                    <input
+                        type="range"
+                        min="0"
+                        max="100"
+                        value={value as number || 16}
+                        onChange={(e) => onChange(parseInt(e.target.value))}
+                        style={{ width: "100%" }}
+                    />
+                    <div style={{ fontSize: "12px", textAlign: "right" }}>{value || 16}px</div>
+                </div>
+            )
+        },
+        cardAspectRatio: {
+            type: "select",
+            label: "Card Aspect Ratio",
+            options: [
+                { label: "1:1 Square", value: "1/1" },
+                { label: "4:3 Classic", value: "4/3" },
+                { label: "2:3 Portrait", value: "2/3" },
+                { label: "16:9 Landscape", value: "16/9" },
+                { label: "Auto", value: "auto" },
+            ]
+        },
+        cardObjectFit: {
+            type: "select",
+            label: "Image Object Fit",
+            options: [
+                { label: "Cover (Fill)", value: "cover" },
+                { label: "Contain (Show all)", value: "contain" },
+            ]
+        },
+        cardShadow: {
+            type: "select",
+            label: "Card Shadow",
+            options: [
+                { label: "None", value: "none" },
+                { label: "Small", value: "sm" },
+                { label: "Medium", value: "md" },
+                { label: "Large", value: "lg" },
+            ]
+        },
+        hoverLift: {
+            type: "custom",
+            label: "Hover Lift Distance",
+            render: ({ value, onChange }) => (
+                <div style={{ padding: "0 8px" }}>
+                    <input
+                        type="range"
+                        min="0"
+                        max="40"
+                        value={value as number || 6}
+                        onChange={(e) => onChange(parseInt(e.target.value))}
+                        style={{ width: "100%" }}
+                    />
+                    <div style={{ fontSize: "12px", textAlign: "right" }}>{value || 6}px</div>
+                </div>
+            )
+        },
     },
     defaultProps: {
         title: "Paket Spesial",
@@ -205,6 +317,11 @@ export const PricingImage: ComponentConfig<PricingImageProps> = {
         columnsTablet: 2,
         columnsMobile: 1,
         gap: { desktop: 28, tablet: 24, mobile: 16 },
+        cardRadius: 16,
+        cardAspectRatio: "2/3",
+        cardObjectFit: "cover",
+        cardShadow: "none",
+        hoverLift: 6,
         items: [
             {
                 imageUrl: "https://via.placeholder.com/400x600?text=Package+1",

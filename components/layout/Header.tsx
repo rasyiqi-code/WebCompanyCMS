@@ -94,7 +94,10 @@ export default function Header({ initialSettings, initialMenuItems = [] }: Heade
                                     alt={settings.siteName || "Logo"}
                                     height={32}
                                     width={128}
-                                    className="h-8 w-auto object-contain"
+                                    priority={true}
+                                    sizes="200px"
+                                    className="object-contain"
+                                    style={{ height: '32px', width: 'auto' }}
                                 />
                             ) : (
                                 <span className="text-xl font-bold tracking-tight" style={{ color: textColor }}>
@@ -186,7 +189,10 @@ export default function Header({ initialSettings, initialMenuItems = [] }: Heade
                                 alt={settings.siteName || "Logo"}
                                 height={32}
                                 width={128}
-                                className="h-8 w-auto object-contain"
+                                priority={true}
+                                sizes="200px"
+                                className="object-contain"
+                                style={{ height: '32px', width: 'auto' }}
                             />
                         ) : (
                             <span className="text-xl font-bold tracking-tight" style={{ color: textColor }}>

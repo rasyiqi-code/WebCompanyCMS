@@ -4,6 +4,7 @@ import type { ComponentConfig } from "@measured/puck";
 import Link from "next/link";
 import Image from "next/image";
 import { ShoppingCart } from "lucide-react";
+import { useCurrency } from "@/hooks/use-currency";
 import { ColorPickerField } from "./fields/ColorPickerField";
 
 export type ProductListProps = {
@@ -18,7 +19,7 @@ type Product = {
     id: string;
     name: string;
     slug: string;
-    price: string;
+    price: string | number;
     images: string[] | null;
     stock: number;
 };
@@ -27,6 +28,7 @@ const ProductListRender = ({ title, description, limit = 4, columns = 4, backgro
     const [products, setProducts] = useState<Product[]>([]);
     const [loading, setLoading] = useState(true);
     const [mounted, setMounted] = useState(false);
+    const { formatPrice } = useCurrency();
 
     useEffect(() => {
         setMounted(true);
@@ -78,6 +80,7 @@ const ProductListRender = ({ title, description, limit = 4, columns = 4, backgro
                                             src={product.images[0]}
                                             alt={product.name}
                                             fill
+                                            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
                                             className="object-cover group-hover:scale-105 transition-transform duration-500"
                                             unoptimized
                                         />
@@ -96,7 +99,7 @@ const ProductListRender = ({ title, description, limit = 4, columns = 4, backgro
                                 <div className="p-4">
                                     <h3 className="font-semibold text-gray-900 mb-1 truncate">{product.name}</h3>
                                     <div className="flex items-center justify-between">
-                                        <span className="text-emerald-700 font-bold">${product.price}</span>
+                                        <span className="text-emerald-700 font-bold">{formatPrice(product.price)}</span>
                                         <span className={`text-xs ${product.stock > 0 ? 'text-green-500' : 'text-red-500'}`}>
                                             {product.stock > 0 ? 'In Stock' : 'Out of Stock'}
                                         </span>
