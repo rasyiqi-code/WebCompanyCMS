@@ -14,5 +14,5 @@ export async function GET() {
     // However, specifically to address "di log masih ada pavicon 404", I will return 204 or a transparent pixel to silence it if no setting is found.
     // Ideally, we just redirect to a default placeholder.
 
-    return new NextResponse(null, { status: 204 });
+    return new NextResponse(null, { status: 404 });
 }

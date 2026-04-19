@@ -20,6 +20,11 @@ const S3 = new S3Client({
 });
 
 export async function uploadToR2(file: Buffer, filename: string, mimeType: string) {
+    if (!R2_ACCOUNT_ID || !R2_ACCESS_KEY_ID || !R2_SECRET_ACCESS_KEY || !R2_BUCKET_NAME) {
+        console.error("Cannot upload: R2 credentials missing");
+        return null;
+    }
+
     const key = `${crypto.randomUUID()}-${filename.replace(/\s+/g, '-')}`;
 
     await S3.send(new PutObjectCommand({
@@ -33,6 +38,11 @@ export async function uploadToR2(file: Buffer, filename: string, mimeType: strin
 }
 
 export async function deleteFromR2(fileUrl: string) {
+    if (!R2_ACCOUNT_ID || !R2_ACCESS_KEY_ID || !R2_SECRET_ACCESS_KEY || !R2_BUCKET_NAME) {
+        console.error("Cannot delete: R2 credentials missing");
+        return;
+    }
+
     try {
         // Use URL API to robustly parse the URL
         let urlStringToParse = fileUrl;

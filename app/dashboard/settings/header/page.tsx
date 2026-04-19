@@ -3,6 +3,14 @@
 import React, { useState, useEffect } from "react";
 import { SiteSettings } from "../../../../lib/settings";
 import { Loader2, Save } from "lucide-react";
+import { 
+    PageHeader,
+    Skeleton,
+    FormSection,
+    FormInput,
+    FormSelect
+} from "@/components/dashboard/ui/DataTable";
+import Link from "next/link";
 
 export default function HeaderSettingsPage() {
     const [settings, setSettings] = useState<SiteSettings | null>(null);
@@ -51,167 +59,130 @@ export default function HeaderSettingsPage() {
         setSettings({ ...settings, [e.target.name]: e.target.value });
     };
 
-    if (loading) return <div className="flex justify-center p-10"><Loader2 className="animate-spin" /></div>;
+    if (loading) return (
+        <div className="w-full animate-in fade-in duration-700 pb-20 px-4 space-y-8">
+            <PageHeader title="Header Architecture" subtitle="Define the structural layout of your navigation interface." />
+            <div className="space-y-6">
+                <Skeleton className="h-[150px] w-full" />
+                <Skeleton className="h-[200px] w-full" />
+                <Skeleton className="h-[250px] w-full" />
+            </div>
+        </div>
+    );
     if (!settings) return <div className="p-10">Error loading settings</div>;
 
     return (
-        <form onSubmit={handleSubmit} className="space-y-8 bg-white p-8 rounded-xl border border-gray-200 shadow-sm">
-            {message && <div className={`px-4 py-2 rounded text-sm font-medium ${message.includes("Error") ? "bg-red-100 text-red-700" : "bg-green-100 text-green-700"}`}>{message}</div>}
+        <form onSubmit={handleSubmit} className="w-full animate-in fade-in duration-700 pb-20 px-4 space-y-8">
+            <PageHeader 
+                title="Header Architecture" 
+                subtitle="Design and structure the structural layout and aesthetics of your primary navigation interface." 
+            />
 
             {/* Header Style */}
-            <div>
-                <h2 className="text-lg font-semibold text-gray-900 mb-4 border-b pb-2">Header Configuration</h2>
+            <FormSection 
+                title="Architecture" 
+                description="Define the structural layout and primary navigation paradigm of your project interface."
+            >
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">Header Style</label>
-                        <select
-                            name="headerStyle"
-                            value={settings.headerStyle || "simple"}
-                            onChange={handleChange}
-                            className="w-full px-3 py-2 border rounded-md"
-                        >
-                            <option value="simple">Simple (Logo Left, Menu Right)</option>
-                            <option value="centered">Centered (Logo Center, Menu Split)</option>
-                            <option value="minimal">Minimal (Logo Left, Menu Hidden/Hamburger)</option>
-                        </select>
-                        <p className="text-xs text-gray-500 mt-1">Choose the layout structure for your navigation bar.</p>
-                    </div>
+                    <FormSelect 
+                        label="Layout Paradigm" 
+                        name="headerStyle" 
+                        value={settings.headerStyle || "simple"} 
+                        onChange={handleChange}
+                        options={[
+                            { label: "Canonical (Logo L, Menu R)", value: "simple" },
+                            { label: "Symmetric (Logo C, Menu Split)", value: "centered" },
+                            { label: "Minimalist (Logo L, Hidden Menu)", value: "minimal" }
+                        ]}
+                    />
                 </div>
-            </div>
+            </FormSection>
 
             {/* Header Colors */}
-            <div>
-                <h2 className="text-lg font-semibold text-gray-900 mb-4 border-b pb-2">Header Colors</h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">Background Color</label>
-                        <div className="flex gap-2 items-center">
-                            <input
-                                type="color"
-                                name="headerBackgroundColor"
-                                value={settings.headerBackgroundColor || "#ffffff"}
-                                onChange={handleChange}
-                                className="h-10 w-20 border rounded cursor-pointer"
-                            />
-                            <input
-                                type="text"
-                                name="headerBackgroundColor"
-                                value={settings.headerBackgroundColor || "#ffffff"}
-                                onChange={handleChange}
-                                className="flex-1 px-3 py-2 border rounded-md uppercase"
-                                maxLength={7}
-                            />
+            <FormSection 
+                title="Chromatic Schema" 
+                description="Coordinate the aesthetic palette and atmospheric tones of the header ecosystem."
+            >
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {["headerBackgroundColor", "headerTextColor", "headerMobileBackgroundColor"].map((color) => (
+                        <div key={color} className="space-y-1.5">
+                            <label className="text-[10px] font-bold text-white uppercase tracking-widest pl-0.5">{color.replace("header", "").replace("Color", "")}</label>
+                            <div className="flex gap-2">
+                                <div className="relative w-8 h-8 rounded border border-[#2f2f2f] overflow-hidden shrink-0">
+                                    <input
+                                        type="color"
+                                        name={color}
+                                        value={(settings as any)[color] || "#ffffff"}
+                                        onChange={handleChange}
+                                        className="absolute inset-0 w-[200%] h-[200%] -translate-x-1/4 -translate-y-1/4 cursor-pointer"
+                                    />
+                                </div>
+                                <input
+                                    type="text"
+                                    name={color}
+                                    value={(settings as any)[color] || "#ffffff"}
+                                    onChange={handleChange}
+                                    className="w-full px-2.5 py-1.5 bg-white/5 border border-[#2f2f2f] rounded text-sm text-white outline-none focus:border-gray-500 transition-all font-mono uppercase"
+                                    maxLength={7}
+                                />
+                            </div>
                         </div>
-                    </div>
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">Text Color</label>
-                        <div className="flex gap-2 items-center">
-                            <input
-                                type="color"
-                                name="headerTextColor"
-                                value={settings.headerTextColor || "#111827"}
-                                onChange={handleChange}
-                                className="h-10 w-20 border rounded cursor-pointer"
-                            />
-                            <input
-                                type="text"
-                                name="headerTextColor"
-                                value={settings.headerTextColor || "#111827"}
-                                onChange={handleChange}
-                                className="flex-1 px-3 py-2 border rounded-md uppercase"
-                                maxLength={7}
-                            />
-                        </div>
-                    </div>
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">Mobile Menu Background</label>
-                        <div className="flex gap-2 items-center">
-                            <input
-                                type="color"
-                                name="headerMobileBackgroundColor"
-                                value={settings.headerMobileBackgroundColor || "#f9fafb"}
-                                onChange={handleChange}
-                                className="h-10 w-20 border rounded cursor-pointer"
-                            />
-                            <input
-                                type="text"
-                                name="headerMobileBackgroundColor"
-                                value={settings.headerMobileBackgroundColor || "#f9fafb"}
-                                onChange={handleChange}
-                                className="flex-1 px-3 py-2 border rounded-md uppercase"
-                                maxLength={7}
-                            />
-                        </div>
-                    </div>
+                    ))}
                 </div>
-            </div>
+            </FormSection>
 
             {/* Features & Integrations */}
-            <div>
-                <h2 className="text-lg font-semibold text-gray-900 mb-4 border-b pb-2">Features & Integrations</h2>
-                <div className="space-y-6">
-                    <div className="flex items-center gap-3">
-                        <input
-                            type="checkbox"
-                            id="showCart"
-                            name="showCart"
-                            checked={settings.showCart !== false}
-                            onChange={(e) => setSettings({ ...settings, showCart: e.target.checked })}
-                            className="h-5 w-5 text-blue-600 rounded border-gray-300 focus:ring-blue-500"
-                        />
+            <FormSection 
+                title="Modules" 
+                description="Activate auxiliary functional extensions and link external services."
+            >
+                <div className="space-y-4">
+                    <div className="flex items-center gap-4 group cursor-pointer" onClick={() => setSettings({ ...settings, showCart: settings.showCart === false })}>
+                        <div className={`flex-shrink-0 w-8 h-4 rounded-full relative transition-colors ${settings.showCart !== false ? 'bg-[#2eaadc]' : 'bg-white/10'}`}>
+                            <div className={`absolute top-0.5 w-3 h-3 rounded-full bg-white transition-all ${settings.showCart !== false ? 'left-[1.125rem]' : 'left-0.5'}`} />
+                        </div>
                         <div>
-                            <label htmlFor="showCart" className="font-medium text-gray-700">Show Shopping Cart</label>
-                            <p className="text-sm text-gray-500">Enable or disable the shopping bag icon in the header.</p>
+                            <label className="text-xs font-bold text-white cursor-pointer">Shopping Cart</label>
                         </div>
                     </div>
 
-                    <div className="flex items-center gap-3">
-                        <input
-                            type="checkbox"
-                            id="showFloatingChat"
-                            name="showFloatingChat"
-                            checked={settings.showFloatingChat || false}
-                            onChange={(e) => setSettings({ ...settings, showFloatingChat: e.target.checked })}
-                            className="h-5 w-5 text-blue-600 rounded border-gray-300 focus:ring-blue-500"
-                        />
+                    <div className="flex items-center gap-4 group cursor-pointer" onClick={() => setSettings({ ...settings, showFloatingChat: !settings.showFloatingChat })}>
+                        <div className={`flex-shrink-0 w-8 h-4 rounded-full relative transition-colors ${settings.showFloatingChat ? 'bg-[#2eaadc]' : 'bg-white/10'}`}>
+                            <div className={`absolute top-0.5 w-3 h-3 rounded-full bg-white transition-all ${settings.showFloatingChat ? 'left-[1.125rem]' : 'left-0.5'}`} />
+                        </div>
                         <div>
-                            <label htmlFor="showFloatingChat" className="font-medium text-gray-700">Floating WhatsApp Chat</label>
-                            <p className="text-sm text-gray-500">Show a sticky WhatsApp button in the bottom right corner.</p>
+                            <label className="text-xs font-bold text-white cursor-pointer">WhatsApp Chat</label>
                         </div>
                     </div>
 
                     {settings.showFloatingChat && (
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">WhatsApp Number</label>
-                            <input
-                                type="text"
-                                name="whatsappNumber"
-                                value={settings.whatsappNumber || ""}
-                                onChange={handleChange}
-                                placeholder="628123456789 (Include country code, no +)"
-                                className="w-full max-w-md px-3 py-2 border rounded-md"
-                            />
+                        <div className="pl-12 pt-2 animate-in slide-in-from-top-2 duration-300">
+                            <FormInput label="WhatsApp Number" name="whatsappNumber" value={settings.whatsappNumber || ""} onChange={handleChange} placeholder="628XXXXXXXXXX" className="max-w-xs" />
                         </div>
                     )}
                 </div>
-            </div>
+            </FormSection>
 
-            <div className="flex justify-end pt-4">
+            <div className="flex flex-col md:flex-row items-center justify-between gap-6 pt-4">
+                <p className="text-xs text-white">
+                    Heads up: Menu items are managed in the <Link href="/dashboard/menus" className="text-[#2eaadc] hover:underline">Menus</Link> section.
+                </p>
+
                 <button
                     type="submit"
                     disabled={saving}
-                    className="flex items-center bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 disabled:opacity-50"
+                    className="flex items-center justify-center px-6 py-2 bg-[#2eaadc] text-white rounded hover:bg-[#1a99cc] disabled:opacity-50 text-xs font-bold transition-colors"
                 >
-                    {saving ? <Loader2 className="animate-spin mr-2" size={18} /> : <Save className="mr-2" size={18} />}
-                    Save Header Settings
+                    {saving ? <Loader2 className="animate-spin mr-2" size={14} /> : <Save className="mr-2" size={14} />}
+                    Save Header
                 </button>
             </div>
 
-            <div className="bg-blue-50 p-4 rounded-lg flex items-start gap-3 text-sm text-blue-900 mt-6">
-                <div>
-                    <strong>Note:</strong> Menu items for the header are managed in the <a href="/dashboard/menus" className="underline font-semibold hover:text-blue-700">Menus Dashboard</a>.
+            {message && (
+                <div className={`fixed bottom-8 right-8 px-6 py-3 bg-[#2eaadc] text-white rounded-lg shadow-2xl text-xs font-bold border border-[#2eaadc]/20 animate-in slide-in-from-bottom-4 duration-500 z-50`}>
+                    Header Architecture Updated
                 </div>
-            </div>
-        </form >
+            )}
+        </form>
     );
 }

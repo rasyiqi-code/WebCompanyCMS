@@ -1,8 +1,12 @@
 import React from "react";
 import Link from "next/link";
-import { Plus, ExternalLink } from "lucide-react";
+import { Plus, ExternalLink, MessageSquare } from "lucide-react";
 import { db } from "../../../lib/db";
 import TestimonialCard from "./TestimonialCard";
+import { 
+    PageHeader,
+    EmptyState
+} from "@/components/dashboard/ui/DataTable";
 
 export const dynamic = 'force-dynamic';
 
@@ -12,56 +16,40 @@ export default async function TestimonialsPage() {
     });
 
     return (
-        <div className="max-w-6xl mx-auto py-8 px-4">
-            <div className="flex justify-between items-center mb-8">
-                <div>
-                    <h1 className="text-3xl font-bold text-gray-900">Testimonials</h1>
-                    <p className="text-gray-500 mt-1">Manage what people say about you.</p>
-                </div>
-                <div className="flex items-center gap-3">
-                    <Link
-                        href="/testimonials"
-                        target="_blank"
-                        className="flex items-center gap-2 bg-white border border-gray-300 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-50 transition"
-                    >
-                        <ExternalLink size={18} />
-                        View Public Page
-                    </Link>
-                    <Link
-                        href="/dashboard/testimonials/new"
-                        className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition"
-                    >
-                        <Plus size={20} />
-                        Add Testimonial
-                    </Link>
-                </div>
-            </div>
+        <div className="w-full animate-in fade-in duration-700 pb-20 px-4">
+            <PageHeader 
+                title="Testimonials" 
+                subtitle="Curate and showcase client voices and success stories."
+            >
+                <Link
+                    href="/dashboard/testimonials/new"
+                    className="px-3 py-1.5 bg-[#2eaadc] text-white rounded text-xs font-bold hover:bg-[#1a99cc] transition-colors"
+                >
+                    New Entry
+                </Link>
+            </PageHeader>
 
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-8 flex items-start gap-3">
-                <ExternalLink className="text-blue-500 mt-1 flex-shrink-0" size={20} />
+            <div className="bg-[#202020] border border-[#2f2f2f] rounded p-4 mb-8 flex items-start gap-4">
+                <div className="w-8 h-8 rounded bg-white/5 flex items-center justify-center flex-shrink-0 border border-[#2f2f2f]">
+                    <ExternalLink className="text-white" size={14} />
+                </div>
                 <div>
-                    <h3 className="font-semibold text-blue-900">Public Submission Link</h3>
-                    <p className="text-blue-700 text-sm mb-2">Share this link with your clients to collect testimonials:</p>
-                    <a
-                        href="/submit-testimonial"
-                        target="_blank"
-                        className="text-blue-600 font-medium hover:underline break-all"
-                    >
+                    <h3 className="font-bold text-white text-sm mb-1 tracking-tight">Public Submission Link</h3>
+                    <p className="text-white text-xs mb-3">Copy this link for your clients to submit their testimonials:</p>
+                    <div className="inline-flex items-center px-2 py-1 bg-white/5 rounded border border-[#2f2f2f] text-white font-mono text-[10px]">
                         {process.env.NEXT_PUBLIC_APP_URL || "https://univedpress.id"}/submit-testimonial
-                    </a>
+                    </div>
                 </div>
             </div>
 
             {
                 allTestimonials.length === 0 ? (
-                    <div className="text-center py-16 bg-gray-50 rounded-xl border-dashed border-2 border-gray-200">
-                        <p className="text-gray-400 mb-4">No testimonials yet.</p>
-                        <Link href="/dashboard/testimonials/new" className="text-blue-600 font-medium hover:underline">
-                            Create your first one
-                        </Link>
-                    </div>
+                    <EmptyState 
+                        icon={<MessageSquare size={32} />} 
+                        message="No client voices detected. Ready to curate your first success story?" 
+                    />
                 ) : (
-                    <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+                    <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
                         {allTestimonials.map((item) => (
                             <TestimonialCard key={item.id} testimonial={item} />
                         ))}

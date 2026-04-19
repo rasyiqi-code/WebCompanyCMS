@@ -48,53 +48,56 @@ export default async function OrderDetailPage({
     }));
 
     return (
-        <div className="max-w-5xl mx-auto">
-            <div className="mb-6">
-                <Link href="/dashboard/orders" className="text-gray-500 hover:text-indigo-600 inline-flex items-center mb-4">
-                    <ArrowLeft size={16} className="mr-1" /> Back to Orders
+        <div className="w-full animate-in fade-in duration-700 pb-20 px-4">
+            <div className="mb-8 border-b border-[#2f2f2f] pb-4">
+                <Link href="/dashboard/orders" className="flex items-center gap-2 text-white hover:text-white transition-colors text-xs font-medium mb-4">
+                    <ArrowLeft size={14} />
+                    Back to Orders
                 </Link>
-                <div className="flex justify-between items-start">
+                <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
                     <div>
-                        <h1 className="text-3xl font-bold text-gray-900 flex items-center">
-                            Order #{order.id.slice(0, 8)}
-                            <span className={`ml-3 text-sm font-normal px-3 py-1 rounded-full ${order.paymentStatus === 'paid' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'}`}>
-                                {order.paymentStatus || 'pending'}
-                            </span>
-                        </h1>
-                        <p className="text-gray-500 mt-1">Placed on {new Date(order.createdAt).toLocaleDateString()} at {new Date(order.createdAt).toLocaleTimeString()}</p>
+                        <div className="flex items-center gap-3 mb-1">
+                            <h1 className="text-2xl font-bold text-white tracking-tight">
+                                Order <span className="text-white">#{order.id.slice(0, 8)}</span>
+                            </h1>
+                        </div>
+                        <p className="text-white text-[11px] font-medium uppercase tracking-widest">{new Date(order.createdAt).toLocaleDateString()}</p>
                     </div>
-                    <div className="text-right">
-                        <div className="text-sm text-gray-500">Total Amount</div>
-                        <div className="text-3xl font-bold text-gray-900">{formatPrice(order.total, currency)}</div>
+                    <div className="text-left md:text-right">
+                        <div className="text-[10px] font-bold text-white uppercase tracking-widest mb-0.5">Total Amount</div>
+                        <div className="text-2xl font-bold text-white tracking-tight">{formatPrice(order.total, currency)}</div>
                     </div>
                 </div>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
                 {/* Left Column: Details */}
-                <div className="lg:col-span-2 space-y-6">
+                <div className="lg:col-span-2 space-y-8">
                     {/* Items */}
-                    <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
-                        <div className="px-6 py-4 border-b border-gray-200 bg-gray-50 flex items-center">
-                            <Package size={18} className="mr-2 text-gray-400" />
-                            <h3 className="font-semibold text-gray-700">Order Items</h3>
+                    <div className="bg-[#202020] rounded-lg border border-[#2f2f2f] overflow-hidden">
+                        <div className="px-4 py-2 border-b border-[#2f2f2f] bg-white/[0.01]">
+                             <h3 className="text-[11px] font-bold text-white uppercase tracking-widest opacity-50">Items</h3>
                         </div>
-                        <ul className="divide-y divide-gray-100">
+                        <ul className="divide-y divide-[#2f2f2f]">
                             {formattedItems.map((item) => (
-                                <li key={item.id} className="p-6 flex items-center">
-                                    <div className="w-16 h-16 bg-gray-100 rounded-lg overflow-hidden border border-gray-100 flex-shrink-0 mr-4 relative">
+                                <li key={item.id} className="p-4 flex items-center hover:bg-white/[0.01] transition-colors">
+                                    <div className="w-12 h-12 bg-white/[0.03] rounded border border-[#2f2f2f] flex-shrink-0 mr-4 relative overflow-hidden">
                                         {item.productImage && item.productImage[0] ? (
                                             <Image src={item.productImage[0]} alt={item.productName || "Product"} fill className="object-cover" />
                                         ) : (
-                                            <div className="w-full h-full flex items-center justify-center bg-gray-200 text-gray-400">IMG</div>
+                                            <div className="w-full h-full flex items-center justify-center text-[10px] text-gray-700 font-bold uppercase tracking-tight">NULL</div>
                                         )}
                                     </div>
-                                    <div className="flex-1">
-                                        <h4 className="font-medium text-gray-900">{item.productName || "Unknown Product"}</h4>
-                                        <p className="text-sm text-gray-500">{formatPrice(item.price, currency)} x {item.quantity}</p>
+                                    <div className="flex-1 min-w-0">
+                                        <h4 className="font-bold text-white text-sm truncate uppercase tracking-tight">{item.productName || "Untitled Product"}</h4>
+                                        <p className="text-[11px] text-white font-medium">
+                                            {formatPrice(item.price, currency)} × {item.quantity}
+                                        </p>
                                     </div>
-                                    <div className="font-bold text-gray-900">
-                                        {formatPrice(Number(item.price) * item.quantity, currency)}
+                                    <div className="text-right ml-4">
+                                        <div className="text-sm font-bold text-white tracking-tight">
+                                            {formatPrice(Number(item.price) * item.quantity, currency)}
+                                        </div>
                                     </div>
                                 </li>
                             ))}
@@ -103,40 +106,44 @@ export default async function OrderDetailPage({
                 </div>
 
                 {/* Right Column: Customer & Actions */}
-                <div className="space-y-6">
-                    {/* Customer Info */}
-                    <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
-                        <div className="px-6 py-4 border-b border-gray-200 bg-gray-50 flex items-center">
-                            <User size={18} className="mr-2 text-gray-400" />
-                            <h3 className="font-semibold text-gray-700">Customer Details</h3>
+                <div className="space-y-8">
+                    {/* Status & Customer */}
+                    <div className="space-y-6">
+                        <div className="space-y-3">
+                            <h3 className="text-[11px] font-bold text-white uppercase tracking-widest opacity-50">Status</h3>
+                            <div className={`px-2 py-1 rounded text-[10px] font-bold uppercase tracking-widest border inline-block ${order.paymentStatus === 'paid' ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400' : 'bg-orange-500/10 border-orange-500/20 text-orange-400'}`}>
+                                {order.paymentStatus || 'pending'}
+                            </div>
                         </div>
-                        <div className="p-6 space-y-4">
-                            <div>
-                                <label className="text-xs font-semibold text-gray-400 uppercase">Customer Name</label>
-                                <p className="text-gray-900 font-medium">{order.customerName}</p>
-                            </div>
-                            <div>
-                                <label className="text-xs font-semibold text-gray-400 uppercase">Email Address</label>
-                                <p className="text-gray-900 flex items-center">
-                                    <Mail size={14} className="mr-1 text-gray-400" /> {order.customerEmail}
-                                </p>
-                            </div>
-                            <div>
-                                <label className="text-xs font-semibold text-gray-400 uppercase">Shipping Address</label>
-                                <p className="text-gray-900 flex items-start mt-1">
-                                    <MapPin size={14} className="mr-1 mt-1 text-gray-400 flex-shrink-0" />
-                                    {order.customerAddress}
-                                </p>
+
+                        <div className="pt-6 border-t border-[#2f2f2f] space-y-4">
+                            <h3 className="text-[11px] font-bold text-white uppercase tracking-widest opacity-50">Identity</h3>
+                            <div className="space-y-4">
+                                <div className="space-y-1">
+                                    <label className="text-[11px] font-semibold text-white">Name</label>
+                                    <p className="text-sm font-bold text-white tracking-tight uppercase">{order.customerName}</p>
+                                </div>
+                                <div className="space-y-1">
+                                    <label className="text-[11px] font-semibold text-white">Email</label>
+                                    <p className="text-sm font-medium text-white">{order.customerEmail}</p>
+                                </div>
+                                <div className="space-y-1">
+                                    <label className="text-[11px] font-semibold text-white">Address</label>
+                                    <p className="text-[11px] font-medium text-white leading-relaxed uppercase tracking-tight">
+                                        {order.customerAddress}
+                                    </p>
+                                </div>
                             </div>
                         </div>
                     </div>
-
-                    {/* Status Management (Client Component) */}
-                    <OrderStatusManager
-                        orderId={orderId}
-                        paymentStatus={order.paymentStatus || "pending"}
-                        fulfillmentStatus={order.fulfillmentStatus || "unfulfilled"}
-                    />
+                    <div className="pt-8 border-t border-[#2f2f2f] space-y-4">
+                        <h3 className="text-[11px] font-bold text-white uppercase tracking-widest opacity-50">Operations</h3>
+                        <OrderStatusManager
+                            orderId={orderId}
+                            paymentStatus={order.paymentStatus || "pending"}
+                            fulfillmentStatus={order.fulfillmentStatus || "unfulfilled"}
+                        />
+                    </div>
                 </div>
             </div>
         </div>

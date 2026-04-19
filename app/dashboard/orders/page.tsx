@@ -6,6 +6,17 @@ import { authOptions } from "@/lib/auth";
 import { serializeOrders } from "@/lib/serialize";
 import { getPaymentSettings } from "@/lib/settings";
 import { formatPrice } from "@/lib/currency";
+import { 
+    PageHeader, 
+    TableContainer, 
+    THead, 
+    TBody, 
+    TR, 
+    TH, 
+    TD, 
+    StatusBadge,
+    EmptyState
+} from "@/components/dashboard/ui/DataTable";
 
 export const revalidate = 0; // Ensure fresh data
 
@@ -32,91 +43,73 @@ export default async function OrderListPage() {
 
     const orderList = serializeOrders(orderListRaw);
 
-    const getStatusBadge = (status: string) => {
-        switch (status) {
-            case "paid":
-                return <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800"><CheckCircle size={12} className="mr-1" /> Paid</span>;
-            case "shipped":
-                return <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800"><Truck size={12} className="mr-1" /> Shipped</span>;
-            case "cancelled":
-                return <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800"><XCircle size={12} className="mr-1" /> Cancelled</span>;
-            default:
-                return <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800"><Clock size={12} className="mr-1" /> Pending</span>;
-        }
-    };
 
     return (
-        <div>
-            <div className="flex justify-between items-center mb-6">
-                <h1 className="text-2xl font-bold text-gray-900">Orders</h1>
-            </div>
+        <div className="animate-in fade-in duration-700 pb-20 px-4">
+            <PageHeader 
+                title="Orders" 
+                subtitle="Manage and track your customer orders."
+            />
 
-            <div className="bg-white shadow-sm rounded-lg border border-gray-200 overflow-hidden">
-                <table className="min-w-full divide-y divide-gray-200">
-                    <thead className="bg-gray-50">
-                        <tr>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Order ID</th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Customer</th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Payment</th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Fulfillment</th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total</th>
-                            <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody className="bg-white divide-y divide-gray-200">
-                        {orderList.length === 0 ? (
-                            <tr>
-                                <td colSpan={7} className="px-6 py-10 text-center text-gray-500">
-                                    <Package className="mx-auto h-12 w-12 text-gray-300 mb-3" />
-                                    No orders found.
-                                </td>
-                            </tr>
-                        ) : (
-                            orderList.map((order) => (
-                                <tr key={order.id} className="hover:bg-gray-50">
-                                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                                        #{order.id.slice(0, 8)}
-                                    </td>
-                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                        <div className="font-medium text-gray-900">{order.customerName}</div>
-                                        <div className="text-gray-400 text-xs">{order.customerEmail}</div>
-                                    </td>
-                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                        {new Date(order.createdAt).toLocaleDateString()}
-                                    </td>
-                                    <td className="px-6 py-4 whitespace-nowrap">
-                                        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${order.paymentStatus === 'paid' ? 'bg-green-100 text-green-800' :
-                                            order.paymentStatus === 'failed' ? 'bg-red-100 text-red-800' :
-                                                'bg-yellow-100 text-yellow-800'
-                                            }`}>
-                                            {order.paymentStatus === 'paid' ? <CheckCircle size={12} className="mr-1" /> : <Clock size={12} className="mr-1" />}
-                                            {order.paymentStatus || 'pending'}
-                                        </span>
-                                    </td>
-                                    <td className="px-6 py-4 whitespace-nowrap">
-                                        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${order.fulfillmentStatus === 'delivered' ? 'bg-green-100 text-green-800' :
-                                            order.fulfillmentStatus === 'shipped' ? 'bg-blue-100 text-blue-800' :
-                                                'bg-gray-100 text-gray-800'
-                                            }`}>
-                                            {order.fulfillmentStatus === 'shipped' ? <Truck size={12} className="mr-1" /> : null}
-                                            {order.fulfillmentStatus || 'unfulfilled'}
-                                        </span>
-                                    </td>
-                                    <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-900">
-                                        {formatPrice(order.total, currency)}
-                                    </td>
-                                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                        <Link href={`/dashboard/orders/${order.id}`} className="text-indigo-600 hover:text-indigo-900 inline-flex items-center">
-                                            <Eye size={16} className="mr-1" /> View
+            <TableContainer>
+                <THead>
+                    <TR>
+                        <TH>Order ID</TH>
+                        <TH>Customer</TH>
+                        <TH>Date</TH>
+                        <TH>Status</TH>
+                        <TH>Total</TH>
+                        <TH align="right">Actions</TH>
+                    </TR>
+                </THead>
+                <TBody>
+                    {orderList.length === 0 ? (
+                        <TR>
+                            <TD colSpan={6} className="p-0 border-none">
+                                <EmptyState 
+                                    icon={<Package size={32} />} 
+                                    message="No transactions found. Your ledger is currently clean." 
+                                />
+                            </TD>
+                        </TR>
+                    ) : (
+                        orderList.map((order) => (
+                            <TR key={order.id}>
+                                <TD className="font-mono text-[10px] text-white">
+                                    #{order.id.slice(0, 8).toUpperCase()}
+                                </TD>
+                                <TD>
+                                    <div className="text-sm font-bold text-white tracking-tight">{order.customerName}</div>
+                                    <div className="text-[10px] text-gray-400 mt-0.5">{order.customerEmail}</div>
+                                </TD>
+                                <TD className="text-xs text-white">
+                                    {new Date(order.createdAt).toLocaleDateString()}
+                                </TD>
+                                <TD>
+                                    <StatusBadge 
+                                        type={
+                                            order.paymentStatus === 'paid' ? 'success' : 
+                                            order.paymentStatus === 'failed' ? 'error' : 
+                                            'warning'
+                                        } 
+                                        label={order.paymentStatus || 'pending'} 
+                                    />
+                                </TD>
+                                <TD className="text-sm font-bold text-white">
+                                    {formatPrice(order.total, currency)}
+                                </TD>
+                                <TD align="right">
+                                    <div className="flex justify-end gap-3 items-center">
+                                        <Link href={`/dashboard/orders/${order.id}`} className="p-1 text-white hover:text-[#2eaadc] transition-colors" title="View Order">
+                                            <Eye size={14} />
                                         </Link>
-                                    </td>
-                                </tr>
-                            ))
-                        )}
-                    </tbody>
-                </table>
-            </div>
+                                    </div>
+                                </TD>
+                            </TR>
+                        ))
+                    )}
+                </TBody>
+            </TableContainer>
         </div>
     );
 }

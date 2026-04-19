@@ -3,7 +3,7 @@
 
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, Save, Trash2 } from "lucide-react";
+import { ArrowLeft, Save, Trash2, Loader2 } from "lucide-react";
 import Link from "next/link";
 
 interface TestimonialEditorProps {
@@ -76,82 +76,107 @@ export default function TestimonialEditor({ initialData, isEditMode = false }: T
     };
 
     return (
-        <div className="max-w-2xl mx-auto py-8 px-4">
-            <Link href="/dashboard/testimonials" className="inline-flex items-center text-gray-500 hover:text-gray-900 mb-6">
-                <ArrowLeft size={18} className="mr-2" /> Back to Testimonials
+        <div className="w-full py-10 px-4 animate-in fade-in slide-in-from-bottom-4 duration-700 pb-20">
+            <Link href="/dashboard/testimonials" className="inline-flex items-center gap-2 text-white hover:text-white mb-8 group transition-all font-bold text-xs uppercase tracking-widest">
+                <div className="w-8 h-8 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center group-hover:bg-white/10 group-hover:scale-110 transition-all">
+                    <ArrowLeft size={16} />
+                </div>
+                Back to Testimonials
             </Link>
 
             <div className="flex justify-between items-center mb-8">
-                <h1 className="text-2xl font-bold text-gray-900">
-                    {isEditMode ? "Edit Testimonial" : "Add New Testimonial"}
-                </h1>
+                <div>
+                    <h1 className="text-3xl font-extrabold text-white tracking-tight">
+                        {isEditMode ? "Edit Testimonial" : "Create Testimonial"}
+                    </h1>
+                    <p className="text-white font-medium mt-1 text-xs">
+                        {isEditMode ? `Managing testimonial from ${formData.author}` : "Add a new customer endorsement to your collection."}
+                    </p>
+                </div>
                 {isEditMode && (
                     <button
                         onClick={handleDelete}
                         type="button"
-                        className="text-red-600 hover:bg-red-50 p-2 rounded-lg transition"
-                        title="Delete Testimonial"
+                        className="w-12 h-12 flex items-center justify-center bg-red-500/10 border border-red-500/20 text-red-500 rounded-2xl hover:bg-red-500/20 transition-all hover:scale-110 active:scale-95"
+                        title="Purge Sentiment"
                     >
                         <Trash2 size={20} />
                     </button>
                 )}
             </div>
 
-            <form onSubmit={handleSubmit} className="space-y-6 bg-white p-8 rounded-xl border border-gray-100 shadow-sm">
-                <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Author Name</label>
-                    <input
-                        required
-                        type="text"
-                        value={formData.author}
-                        onChange={(e) => setFormData({ ...formData, author: e.target.value })}
-                        className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
-                        placeholder="e.g. John Doe"
-                    />
-                </div>
+            <form onSubmit={handleSubmit} className="bg-[#0a0a0a] rounded-2xl border border-white/5 shadow-2xl relative overflow-hidden group">
+                <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-indigo-500/50 via-purple-500/50 to-blue-500/50"></div>
+                <div className="p-6 space-y-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <div className="space-y-1.5">
+                            <label className="text-[10px] font-bold text-white uppercase tracking-[0.2em] ml-1 text-indigo-400">Author Name</label>
+                            <input
+                                required
+                                type="text"
+                                value={formData.author}
+                                onChange={(e) => setFormData({ ...formData, author: e.target.value })}
+                                className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500/50 outline-none text-white transition-all font-bold"
+                                placeholder="e.g. Architect-Zero-One"
+                            />
+                        </div>
 
-                <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Role / Title</label>
-                    <input
-                        type="text"
-                        value={formData.role}
-                        onChange={(e) => setFormData({ ...formData, role: e.target.value })}
-                        className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
-                        placeholder="e.g. CEO of Company"
-                    />
-                </div>
+                        <div className="space-y-1.5">
+                            <label className="text-[10px] font-bold text-white uppercase tracking-[0.2em] ml-1 text-indigo-400">Role / Company</label>
+                            <input
+                                type="text"
+                                value={formData.role}
+                                onChange={(e) => setFormData({ ...formData, role: e.target.value })}
+                                className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500/50 outline-none text-white transition-all font-medium"
+                                placeholder="e.g. Chief of Digital Manifest"
+                            />
+                        </div>
+                    </div>
 
-                <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Quote</label>
-                    <textarea
-                        required
-                        value={formData.quote}
-                        onChange={(e) => setFormData({ ...formData, quote: e.target.value })}
-                        className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none h-32 resize-none"
-                        placeholder="What did they say?"
-                    />
-                </div>
-
-                <div>
-                    <label className="flex items-center space-x-3 p-4 border rounded-lg hover:bg-gray-50 cursor-pointer">
-                        <input
-                            type="checkbox"
-                            checked={formData.isApproved}
-                            onChange={(e) => setFormData({ ...formData, isApproved: e.target.checked })}
-                            className="w-5 h-5 text-blue-600 rounded focus:ring-blue-500"
+                    <div className="space-y-1.5">
+                        <label className="text-[10px] font-bold text-white uppercase tracking-[0.2em] ml-1 text-indigo-400">Testimonial Quote</label>
+                        <textarea
+                            required
+                            value={formData.quote}
+                            onChange={(e) => setFormData({ ...formData, quote: e.target.value })}
+                            className="w-full px-4 py-4 bg-white/5 border border-white/10 rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500/50 outline-none text-white transition-all h-40 resize-none font-medium leading-relaxed"
+                            placeholder="State the observed value..."
                         />
-                        <span className="text-gray-900 font-medium">Approved (Visible on public site)</span>
-                    </label>
-                </div>
+                    </div>
 
-                <div className="pt-4">
-                    <button
-                        type="submit"
-                        disabled={loading}
-                        className="w-full flex items-center justify-center bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition font-medium disabled:opacity-50"
-                    >
-                        {loading ? "Saving..." : <><Save size={20} className="mr-2" /> Save Testimonial</>}
-                    </button>
+                    <div className="pt-6 border-t border-white/5">
+                        <label className="flex items-center space-x-4 p-4 rounded-xl bg-white/[0.02] border border-white/5 hover:border-white/10 cursor-pointer transition-all group/toggle">
+                            <div className={`w-12 h-6 rounded-full relative transition-all duration-300 ${formData.isApproved ? 'bg-indigo-600 shadow-[0_0_15px_rgba(79,70,229,0.3)]' : 'bg-white/10 border border-white/5'}`}>
+                                <div className={`absolute top-1 w-4 h-4 rounded-full bg-white transition-all duration-300 ${formData.isApproved ? 'left-7' : 'left-1'}`} />
+                            </div>
+                            <input
+                                type="checkbox"
+                                checked={formData.isApproved}
+                                onChange={(e) => setFormData({ ...formData, isApproved: e.target.checked })}
+                                className="hidden"
+                            />
+                            <div className="flex flex-col">
+                                <span className="text-white font-bold text-sm tracking-tight">Visibility</span>
+                                <span className="text-[10px] text-white font-bold uppercase tracking-widest mt-0.5">Show this testimonial on the website</span>
+                            </div>
+                        </label>
+                    </div>
+
+                    <div className="pt-6 flex justify-end items-center gap-6 border-t border-white/5">
+                        {loading && (
+                            <div className="flex items-center gap-3 text-indigo-400 font-bold text-[10px] uppercase tracking-widest animate-pulse">
+                                <Loader2 size={16} className="animate-spin" /> Saving...
+                            </div>
+                        )}
+                        <button
+                            type="submit"
+                            disabled={loading}
+                            className="flex items-center justify-center bg-indigo-600 text-white px-8 py-3 rounded-xl hover:bg-indigo-500 transition-all font-bold text-xs uppercase tracking-widest shadow-xl shadow-indigo-600/20 active:scale-95 disabled:opacity-50"
+                        >
+                            {!loading && <Save size={16} className="mr-3" />}
+                            {loading ? "Saving..." : "Save Testimonial"}
+                        </button>
+                    </div>
                 </div>
             </form>
         </div>

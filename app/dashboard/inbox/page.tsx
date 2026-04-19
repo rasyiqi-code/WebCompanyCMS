@@ -3,6 +3,11 @@
 
 import { useEffect, useState } from "react";
 import { Loader2, Mail, Calendar } from "lucide-react";
+import { 
+    PageHeader,
+    Skeleton,
+    CardSkeleton
+} from "@/components/dashboard/ui/DataTable";
 
 type Submission = {
     id: string;
@@ -31,33 +36,62 @@ export default function InboxPage() {
             });
     }, []);
 
-    if (loading) return <div className="p-10 flex justify-center"><Loader2 className="animate-spin" /></div>;
+    if (loading) return (
+        <div className="w-full animate-in fade-in duration-700 pb-20 px-4">
+            <PageHeader title="Inbox" subtitle="Aggregate and read inbound communications from your website." />
+            <div className="space-y-6">
+                {Array.from({ length: 3 }).map((_, i) => (
+                    <div key={i} className="bg-[#202020] rounded border border-[#2f2f2f] p-6 space-y-4">
+                        <div className="flex justify-between">
+                            <Skeleton className="h-6 w-1/3" />
+                            <Skeleton className="h-4 w-16" />
+                        </div>
+                        <Skeleton className="h-4 w-1/2" />
+                        <Skeleton className="h-20 w-full" />
+                    </div>
+                ))}
+            </div>
+        </div>
+    );
 
     return (
-        <div className="space-y-6">
-            <h1 className="text-2xl font-bold text-gray-900">Inbox / Messages</h1>
+        <div className="w-full animate-in fade-in duration-700 pb-20 px-4">
+            <PageHeader 
+                title="Inbox" 
+                subtitle="Aggregate and read inbound communications from your website." 
+            />
 
             {messages.length === 0 ? (
-                <div className="bg-white p-10 rounded-xl border text-center text-gray-500">
-                    <Mail size={48} className="mx-auto mb-4 opacity-20" />
-                    <p>No messages yet.</p>
+                <div className="bg-[#202020] py-32 rounded border border-[#2f2f2f] text-center">
+                    <Mail size={40} className="mx-auto mb-4 text-gray-700" />
+                    <p className="text-white text-xs font-medium">No messages found in your inbox.</p>
                 </div>
             ) : (
-                <div className="grid gap-4">
+                <div className="space-y-6">
                     {messages.map(msg => (
-                        <div key={msg.id} className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow">
-                            <div className="flex justify-between items-start mb-2">
-                                <div>
-                                    <h3 className="font-bold text-lg text-gray-900">{msg.subject || "(No Subject)"}</h3>
-                                    <p className="text-sm text-blue-600 font-medium">{msg.name} &lt;{msg.email}&gt;</p>
+                        <div key={msg.id} className="bg-[#202020] rounded border border-[#2f2f2f] transition-all overflow-hidden w-full">
+                            <div className="p-6">
+                                <div className="flex flex-col md:flex-row justify-between items-start gap-3 mb-6">
+                                    <div>
+                                        <h3 className="font-bold text-lg text-white tracking-tight mb-2">
+                                            {msg.subject || "(Untitled Message)"}
+                                        </h3>
+                                        <div className="flex items-center gap-2">
+                                            <div className="w-6 h-6 rounded bg-white/5 flex items-center justify-center text-white font-bold text-[10px] border border-[#2f2f2f]">
+                                                {msg.name[0].toUpperCase()}
+                                            </div>
+                                            <p className="text-[11px] font-medium text-white">
+                                                {msg.name} <span className="mx-1 text-gray-800">•</span> <span className="text-white lowercase">{msg.email}</span>
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <div className="text-[10px] font-medium text-white uppercase tracking-widest bg-white/[0.02] px-2 py-1 rounded border border-[#2f2f2f]">
+                                        {new Date(msg.createdAt).toLocaleDateString(undefined, { day: '2-digit', month: 'short', year: 'numeric' })}
+                                    </div>
                                 </div>
-                                <div className="text-xs text-gray-400 flex items-center gap-1">
-                                    <Calendar size={12} />
-                                    {new Date(msg.createdAt).toLocaleDateString()} {new Date(msg.createdAt).toLocaleTimeString()}
+                                <div className="p-4 bg-white/[0.01] rounded border border-[#2f2f2f] text-white text-sm leading-relaxed whitespace-pre-wrap font-medium">
+                                    {msg.message}
                                 </div>
-                            </div>
-                            <div className="bg-gray-50 p-4 rounded-lg text-gray-700 text-sm whitespace-pre-wrap">
-                                {msg.message}
                             </div>
                         </div>
                     ))}

@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { CheckCircle, Truck, XCircle, Clock, Save } from "lucide-react";
+import { CheckCircle, Truck, XCircle, Clock, Save, Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 export default function OrderStatusManager({ orderId, paymentStatus, fulfillmentStatus }: { orderId: string, paymentStatus: string, fulfillmentStatus: string }) {
@@ -37,49 +37,53 @@ export default function OrderStatusManager({ orderId, paymentStatus, fulfillment
     };
 
     return (
-        <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm mt-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">Manage Order Status</h3>
+        <div className="bg-[#0a0a0a] p-6 rounded-2xl border border-white/5 shadow-2xl relative overflow-hidden group">
+            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-emerald-500 via-indigo-500 to-blue-500"></div>
+            <h3 className="text-xs font-black text-indigo-400 mb-6 uppercase tracking-[0.2em]">Sync Order Status</h3>
 
-            <div className="space-y-4">
-                <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Payment Status</label>
+            <div className="space-y-6">
+                <div className="space-y-1.5">
+                    <label className="text-[10px] font-bold text-white uppercase tracking-[0.2em] ml-1">Payment Tracking</label>
                     <select
                         value={pStatus}
                         onChange={(e) => setPStatus(e.target.value)}
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none bg-white"
+                        className="appearance-none w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500/50 outline-none text-white transition-all font-bold text-sm cursor-pointer"
                     >
-                        <option value="pending">Pending</option>
-                        <option value="paid">Paid</option>
-                        <option value="failed">Failed</option>
-                        <option value="refunded">Refunded</option>
+                        <option value="pending" className="bg-[#111]">Pending Authorization</option>
+                        <option value="paid" className="bg-[#111]">Capital Verified</option>
+                        <option value="failed" className="bg-[#111]">Transmission Failure</option>
+                        <option value="refunded" className="bg-[#111]">Asset Reversion</option>
                     </select>
                 </div>
 
-                <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Fulfillment Status</label>
+                <div className="space-y-1.5">
+                    <label className="text-[10px] font-bold text-white uppercase tracking-[0.2em] ml-1">Fulfillment Status</label>
                     <select
                         value={fStatus}
                         onChange={(e) => setFStatus(e.target.value)}
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none bg-white"
+                        className="appearance-none w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500/50 outline-none text-white transition-all font-bold text-sm cursor-pointer"
                     >
-                        <option value="unfulfilled">Unfulfilled</option>
-                        <option value="shipped">Shipped</option>
-                        <option value="delivered">Delivered</option>
-                        <option value="returned">Returned</option>
-                        <option value="cancelled">Cancelled</option>
+                        <option value="unfulfilled" className="bg-[#111]">Awaiting Logistics</option>
+                        <option value="shipped" className="bg-[#111]">Transit Initiated</option>
+                        <option value="delivered" className="bg-[#111]">Recipient Acquisition</option>
+                        <option value="returned" className="bg-[#111]">Reverse Logistics</option>
+                        <option value="cancelled" className="bg-[#111]">Protocol Terminated</option>
                     </select>
                 </div>
 
-                <div className="pt-2">
+                <div className="pt-4">
                     <button
                         onClick={handleUpdate}
                         disabled={isLoading || (pStatus === paymentStatus && fStatus === fulfillmentStatus)}
-                        className="w-full px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed font-medium flex items-center justify-center"
+                        className="w-full px-8 py-3 bg-indigo-600 text-white rounded-xl hover:bg-indigo-500 disabled:opacity-30 disabled:cursor-not-allowed font-bold text-xs uppercase tracking-widest transition-all shadow-lg shadow-indigo-600/20 active:scale-95 flex items-center justify-center gap-3"
                     >
-                        {isLoading ? "Saving..." : <><Save size={18} className="mr-2" /> Update Statuses</>}
+                        {isLoading ? <Loader2 size={16} className="animate-spin" /> : <Save size={16} />}
+                        {isLoading ? "Saving..." : "Update Status"}
                     </button>
                 </div>
             </div>
         </div>
     );
 }
+
+

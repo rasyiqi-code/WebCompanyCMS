@@ -3,6 +3,13 @@
 import React, { useState, useEffect } from "react";
 import { SiteSettings } from "../../../../lib/settings";
 import { Loader2, Save } from "lucide-react";
+import { 
+    PageHeader,
+    Skeleton,
+    FormSection,
+    FormInput,
+    FormTextArea
+} from "@/components/dashboard/ui/DataTable";
 
 export default function GeneralSettingsPage() {
     const [settings, setSettings] = useState<SiteSettings | null>(null);
@@ -46,120 +53,118 @@ export default function GeneralSettingsPage() {
         }
     };
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
         if (!settings) return;
         setSettings({ ...settings, [e.target.name]: e.target.value });
     };
 
-    if (loading) return <div className="flex justify-center p-10"><Loader2 className="animate-spin" /></div>;
+    if (loading) return (
+        <div className="w-full animate-in fade-in duration-700 pb-20 px-4 space-y-8">
+            <PageHeader title="General Settings" subtitle="Define your project's foundational attributes." />
+            <div className="space-y-6">
+                <Skeleton className="h-[200px] w-full" />
+                <Skeleton className="h-[300px] w-full" />
+            </div>
+        </div>
+    );
     if (!settings) return <div className="p-10">Error loading settings</div>;
 
     return (
-        <form onSubmit={handleSubmit} className="space-y-8 bg-white p-8 rounded-xl border border-gray-200 shadow-sm">
-            {message && <div className={`px-4 py-2 rounded text-sm font-medium ${message.includes("Error") ? "bg-red-100 text-red-700" : "bg-green-100 text-green-700"}`}>{message}</div>}
+        <form onSubmit={handleSubmit} className="w-full animate-in fade-in duration-700 pb-20 px-4 space-y-8">
+            <PageHeader 
+                title="General Settings" 
+                subtitle="Define your project's foundational attributes and core site identity." 
+            />
 
             {/* General Info */}
-            <div>
-                <h2 className="text-lg font-semibold text-gray-900 mb-4 border-b pb-2">General Information</h2>
+            <FormSection 
+                title="Core Identity" 
+                description="Define your project's foundational attributes and public-facing identity."
+            >
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">Site Name</label>
-                        <input name="siteName" value={settings.siteName || ""} onChange={handleChange} className="w-full px-3 py-2 border rounded-md" />
-                    </div>
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">Tagline</label>
-                        <input name="tagline" value={settings.tagline || ""} onChange={handleChange} placeholder="e.g. Best Widget Maker" className="w-full px-3 py-2 border rounded-md" />
-                    </div>
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">Logo URL</label>
-                        <input name="logoUrl" value={settings.logoUrl || ""} onChange={handleChange} placeholder="https://example.com/logo.png" className="w-full px-3 py-2 border rounded-md" />
-                        <p className="text-xs text-gray-500 mt-1">If set, this image will replace the Site Name text.</p>
-                    </div>
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">Contact Email</label>
-                        <input name="contactEmail" value={settings.contactEmail || ""} onChange={handleChange} className="w-full px-3 py-2 border rounded-md" />
-                    </div>
-                    <div className="md:col-span-2">
-                        <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
-                        <textarea name="description" value={settings.description || ""} onChange={handleChange} className="w-full px-3 py-2 border rounded-md" rows={3} />
+                    <FormInput label="Site Name" name="siteName" value={settings.siteName || ""} onChange={handleChange} />
+                    <FormInput label="Hero Tagline" name="tagline" value={settings.tagline || ""} onChange={handleChange} placeholder="e.g. Masterwork Engineering" />
+                    <FormInput label="Brand Logo URL" name="logoUrl" value={settings.logoUrl || ""} onChange={handleChange} placeholder="https://..." />
+                    <FormInput label="Contact Email" name="contactEmail" value={settings.contactEmail || ""} onChange={handleChange} />
+                    <FormTextArea label="Description" name="description" value={settings.description || ""} onChange={handleChange} className="md:col-span-2" />
+                </div>
+            </FormSection>
+
+            {/* Theme Selection */}
+            <FormSection 
+                title="Visual Engine" 
+                description="Select the architectural theme that defines your site's presentation layer."
+            >
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="space-y-1.5">
+                        <label className="text-[10px] font-bold text-white/40 uppercase tracking-widest ml-1">Active Theme</label>
+                        <select 
+                            name="activeTheme"
+                            value={settings.activeTheme || "default"}
+                            onChange={handleChange}
+                            className="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg focus:ring-2 focus:ring-[#2eaadc]/20 focus:border-[#2eaadc]/50 outline-none text-xs text-white transition-all appearance-none cursor-pointer"
+                        >
+                            <option value="default" className="bg-[#202020]">Default (Standard Next)</option>
+                            <option value="luxury" className="bg-[#202020]">Luxury Dark (Premium Serif)</option>
+                        </select>
+                        <p className="text-[9px] text-gray-500 mt-1 italic">Switching themes instantly modifies fonts, colors, and layouts across the public site.</p>
                     </div>
                 </div>
-            </div>
+            </FormSection>
 
             {/* SEO Configuration */}
-            <div>
-                <h2 className="text-lg font-semibold text-gray-900 mb-4 border-b pb-2">SEO Configuration (Global)</h2>
+            <FormSection 
+                title="Visibility Matrix" 
+                description="Fine-tune your global search and discovery footprint for maximum engagement."
+            >
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">Default Title Template</label>
-                        <input name="seoTitle" value={settings.seoTitle || ""} onChange={handleChange} placeholder="%s | My Site" className="w-full px-3 py-2 border rounded-md" />
-                        <p className="text-xs text-gray-500 mt-1">Use %s as a placeholder for the page title.</p>
-                    </div>
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">Default Keywords</label>
-                        <input name="seoKeywords" value={settings.seoKeywords || ""} onChange={handleChange} placeholder="nextjs, builder, awesome" className="w-full px-3 py-2 border rounded-md" />
-                    </div>
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">Calculated Favicon URL</label>
-                        <input name="faviconUrl" value={settings.faviconUrl || ""} onChange={handleChange} placeholder="https://example.com/favicon.ico" className="w-full px-3 py-2 border rounded-md" />
-                    </div>
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">Default Social Image</label>
-                        <input name="seoImage" value={settings.seoImage || ""} onChange={handleChange} placeholder="https://example.com/og-image.jpg" className="w-full px-3 py-2 border rounded-md" />
-                    </div>
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">Google Site Verification ID</label>
-                        <input name="googleSiteVerificationId" value={settings.googleSiteVerificationId || ""} onChange={handleChange} placeholder="e.g. A1B2C3D4..." className="w-full px-3 py-2 border rounded-md" />
-                        <p className="text-xs text-gray-500 mt-1">Found in your Google Search Console verification meta tag (content=&quot;...&quot;).</p>
-                    </div>
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">Google Analytics ID</label>
-                        <input name="googleAnalyticsId" value={settings.googleAnalyticsId || ""} onChange={handleChange} placeholder="G-XXXXXXXXXX" className="w-full px-3 py-2 border rounded-md" />
-                    </div>
+                    <FormInput label="Meta Title Pattern" name="seoTitle" value={settings.seoTitle || ""} onChange={handleChange} placeholder="%s | Studio" />
+                    <FormInput label="Global Keywords" name="seoKeywords" value={settings.seoKeywords || ""} onChange={handleChange} />
+                    <FormInput label="Favicon URL" name="faviconUrl" value={settings.faviconUrl || ""} onChange={handleChange} />
+                    <FormInput label="OG Image Reference" name="seoImage" value={settings.seoImage || ""} onChange={handleChange} />
+                    <FormInput label="GSV ID" name="googleSiteVerificationId" value={settings.googleSiteVerificationId || ""} onChange={handleChange} />
+                    <FormInput label="Analytics ID (GA4)" name="googleAnalyticsId" value={settings.googleAnalyticsId || ""} onChange={handleChange} />
                 </div>
-            </div>
+            </FormSection>
 
             {/* Social Media */}
-            <div>
-                <h2 className="text-lg font-semibold text-gray-900 mb-4 border-b pb-2">Social Media Links</h2>
+            <FormSection 
+                title="Social Ecosystem" 
+                description="Link your presence across the digital landscape to foster multi-channel growth."
+            >
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">Facebook</label>
-                        <input name="socialFacebook" value={settings.socialFacebook || ""} onChange={handleChange} className="w-full px-3 py-2 border rounded-md" />
-                    </div>
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">Twitter (X)</label>
-                        <input name="socialTwitter" value={settings.socialTwitter || ""} onChange={handleChange} className="w-full px-3 py-2 border rounded-md" />
-                    </div>
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">Instagram</label>
-                        <input name="socialInstagram" value={settings.socialInstagram || ""} onChange={handleChange} className="w-full px-3 py-2 border rounded-md" />
-                    </div>
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">LinkedIn</label>
-                        <input name="socialLinkedin" value={settings.socialLinkedin || ""} onChange={handleChange} className="w-full px-3 py-2 border rounded-md" />
-                    </div>
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">WhatsApp</label>
-                        <input name="socialWhatsapp" value={settings.socialWhatsapp || ""} onChange={handleChange} className="w-full px-3 py-2 border rounded-md" />
-                    </div>
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">Telegram</label>
-                        <input name="socialTelegram" value={settings.socialTelegram || ""} onChange={handleChange} className="w-full px-3 py-2 border rounded-md" />
-                    </div>
+                    {["socialFacebook", "socialTwitter", "socialInstagram", "socialLinkedin", "socialWhatsapp", "socialTelegram"].map((social) => (
+                        <FormInput 
+                            key={social}
+                            label={social.replace("social", "")} 
+                            name={social} 
+                            value={(settings as any)[social] || ""} 
+                            onChange={handleChange} 
+                        />
+                    ))}
                 </div>
-            </div>
+            </FormSection>
 
             <div className="flex justify-end pt-4">
                 <button
                     type="submit"
                     disabled={saving}
-                    className="flex items-center bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 disabled:opacity-50"
+                    className="flex items-center justify-center px-6 py-2 bg-[#2eaadc] text-white rounded hover:bg-[#1a99cc] disabled:opacity-50 text-xs font-bold transition-colors"
                 >
-                    {saving ? <Loader2 className="animate-spin mr-2" size={18} /> : <Save className="mr-2" size={18} />}
-                    Save Changes
+                    {saving ? <Loader2 className="animate-spin mr-2" size={14} /> : <Save className="mr-2" size={14} />}
+                    Save Settings
                 </button>
             </div>
+
+            {message && (
+                <div className={`fixed bottom-8 right-8 px-6 py-3 rounded-lg shadow-2xl text-xs font-bold border animate-in slide-in-from-bottom-4 duration-500 z-50 ${
+                    message.includes("Error") 
+                        ? "bg-red-500 text-white border-red-600" 
+                        : "bg-[#2eaadc] text-white border-[#2eaadc]/20"
+                }`}>
+                    {message}
+                </div>
+            )}
         </form>
     );
 }

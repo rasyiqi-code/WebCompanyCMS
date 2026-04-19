@@ -1,0 +1,45 @@
+{
+  "name": "@credbuild/plugin-heading-analyzer",
+  "version": "0.21.2",
+  "author": "Chris Villa <chris@credbuild.com>",
+  "repository": "credbuild/credbuild",
+  "bugs": "https://github.com/credbuild/credbuild/issues",
+  "homepage": "https://credbuild.com",
+  "private": false,
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.mjs",
+      "types": "./dist/index.d.ts"
+    },
+    "./dist/index.css": "./dist/index.css"
+  },
+  "license": "MIT",
+  "scripts": {
+    "lint": "eslint \"**/*.ts*\"",
+    "build": "rm -rf dist && tsup index.ts",
+    "dev": "tsup index.ts --watch"
+  },
+  "files": [
+    "dist"
+  ],
+  "devDependencies": {
+    "@credbuild/core": "^0.21.2",
+    "@types/minimatch": "3.0.5",
+    "@types/react": "^19.0.1",
+    "@types/react-dom": "^19.0.2",
+    "eslint": "^7.32.0",
+    "eslint-config-custom": "*",
+    "tsconfig": "*",
+    "tsup": "^8.2.4",
+    "tsup-config": "*",
+    "typescript": "^5.5.4"
+  },
+  "dependencies": {
+    "react-from-json": "^0.8.0"
+  },
+  "peerDependencies": {
+    "react": "^17.0.0 || ^18.0.0 || ^19.0.0"
+  }
+}

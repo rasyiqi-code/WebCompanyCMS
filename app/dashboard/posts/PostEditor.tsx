@@ -2,8 +2,9 @@
 
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Save, ArrowLeft } from "lucide-react";
+import { Save, ArrowLeft, Loader2, Image as ImageIcon } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 import TiptapEditor from "@/components/TiptapEditor";
 
 // Tiptap is now fully implemented.
@@ -69,103 +70,97 @@ export default function PostEditor({ postId, initialData }: { postId?: string, i
     }
 
     return (
-        <form onSubmit={handleSubmit} className="max-w-4xl mx-auto">
-            <div className="flex items-center justify-between mb-8">
-                <div className="flex items-center">
-                    <Link href="/dashboard/posts" className="mr-4 text-gray-500 hover:text-gray-900 transition-colors">
-                        <ArrowLeft size={24} />
+        <form onSubmit={handleSubmit} className="w-full animate-in fade-in duration-700 pb-20 px-4">
+            <div className="flex items-center justify-between mb-8 border-b border-[#2f2f2f] pb-4">
+                <div className="flex items-center gap-4">
+                    <Link href="/dashboard/posts" className="w-8 h-8 rounded hover:bg-white/5 flex items-center justify-center text-white hover:text-white transition-colors">
+                        <ArrowLeft size={16} />
                     </Link>
-                    <div>
-                        <h1 className="text-2xl font-bold text-gray-900">
-                            {postId ? "Edit Post" : "Create New Post"}
-                        </h1>
-                        <p className="text-sm text-gray-500">
-                            {postId ? `Editing: ${initialData?.title}` : "Write something amazing."}
-                        </p>
-                    </div>
+                    <h1 className="text-xl font-bold text-white tracking-tight">
+                        {postId ? title || "Untitled post" : "Untitled post"}
+                    </h1>
                 </div>
-                <div className="flex items-center space-x-3">
-                    <span className="text-sm text-gray-500">
-                        {isLoading ? "Saving..." : "Unsaved changes"}
-                    </span>
+                <div className="flex items-center gap-3">
                     <button
                         type="submit"
                         disabled={isLoading}
-                        className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium disabled:opacity-50"
+                        className="px-3 py-1.5 bg-[#2eaadc] text-white rounded text-xs font-bold hover:bg-[#1a99cc] transition-colors disabled:opacity-50"
                     >
-                        <Save size={18} className="mr-2" />
-                        Save Post
+                        {isLoading ? "Saving..." : "Save"}
                     </button>
                 </div>
             </div>
 
-            <div className="grid grid-cols-3 gap-8">
-                <div className="col-span-2 space-y-6">
-                    <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                            Post Title
-                        </label>
+            <div className="grid grid-cols-1 lg:grid-cols-4 gap-10">
+                {/* Main Content Area */}
+                <div className="lg:col-span-3 space-y-8">
+                    <div className="space-y-4">
                         <input
                             type="text"
                             value={title}
                             onChange={(e) => setTitle(e.target.value)}
-                            placeholder="Enter post title"
-                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
+                            className="w-full px-0 py-1 bg-transparent border-none focus:ring-0 outline-none text-2xl font-bold text-white placeholder:text-[#373737]"
+                            placeholder="Post Title"
                             required
                         />
                     </div>
 
-                    <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm min-h-[400px]">
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                            Content
-                        </label>
-                        <TiptapEditor content={content} onChange={setContent} />
+                    <div className="min-h-[400px] border-t border-[#2f2f2f] pt-4">
+                        <TiptapEditor
+                            content={content}
+                            onChange={setContent}
+                        />
                     </div>
                 </div>
 
+                {/* Sidebar area */}
                 <div className="space-y-6">
-                    <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
-                        <h3 className="text-sm font-bold text-gray-900 mb-4 uppercase tracking-wider">
-                            Publishing
-                        </h3>
+                    <div className="space-y-4">
+                        <h3 className="text-[11px] font-bold text-white uppercase tracking-widest opacity-50">Settings</h3>
+                        
                         <div className="space-y-4">
-                            <div>
-                                <label className="block text-xs font-medium text-gray-500 mb-1">
-                                    Slug (URL)
-                                </label>
+                            <div className="space-y-1">
+                                <label className="text-xs font-medium text-white">Slug</label>
                                 <input
                                     type="text"
                                     value={slug}
                                     onChange={(e) => setSlug(e.target.value)}
-                                    placeholder="post-url-slug"
-                                    className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
-                                    required
+                                    className="w-full px-2 py-1.5 bg-white/5 border border-[#2f2f2f] rounded text-[11px] font-mono text-white outline-none focus:border-gray-500 transition-colors"
                                 />
                             </div>
-                            <div>
-                                <label className="block text-xs font-medium text-gray-500 mb-1">
-                                    Feature Image URL
-                                </label>
-                                <input
-                                    type="text"
-                                    value={imageUrl}
-                                    onChange={(e) => setImageUrl(e.target.value)}
-                                    placeholder="https://..."
-                                    className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
-                                />
-                            </div>
-                            <div>
-                                <label className="block text-xs font-medium text-gray-500 mb-1">
-                                    Status
-                                </label>
+
+                            <div className="space-y-1">
+                                <label className="text-xs font-medium text-white">Status</label>
                                 <select
-                                    className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none bg-white"
                                     value={status}
                                     onChange={(e) => setStatus(e.target.value)}
+                                    className="w-full px-2 py-1.5 bg-[#202020] border border-[#2f2f2f] rounded text-xs text-white outline-none focus:border-gray-500 transition-colors"
                                 >
-                                    <option value="draft">Draft</option>
-                                    <option value="published">Published</option>
+                                    <option value="DRAFT">Draft</option>
+                                    <option value="PUBLISHED">Published</option>
                                 </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="pt-6 border-t border-[#2f2f2f]">
+                        <h3 className="text-[11px] font-bold text-white uppercase tracking-widest opacity-50 mb-4">Cover Image</h3>
+                        <div className="space-y-3">
+                            <input
+                                type="text"
+                                value={imageUrl}
+                                onChange={(e) => setImageUrl(e.target.value)}
+                                placeholder="Image URL..."
+                                className="w-full px-2 py-1.5 bg-white/5 border border-[#2f2f2f] rounded text-[11px] text-white outline-none focus:border-gray-500 transition-colors"
+                            />
+                            <div className="relative aspect-video bg-white/[0.02] border border-[#2f2f2f] rounded overflow-hidden">
+                                {imageUrl ? (
+                                    <Image src={imageUrl} alt="Cover" fill className="object-cover" />
+                                ) : (
+                                    <div className="w-full h-full flex items-center justify-center text-[10px] text-gray-700 font-bold uppercase tracking-widest">
+                                        No Image
+                                    </div>
+                                )}
                             </div>
                         </div>
                     </div>

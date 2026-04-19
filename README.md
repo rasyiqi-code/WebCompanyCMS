@@ -1,89 +1,81 @@
-# Builder
+# Next CMS
 
-A powerful Next.js application for building and managing content with Puck. This project features a robust dashboard for page management, SEO optimization, and dynamic content rendering.
+<p align="center">
+  <a href="README.md">English</a> | <a href="README.id.md">Bahasa Indonesia</a>
+</p>
+
+A powerful Next.js application for building and managing content with CredBuild. Featuring a **Universal Adaptive Installer**, Next CMS works seamlessly across Vercel, VPS, and Docker environments.
 
 ## Features
 
-- **Page Builder**: Visual editing with Puck.
-- **Content Management**: Dashboard to manage pages, posts, products, and more.
-- **SEO Optimized**: Built-in support for meta tags, Open Graph, Sitemap, and Robots.txt.
-- **Authentication**: Secure access for dashboard and editing routes.
-- **Database**: PostgreSQL with Drizzle ORM for efficient data management.
+- **Adaptive Installer**: Smart environment detection for effortless setup on any platform.
+- **Page Builder**: Visual editing with CredBuild.
+- **Content Management**: Robust dashboard for pages, posts, and media.
+- **SEO Optimized**: Dynamic Sitemap, Robots.txt, and metadata.
+- **Modern Stack**: Built with Next.js 15, Prisma ORM, and Tailwind CSS.
+- **Luxury Dark Studio**: Premium dashboard UI with high-density compact design.
+
+## Previews
+
+| Dashboard Overview | Media Library (Folder Based) |
+| :---: | :---: |
+| ![Dashboard Overview](docs/previews/dashboard_overview.png) | ![Media Library](docs/previews/media_library.png) |
+
+| Content Management | Taxonomy Dashboard |
+| :---: | :---: |
+| ![Pages List](docs/previews/pages_list.png) | ![Taxonomy Dashboard](docs/previews/taxonomy_dashboard.png) |
+
+| Terms Management | Settings & Compact UI |
+| :---: | :---: |
+| ![Terms Management](docs/previews/terms_management.png) | ![Header Settings](docs/previews/settings_header.png) |
 
 ## Getting Started
 
 ### Prerequisites
 
 - Node.js 18+
-- PostgreSQL Database (e.g., Neon)
-- Cloudflare R2 (for storage)
+- PostgreSQL Database
+- Cloudflare R2 (for primary storage)
 
-### Installation
+### Installation & Setup
 
-1.  Clone the repository:
+1.  **Clone the repository**:
     ```bash
-    git clone <repository-url>
-    cd builder
+    git clone https://github.com/crediblemark-official/Next_CMS.git
+    cd Next_CMS
     ```
 
-2.  Install dependencies:
+2.  **Install dependencies**:
     ```bash
-    pnpm install
+    bun install
     ```
 
-3.  Configure Environment Variables:
-    Create a `.env` file in the root directory and add the following:
-
-    ```env
-    DATABASE_URL="postgresql://user:password@host/db?sslmode=require"
-    R2_ACCOUNT_ID="your-r2-account-id"
-    R2_ACCESS_KEY_ID="your-r2-access-key"
-    R2_SECRET_ACCESS_KEY="your-r2-secret-key"
-    R2_BUCKET_NAME="your-bucket-name"
-    R2_PUBLIC_DOMAIN="https://your-r2-domain.com"
-    NEXTAUTH_SECRET="your-nextauth-secret"
-    NEXTAUTH_URL="http://localhost:3000"
-    NEXT_PUBLIC_APP_URL="http://localhost:3000"
-    ```
-
-    > **Important**: `NEXT_PUBLIC_APP_URL` is required for SEO features (Sitemap, Robots.txt, Open Graph) to work correctly.
-
-4.  Run Database Migrations:
+3.  **Deploy & Initialize**:
+    For local development:
     ```bash
-    npx drizzle-kit push
+    npx prisma db push
+    bun dev
     ```
+    Then visit `http://localhost:3000/installer` to initialize your site.
 
-5.  Start the Development Server:
-    ```bash
-    pnpm dev
-    ```
+    For **Cloud Deployment (Vercel/Railway)**, please refer to the [Deployment Guide](docs/DEPLOYMENT.md).
 
-    Navigate to [http://localhost:3000](http://localhost:3000).
+## Documentation
 
-## Default Accounts
+- [Installation Guide](docs/INSTALLATION.md) - Deep dive into local and cloud setup.
+- [Deployment Guide](docs/DEPLOYMENT.md) - Platform-specific instructions.
+- [Developer Guide](docs/creating-hero-components.md) - Creating custom components.
+- [Security Analysis](docs/security-analysis.md) - Architecture security overview.
+
+## Default Credentials
+*Only available after running the installer or seeding scripts.*
+
 | Role | Email | Password |
 | :--- | :--- | :--- |
 | **Admin** | `admin@univedpress.com` | `admin` |
-| **Editor** | `editor@univedpress.com` | `editor` |
-| **User** | `user@univedpress.com` | `user` |
 
-> **Note**: These accounts are created by running `npx tsx scripts/seed-user.ts`.
+> **Note**: Seed users can be created via `bun scripts/seed-user.ts`.
 
-## Usage
-
-### Managing Pages
-1.  Go to `http://localhost:3000/dashboard/pages`.
-2.  Click **Create New Page**.
-3.  Enter the Title, URL Path, content, and **SEO metadata** (Description, Image URL).
-4.  Click **Save**.
-
-### Editing Content
-- Use the Dashboard to manage site content.
-- Use the Puck editor (if configured) for visual page building.
-
-## SEO Configuration
-The application automatically generates:
-- **Sitemap**: `/sitemap.xml`
-- **Robots.txt**: `/robots.txt`
-
-Ensure `NEXT_PUBLIC_APP_URL` is set to your production domain (e.g., `https://example.com`) when deploying to ensure these files contain correct absolute URLs.
+## License & Author
+- **Author**: Rasyiqi Crediblemark
+- **Homepage**: [build.crediblemark.com](https://build.crediblemark.com)

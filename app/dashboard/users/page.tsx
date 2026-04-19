@@ -4,6 +4,21 @@ import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import { Search, Shield, User as UserIcon, Plus, Edit, Trash2 } from "lucide-react";
 import UserModal from "./UserModal";
+import { 
+    PageHeader, 
+    TableContainer, 
+    THead, 
+    TBody, 
+    TR, 
+    TH, 
+    TD, 
+    StatusBadge,
+    ActionButton,
+    SearchInput,
+    TableSkeleton,
+    Skeleton,
+    EmptyState
+} from "@/components/dashboard/ui/DataTable";
 
 type User = {
     id: string;
@@ -77,7 +92,7 @@ export default function UsersPage() {
     );
 
     return (
-        <div className="p-6 max-w-7xl mx-auto">
+        <div className="w-full animate-in fade-in duration-700 pb-20 px-4">
             <UserModal
                 isOpen={isModalOpen}
                 onClose={() => setIsModalOpen(false)}
@@ -85,105 +100,95 @@ export default function UsersPage() {
                 initialData={selectedUser}
             />
 
-            <div className="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
-                <div>
-                    <h1 className="text-2xl font-bold text-gray-900">Users & Permissions</h1>
-                    <p className="text-sm text-gray-500 mt-1">Manage team access and roles.</p>
-                </div>
+            <PageHeader 
+                title="Users" 
+                subtitle="Manage team entities, permissions and operational roles."
+            >
+                <button
+                    onClick={handleCreate}
+                    className="px-3 py-1.5 bg-[#2eaadc] text-white rounded text-xs font-bold hover:bg-[#1a99cc] transition-colors"
+                >
+                    New User
+                </button>
+            </PageHeader>
 
-                <div className="flex gap-2">
-                    <button
-                        onClick={handleCreate}
-                        className="flex items-center px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 font-medium text-sm transition-colors"
-                    >
-                        <Plus size={18} className="mr-2" />
-                        Add User
-                    </button>
-                </div>
-            </div>
+            <SearchInput 
+                value={searchTerm}
+                onChange={setSearchTerm}
+                placeholder="Search users..."
+            />
 
-            <div className="relative mb-6">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
-                <input
-                    type="text"
-                    placeholder="Search users..."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 outline-none w-full"
-                />
-            </div>
-
-            <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
-                <div className="overflow-x-auto">
-                    <table className="w-full text-left border-collapse">
-                        <thead>
-                            <tr className="bg-gray-50 border-b border-gray-200 text-xs uppercase text-gray-500 font-semibold tracking-wider">
-                                <th className="px-6 py-4">User</th>
-                                <th className="px-6 py-4">Role</th>
-                                <th className="px-6 py-4 text-center">Posts</th>
-                                <th className="px-6 py-4 text-right">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody className="divide-y divide-gray-100">
-                            {loading ? (
-                                <tr><td colSpan={4} className="text-center py-8">Loading users...</td></tr>
-                            ) : filteredUsers.length === 0 ? (
-                                <tr><td colSpan={4} className="text-center py-8 text-gray-400">No users found.</td></tr>
-                            ) : (
-                                filteredUsers.map((user) => (
-                                    <tr key={user.id} className="hover:bg-gray-50 transition-colors">
-                                        <td className="px-6 py-4">
-                                            <div className="flex items-center">
-                                                <div className="w-10 h-10 rounded-full bg-purple-100 flex items-center justify-center text-purple-600 mr-3 overflow-hidden relative">
-                                                    {user.image ? (
-                                                        <Image src={user.image} alt={user.name || "User"} fill className="object-cover" />
-                                                    ) : (
-                                                        <span className="font-bold text-sm">{(user.name?.[0] || user.email?.[0] || "?").toUpperCase()}</span>
-                                                    )}
-                                                </div>
-                                                <div>
-                                                    <div className="font-medium text-gray-900">{user.name || "Unknown User"}</div>
-                                                    <div className="text-sm text-gray-500">{user.email}</div>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td className="px-6 py-4">
-                                            <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${user.role === 'admin' ? 'bg-purple-50 text-purple-700 border-purple-200' :
-                                                user.role === 'editor' ? 'bg-blue-50 text-blue-700 border-blue-200' :
-                                                    'bg-gray-50 text-gray-600 border-gray-200'
-                                                }`}>
-                                                {user.role === 'admin' && <Shield size={12} className="mr-1" />}
-                                                {user.role.charAt(0).toUpperCase() + user.role.slice(1)}
-                                            </span>
-                                        </td>
-                                        <td className="px-6 py-4 text-center text-gray-500 text-sm">
-                                            {user._count?.posts || 0}
-                                        </td>
-                                        <td className="px-6 py-4 text-right">
-                                            <div className="flex justify-end gap-2">
-                                                <button
-                                                    onClick={() => handleEdit(user)}
-                                                    className="p-1.5 text-gray-500 hover:text-purple-600 hover:bg-purple-50 rounded-lg transition-colors"
-                                                    title="Edit User"
-                                                >
-                                                    <Edit size={16} />
-                                                </button>
-                                                <button
-                                                    onClick={() => handleDelete(user.id)}
-                                                    className="p-1.5 text-gray-500 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
-                                                    title="Delete User"
-                                                >
-                                                    <Trash2 size={16} />
-                                                </button>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                ))
-                            )}
-                        </tbody>
-                    </table>
-                </div>
-            </div>
+            <TableContainer>
+                <THead>
+                    <TR>
+                        <TH>User</TH>
+                        <TH>Role</TH>
+                        <TH align="center">Posts</TH>
+                        <TH align="right">Actions</TH>
+                    </TR>
+                </THead>
+                <TBody>
+                    {loading ? (
+                        Array.from({ length: 5 }).map((_, i) => (
+                            <TR key={i}>
+                                <TD><Skeleton className="h-8 w-8 rounded-full" /></TD>
+                                <TD><Skeleton className="h-4 w-32" /></TD>
+                                <TD><Skeleton className="h-4 w-16" /></TD>
+                                <TD align="center"><Skeleton className="h-4 w-8" /></TD>
+                                <TD align="right"><Skeleton className="h-6 w-12" /></TD>
+                            </TR>
+                        ))
+                    ) : filteredUsers.length === 0 ? (
+                        <TR>
+                            <TD colSpan={4} className="p-0 border-none">
+                                <EmptyState 
+                                    icon={<Shield size={32} />} 
+                                    message="No entities match your current search parameters." 
+                                />
+                            </TD>
+                        </TR>
+                    ) : (
+                        filteredUsers.map((user) => (
+                            <TR key={user.id}>
+                                <TD>
+                                    <div className="flex items-center">
+                                        <div className="w-8 h-8 rounded bg-white/5 flex items-center justify-center text-white mr-3 overflow-hidden border border-[#2f2f2f]">
+                                            {user.image ? (
+                                                <Image src={user.image} alt={user.name || "User"} fill className="object-cover" />
+                                            ) : (
+                                                <span className="font-bold text-[10px]">{(user.name?.[0] || user.email?.[0] || "?").toUpperCase()}</span>
+                                            )}
+                                        </div>
+                                        <div>
+                                            <div className="text-xs font-bold text-white tracking-tight">{user.name || "Anonymous User"}</div>
+                                            <div className="text-[10px] text-gray-400 mt-0.5">{user.email}</div>
+                                        </div>
+                                    </div>
+                                </TD>
+                                <TD>
+                                    <StatusBadge 
+                                        type={user.role === 'admin' ? "secondary" : user.role === 'editor' ? "info" : "neutral"} 
+                                        label={user.role} 
+                                    />
+                                </TD>
+                                <TD align="center" className="text-xs font-medium text-white">
+                                    {user._count?.posts || 0}
+                                </TD>
+                                <TD align="right">
+                                    <div className="flex justify-end gap-3 items-center">
+                                        <ActionButton onClick={() => handleEdit(user)} title="Edit User">
+                                            <Edit size={14} />
+                                        </ActionButton>
+                                        <ActionButton variant="danger" onClick={() => handleDelete(user.id)} title="Delete User">
+                                            <Trash2 size={14} />
+                                        </ActionButton>
+                                    </div>
+                                </TD>
+                            </TR>
+                        ))
+                    )}
+                </TBody>
+            </TableContainer>
         </div>
     );
 }

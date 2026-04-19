@@ -5,6 +5,14 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import { Loader2, Trash2, Plus, Briefcase, ExternalLink } from "lucide-react";
 import Link from "next/link";
+import { 
+    PageHeader, 
+    CardSkeleton,
+    FormSection,
+    FormInput,
+    FormTextArea,
+    EmptyState
+} from "@/components/dashboard/ui/DataTable";
 
 type PortfolioItem = {
     id: string;
@@ -55,77 +63,90 @@ export default function PortfolioDashboard() {
         fetchItems();
     };
 
-    if (loading) return <div className="p-10 flex justify-center"><Loader2 className="animate-spin" /></div>;
 
     return (
-        <div className="space-y-6">
-            <div className="flex justify-between items-center">
-                <h1 className="text-2xl font-bold text-gray-900">Portfolio Management</h1>
-                <div className="flex items-center gap-3">
-                    <Link
-                        href="/portfolios"
-                        target="_blank"
-                        className="flex items-center gap-2 bg-white border border-gray-300 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-50 transition"
-                    >
-                        <ExternalLink size={18} />
-                        View Public Page
-                    </Link>
-                    <button
-                        onClick={() => setIsCreating(true)}
-                        className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
-                    >
-                        <Plus size={18} /> Add Project
-                    </button>
-                </div>
-            </div>
+        <div className="w-full animate-in fade-in duration-700 pb-20 px-4">
+            <PageHeader 
+                title="Portfolio" 
+                subtitle="Manage and display your creative projects."
+            >
+                <button
+                    onClick={() => setIsCreating(true)}
+                    className="px-3 py-1.5 bg-[#2eaadc] text-white rounded text-xs font-bold hover:bg-[#1a99cc] transition-colors"
+                >
+                    New Project
+                </button>
+            </PageHeader>
 
-            {isCreating && (
-                <div className="bg-white p-6 rounded-xl border border-blue-200 shadow-sm mb-6">
-                    <h3 className="font-bold mb-4">Add New Project</h3>
-                    <form onSubmit={handleCreate} className="space-y-4">
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <input required name="title" placeholder="Project Title" className="w-full px-3 py-2 border rounded-lg" />
-                            <input required name="category" placeholder="Category (e.g. Web Design)" className="w-full px-3 py-2 border rounded-lg" />
-                        </div>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <input required name="imageUrl" placeholder="Image URL (http://...)" className="w-full px-3 py-2 border rounded-lg" />
-                            <input name="link" placeholder="Project Link (http://...)" className="w-full px-3 py-2 border rounded-lg" />
-                        </div>
-                        <textarea name="description" placeholder="Short Description" className="w-full px-3 py-2 border rounded-lg" rows={3} />
-                        <div className="flex justify-end gap-2">
-                            <button type="button" onClick={() => setIsCreating(false)} className="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg">Cancel</button>
-                            <button type="submit" className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">Save</button>
-                        </div>
-                    </form>
+            {loading ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                    {Array.from({ length: 8 }).map((_, i) => (
+                        <CardSkeleton key={i} />
+                    ))}
+                </div>
+            ) : isCreating && (
+                <div className="mb-8">
+                    <FormSection 
+                        title="Project Portfolio" 
+                        description="Chronicle your engineering or creative endeavors by detailing project specifics and external references."
+                    >
+                        <form onSubmit={handleCreate} className="space-y-4">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <FormInput label="Project Name" name="title" required placeholder="Name" />
+                                <FormInput label="Category" name="category" required placeholder="e.g. Development" />
+                            </div>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <FormInput label="Image URL" name="imageUrl" required placeholder="HTTPS source" className="font-mono" />
+                                <FormInput label="External Reference" name="link" placeholder="External URL" className="font-mono" />
+                            </div>
+                            <FormTextArea label="Narrative Description" name="description" placeholder="Project summary..." rows={2} />
+                            <div className="flex justify-end gap-3 pt-2">
+                                <button type="button" onClick={() => setIsCreating(false)} className="px-3 py-1.5 text-white hover:text-white text-xs font-bold transition-colors">Cancel</button>
+                                <button type="submit" className="px-3 py-1.5 bg-[#2eaadc] text-white rounded text-xs font-bold hover:bg-[#1a99cc] transition-colors">Save Project</button>
+                            </div>
+                        </form>
+                    </FormSection>
                 </div>
             )}
 
-            <div className="grid gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                 {items.map(item => (
-                    <div key={item.id} className="bg-white p-4 rounded-xl border border-gray-200 shadow-sm flex gap-4 items-center">
-                        <Image src={item.imageUrl} alt={item.title} width={96} height={64} className="w-24 h-16 object-cover rounded bg-gray-100" />
-                        <div className="flex-1">
-                            <h3 className="font-bold text-gray-900">{item.title}</h3>
-                            <div className="flex gap-2 text-sm text-gray-500">
-                                <span className="bg-blue-50 text-blue-700 px-2 py-0.5 rounded text-xs font-medium">{item.category}</span>
-                                {item.link && <a href={item.link} target="_blank" rel="noreferrer" className="hover:underline">View Link ↗</a>}
+                    <div key={item.id} className="bg-[#202020] p-3 rounded border border-[#2f2f2f] flex flex-col gap-3 transition-colors group">
+                        <div className="relative w-full h-40 rounded overflow-hidden border border-[#2f2f2f] bg-white/5">
+                            <Image src={item.imageUrl} alt={item.title} fill className="object-cover group-hover:scale-105 transition-transform duration-700" />
+                        </div>
+                        <div className="flex-1 space-y-2">
+                            <div className="flex justify-between items-start gap-2">
+                                <h3 className="font-bold text-white text-sm tracking-tight">{item.title}</h3>
+                                <button
+                                    onClick={() => handleDelete(item.id)}
+                                    className="p-1 text-white hover:text-red-500 transition-colors"
+                                    title="Delete"
+                                >
+                                    <Trash2 size={14} />
+                                </button>
+                            </div>
+                            <p className="text-white text-[11px] leading-relaxed line-clamp-2 uppercase tracking-tight">{item.description}</p>
+                            <div className="flex items-center justify-between pt-1">
+                                <span className="px-1.5 py-0.5 rounded bg-white/5 text-white text-[9px] font-bold uppercase tracking-widest border border-[#2f2f2f]">
+                                    {item.category}
+                                </span>
+                                {item.link && (
+                                    <a href={item.link} target="_blank" rel="noreferrer" className="text-white hover:text-white transition-colors">
+                                        <ExternalLink size={12} />
+                                    </a>
+                                )}
                             </div>
                         </div>
-                        <button
-                            onClick={() => handleDelete(item.id)}
-                            className="text-red-500 hover:bg-red-50 p-2 rounded-lg transition-colors"
-                        >
-                            <Trash2 size={20} />
-                        </button>
                     </div>
                 ))}
             </div>
 
-            {items.length === 0 && (
-                <div className="text-center py-20 bg-gray-50 rounded-xl border border-dashed border-gray-300">
-                    <Briefcase className="mx-auto h-12 w-12 text-gray-400 mb-3" />
-                    <p className="text-gray-500">No projects yet</p>
-                </div>
+            {items.length === 0 && !loading && (
+                <EmptyState 
+                    icon={<Briefcase size={32} />} 
+                    message="Your portfolio is currently empty. Start showcasing your engineering excellence." 
+                />
             )}
         </div>
     );

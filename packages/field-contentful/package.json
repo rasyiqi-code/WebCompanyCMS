@@ -1,0 +1,39 @@
+{
+  "name": "@credbuild/field-contentful",
+  "version": "0.21.2",
+  "author": "Chris Villa <chris@credbuild.com>",
+  "repository": "credbuild/credbuild",
+  "bugs": "https://github.com/credbuild/credbuild/issues",
+  "homepage": "https://credbuild.com",
+  "private": false,
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    "types": "./dist/index.d.ts",
+    "import": "./dist/index.mjs"
+  },
+  "license": "MIT",
+  "scripts": {
+    "lint": "eslint \"**/*.ts*\"",
+    "build": "rm -rf dist && tsup index.ts",
+    "dev": "tsup index.ts --watch"
+  },
+  "files": [
+    "dist"
+  ],
+  "devDependencies": {
+    "@credbuild/core": "^0.21.2",
+    "@types/react": "^19.2.7",
+    "@types/react-dom": "^19.2.3",
+    "contentful": "^10.8.6",
+    "eslint": "^7.32.0",
+    "eslint-config-custom": "*",
+    "tsconfig": "*",
+    "tsup-config": "*",
+    "typescript": "^5.5.4"
+  },
+  "peerDependencies": {
+    "contentful": "^10.0.0",
+    "react": "^17.0.0 || ^18.0.0 || ^19.0.0"
+  }
+}

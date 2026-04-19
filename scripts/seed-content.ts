@@ -52,11 +52,11 @@ async function seed() {
     ];
 
     for (const page of pages) {
-        const existing = await db.puckPage.findUnique({
+        const existing = await db.credBuildPage.findUnique({
             where: { path: page.path }
         });
         if (!existing) {
-            await db.puckPage.create({
+            await db.credBuildPage.create({
                 data: { ...page, data: page.data as any }
             });
             console.log(`Created page: ${page.path}`);

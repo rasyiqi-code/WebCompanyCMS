@@ -5,6 +5,14 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import { Loader2, Trash2, Plus, Image as ImageIcon, ExternalLink } from "lucide-react";
 import Link from "next/link";
+import { 
+    PageHeader, 
+    CardSkeleton,
+    FormSection,
+    FormInput,
+    FormTextArea,
+    EmptyState
+} from "@/components/dashboard/ui/DataTable";
 
 type GalleryItem = {
     id: string;
@@ -54,73 +62,75 @@ export default function GalleryDashboard() {
         fetchItems();
     };
 
-    if (loading) return <div className="p-10 flex justify-center"><Loader2 className="animate-spin" /></div>;
 
     return (
-        <div className="space-y-6">
-            <div className="flex justify-between items-center">
-                <h1 className="text-2xl font-bold text-gray-900">Gallery Management</h1>
-                <div className="flex items-center gap-3">
-                    <Link
-                        href="/gallery"
-                        target="_blank"
-                        className="flex items-center gap-2 bg-white border border-gray-300 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-50 transition"
-                    >
-                        <ExternalLink size={18} />
-                        View Public Page
-                    </Link>
-                    <button
-                        onClick={() => setIsCreating(true)}
-                        className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
-                    >
-                        <Plus size={18} /> Add Image
-                    </button>
-                </div>
-            </div>
+        <div className="w-full animate-in fade-in duration-700 pb-20 px-4">
+            <PageHeader 
+                title="Gallery" 
+                subtitle="Manage your library of images and media assets."
+            >
+                <button
+                    onClick={() => setIsCreating(true)}
+                    className="px-3 py-1.5 bg-[#2eaadc] text-white rounded text-xs font-bold hover:bg-[#1a99cc] transition-colors"
+                >
+                    Add Media
+                </button>
+            </PageHeader>
 
-            {isCreating && (
-                <div className="bg-white p-6 rounded-xl border border-blue-200 shadow-sm mb-6">
-                    <h3 className="font-bold mb-4">Add New Image</h3>
-                    <form onSubmit={handleCreate} className="space-y-4">
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <input name="title" placeholder="Image Title" className="w-full px-3 py-2 border rounded-lg" />
-                            <input required name="url" placeholder="Image URL (http://...)" className="w-full px-3 py-2 border rounded-lg" />
-                        </div>
-                        <input name="description" placeholder="Description (optional)" className="w-full px-3 py-2 border rounded-lg" />
-                        <div className="flex justify-end gap-2">
-                            <button type="button" onClick={() => setIsCreating(false)} className="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg">Cancel</button>
-                            <button type="submit" className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">Save</button>
-                        </div>
-                    </form>
+            {loading ? (
+                <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-6">
+                    {Array.from({ length: 12 }).map((_, i) => (
+                        <CardSkeleton key={i} />
+                    ))}
+                </div>
+            ) : isCreating && (
+                <div className="mb-8">
+                    <FormSection 
+                        title="Upload New Asset" 
+                        description="Expand your digital repertoire by linking new media assets to the central gallery."
+                    >
+                        <form onSubmit={handleCreate} className="space-y-4">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <FormInput label="Title" name="title" required placeholder="Asset name" />
+                                <FormInput label="Asset URL" name="url" required placeholder="https://..." className="font-mono" />
+                            </div>
+                            <FormTextArea label="Description" name="description" placeholder="Brief description..." rows={2} />
+                            <div className="flex justify-end gap-3 pt-2">
+                                <button type="button" onClick={() => setIsCreating(false)} className="px-3 py-1.5 text-white hover:text-white text-xs font-bold transition-colors">Cancel</button>
+                                <button type="submit" className="px-3 py-1.5 bg-[#2eaadc] text-white rounded text-xs font-bold hover:bg-[#1a99cc] transition-colors">Save Asset</button>
+                            </div>
+                        </form>
+                    </FormSection>
                 </div>
             )}
 
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-6">
                 {items.map(item => (
-                    <div key={item.id} className="group relative bg-white rounded-xl border border-gray-200 overflow-hidden shadow-sm hover:shadow-md">
-                        <div className="aspect-square bg-gray-100 relative">
-                            <Image src={item.url} alt={item.title || "Gallery image"} fill className="object-cover" />
-                            <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                    <div key={item.id} className="group relative bg-[#202020] rounded border border-[#2f2f2f] overflow-hidden transition-all">
+                        <div className="aspect-square bg-white/[0.02] relative">
+                            <Image src={item.url} alt={item.title || "Gallery image"} fill className="object-cover group-hover:scale-105 transition-transform duration-700" />
+                            <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                                 <button
                                     onClick={() => handleDelete(item.id)}
-                                    className="bg-red-600 text-white p-2 rounded-full hover:bg-red-700"
+                                    className="w-8 h-8 flex items-center justify-center bg-red-500/80 hover:bg-red-500 text-white rounded transition-colors"
+                                    title="Delete"
                                 >
-                                    <Trash2 size={18} />
+                                    <Trash2 size={14} />
                                 </button>
                             </div>
                         </div>
                         <div className="p-3">
-                            <p className="font-medium truncate">{item.title || "Untitled"}</p>
-                            <p className="text-xs text-gray-500 truncate">{item.description}</p>
+                            <p className="font-medium text-white truncate text-xs tracking-tight">{item.title || "Unnamed Asset"}</p>
+                            <p className="text-[9px] text-white font-medium truncate uppercase tracking-widest">{item.description || "No description"}</p>
                         </div>
                     </div>
                 ))}
             </div>
-            {items.length === 0 && (
-                <div className="text-center py-20 bg-gray-50 rounded-xl border border-dashed border-gray-300">
-                    <ImageIcon className="mx-auto h-12 w-12 text-gray-400 mb-3" />
-                    <p className="text-gray-500">No images yet</p>
-                </div>
+            {items.length === 0 && !loading && (
+                <EmptyState 
+                    icon={<ImageIcon size={32} />} 
+                    message="Your gallery is currently empty. Start curating your digital repertoire." 
+                />
             )}
         </div>
     );

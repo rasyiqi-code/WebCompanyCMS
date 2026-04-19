@@ -1,7 +1,13 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { Loader2, Plus, Trash2, GripVertical, Save } from "lucide-react";
+import { Loader2, Plus, Trash2, GripVertical, Save, Settings } from "lucide-react";
+import { 
+    PageHeader,
+    Skeleton,
+    TableSkeleton,
+    CustomSelect
+} from "@/components/dashboard/ui/DataTable";
 
 type MenuItem = {
     label: string;
@@ -50,17 +56,15 @@ export default function MenusPage() {
     }, [menuSlug]);
 
 
-    const addPageItem = (e: React.ChangeEvent<HTMLSelectElement>) => {
-        const pagePath = e.target.value;
+    const addPageItem = (pagePath: string) => {
         if (!pagePath) return;
 
         const page = publishedPages.find(p => p.path === pagePath);
         if (page) {
-            // URL should be /page/foo for standard pages
-            const url = `/page${page.path}`;
+            // URL should be the direct page path (e.g., /about)
+            const url = `${page.path}`;
             setItems([...items, { label: page.title || "Page", url, target: "_self", order: items.length }]);
         }
-        e.target.value = "";
     };
 
     const addItem = () => {
@@ -96,104 +100,116 @@ export default function MenusPage() {
         }
     };
 
-    if (loading) return <div className="p-8"><Loader2 className="animate-spin" /></div>;
+    if (loading) return (
+        <div className="w-full animate-in fade-in duration-700 pb-20 px-4 space-y-8">
+            <PageHeader title="Menus" subtitle="Design and structure your site's operational flow." />
+            <div className="p-4 bg-[#202020] rounded border border-[#2f2f2f]">
+                <Skeleton className="h-10 w-full mb-4" />
+                <div className="space-y-2">
+                    {Array.from({ length: 5 }).map((_, i) => (
+                        <Skeleton key={i} className="h-12 w-full" />
+                    ))}
+                </div>
+            </div>
+        </div>
+    );
 
     return (
-        <div className="max-w-4xl mx-auto py-10 px-4">
-            <div className="flex justify-between items-center mb-8">
-                <h1 className="text-2xl font-bold text-gray-900">Menus Management</h1>
-                <div className="flex gap-2">
-                    <select
-                        className="px-3 py-2 border rounded-md"
+        <div className="w-full animate-in fade-in duration-700 pb-20 px-4 space-y-8">
+            <PageHeader 
+                title="Menus" 
+                subtitle="Design and structure your site's operational flow."
+            >
+                <div className="flex items-center gap-2">
+                    <CustomSelect
+                        options={[
+                            { label: "Main Navigation", value: "main" },
+                            { label: "Footer Links", value: "footer" }
+                        ]}
                         value={menuSlug}
-                        onChange={(e) => setMenuSlug(e.target.value)}
-                    >
-                        <option value="main">Main Menu</option>
-                        <option value="footer">Footer Menu</option>
-                    </select>
+                        onChange={(val) => setMenuSlug(val)}
+                        className="min-w-[160px]"
+                    />
                 </div>
-            </div>
+            </PageHeader>
 
             {/* Quick Add Section */}
-            <div className="mb-6 p-4 bg-blue-50 rounded-lg border border-blue-100 flex items-center justify-between">
+            <div className="p-4 bg-[#202020] rounded border border-[#2f2f2f] flex flex-col md:flex-row items-center justify-between gap-4">
                 <div>
-                    <h3 className="text-sm font-semibold text-blue-900">Quick Add Page</h3>
-                    <p className="text-xs text-blue-700">Select a published page to add to this menu.</p>
+                    <h3 className="text-sm font-bold text-white mb-0.5">Quick Add</h3>
+                    <p className="text-white text-xs">Instantly bind a published page to this menu.</p>
                 </div>
-                <select
-                    className="px-3 py-2 border border-blue-200 rounded-md text-sm min-w-[200px] outline-none focus:border-blue-500"
+                <CustomSelect
+                    placeholder="Select Page..."
+                    options={publishedPages.map(page => ({ label: page.title, value: page.path }))}
                     onChange={addPageItem}
-                    defaultValue=""
-                >
-                    <option value="" disabled>Select a Page...</option>
-                    {publishedPages.map(page => (
-                        <option key={page.id} value={page.path}>
-                            {page.title}
-                        </option>
-                    ))}
-                </select>
+                    value=""
+                    variant="primary"
+                    className="w-full md:w-64"
+                />
             </div>
 
-            <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-                <div className="p-4 bg-gray-50 border-b border-gray-200 font-medium grid grid-cols-12 gap-4 text-sm text-gray-500">
+            <div className="bg-[#202020] rounded border border-[#2f2f2f] overflow-hidden">
+                <div className="p-3 bg-white/5 border-b border-[#2f2f2f] grid grid-cols-12 gap-4 text-[10px] text-white uppercase tracking-widest px-6">
                     <div className="col-span-1"></div>
-                    <div className="col-span-4">Label</div>
-                    <div className="col-span-5">URL</div>
-                    <div className="col-span-2">Actions</div>
+                    <div className="col-span-4 font-medium">Display Label</div>
+                    <div className="col-span-5 font-medium">Target URL</div>
+                    <div className="col-span-2 text-right font-medium">Ops</div>
                 </div>
 
-                <div className="divide-y divide-gray-100">
+                <div className="divide-y divide-[#2f2f2f]">
                     {items.map((item, idx) => (
-                        <div key={idx} className="p-4 grid grid-cols-12 gap-4 items-center hover:bg-gray-50 group">
-                            <div className="col-span-1 flex justify-center text-gray-400 cursor-move">
-                                <GripVertical size={16} />
+                        <div key={idx} className="p-2 grid grid-cols-12 gap-4 items-center hover:bg-white/5 transition-all group">
+                            <div className="col-span-1 flex justify-center text-gray-700 cursor-move group-hover:text-white transition-colors">
+                                <GripVertical size={14} />
                             </div>
                             <div className="col-span-4">
                                 <input
-                                    className="w-full px-2 py-1 border border-transparent hover:border-gray-300 rounded focus:border-blue-500 outline-none"
+                                    className="w-full px-2 py-1 bg-transparent border border-transparent focus:bg-[#191919] focus:border-[#2f2f2f] rounded outline-none text-white text-xs font-bold transition-all placeholder:text-gray-700"
                                     value={item.label}
                                     onChange={(e) => updateItem(idx, 'label', e.target.value)}
-                                    placeholder="Link Label"
+                                    placeholder="Label"
                                 />
                             </div>
                             <div className="col-span-5">
                                 <input
-                                    className="w-full px-2 py-1 border border-transparent hover:border-gray-300 rounded focus:border-blue-500 outline-none text-gray-600 font-mono text-sm"
+                                    className="w-full px-2 py-1 bg-transparent border border-transparent focus:bg-[#191919] focus:border-[#2f2f2f] rounded outline-none text-white font-mono text-xs transition-all placeholder:text-gray-700"
                                     value={item.url}
                                     onChange={(e) => updateItem(idx, 'url', e.target.value)}
-                                    placeholder="/path"
+                                    placeholder="/"
                                 />
                             </div>
                             <div className="col-span-2 flex justify-end">
                                 <button
                                     onClick={() => removeItem(idx)}
-                                    className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded"
+                                    className="p-1 px-2 text-white hover:text-red-400 hover:bg-red-500/5 rounded transition-all opacity-0 group-hover:opacity-100"
                                 >
-                                    <Trash2 size={16} />
+                                    <Trash2 size={14} />
                                 </button>
                             </div>
                         </div>
                     ))}
 
                     {items.length === 0 && (
-                        <div className="p-8 text-center text-gray-500 italic">No menu items yet.</div>
+                        <div className="p-12 text-center text-white italic text-xs">Your menu is empty.</div>
                     )}
                 </div>
 
-                <div className="p-4 bg-gray-50 border-t border-gray-200 flex justify-between">
+                <div className="p-4 bg-white/2 border-t border-[#2f2f2f] flex flex-col md:flex-row justify-between items-center gap-4">
                     <button
                         onClick={addItem}
-                        className="flex items-center text-sm font-medium text-blue-600 hover:text-blue-800"
+                        className="flex items-center text-xs font-bold text-white hover:text-white transition-colors group"
                     >
-                        <Plus size={16} className="mr-1" /> Add Custom Link
+                        <Plus size={14} className="mr-2" />
+                        Add item
                     </button>
 
                     <button
                         onClick={handleSave}
                         disabled={saving}
-                        className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 text-sm font-medium"
+                        className="flex items-center justify-center px-6 py-2 bg-[#2eaadc] text-white rounded hover:bg-[#1a99cc] disabled:opacity-50 text-xs font-bold transition-colors"
                     >
-                        {saving ? <Loader2 className="animate-spin mr-2" size={16} /> : <Save className="mr-2" size={16} />}
+                        {saving ? <Loader2 className="animate-spin mr-2" size={14} /> : <Save className="mr-2" size={14} />}
                         Save Menu
                     </button>
                 </div>

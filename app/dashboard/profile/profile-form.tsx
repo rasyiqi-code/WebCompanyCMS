@@ -2,7 +2,7 @@
 "use client";
 
 import { useState } from "react";
-import { Save, Lock, User } from "lucide-react";
+import { Save, Lock, User, Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 export function ProfileForm({ user }: { user: any }) {
@@ -45,63 +45,71 @@ export function ProfileForm({ user }: { user: any }) {
     };
 
     return (
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <form onSubmit={handleSubmit} className="space-y-10 p-8">
             {message.text && (
-                <div className={`p-4 rounded-lg text-sm ${message.type === "success" ? "bg-green-50 text-green-700" : "bg-red-50 text-red-700"}`}>
+                <div className={`px-6 py-4 rounded-2xl text-sm font-bold shadow-2xl backdrop-blur-md border ${
+                    message.type === "error" 
+                        ? "bg-red-500/10 text-red-400 border-red-500/20" 
+                        : "bg-emerald-500/10 text-emerald-400 border-emerald-500/20"
+                }`}>
                     {message.text}
                 </div>
             )}
 
-            <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Full Name</label>
-                <div className="relative">
-                    <User className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
+            <div className="space-y-2">
+                <label className="text-[10px] font-bold text-white uppercase tracking-[0.2em] ml-1">Universal Designation</label>
+                <div className="relative group">
+                    <User className="absolute left-4 top-1/2 -translate-y-1/2 text-white group-focus-within:text-indigo-400 transition-colors" size={18} />
                     <input
                         name="name"
                         defaultValue={user.name || ""}
-                        className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+                        className="w-full pl-12 pr-4 py-3 bg-white/5 border border-white/10 rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500/50 outline-none text-white transition-all font-medium"
                     />
                 </div>
             </div>
 
-            <div className="pt-4 border-t border-gray-100">
-                <h3 className="text-sm font-medium text-gray-900 mb-4">Change Password (Optional)</h3>
-                <div className="space-y-4">
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">New Password</label>
-                        <div className="relative">
-                            <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
+            <div className="pt-10 border-t border-white/5 space-y-8">
+                <div>
+                    <h3 className="text-lg font-extrabold text-white tracking-tight mb-1">Credential Rotation</h3>
+                    <p className="text-white text-sm font-medium">Update account access tokens (optional).</p>
+                </div>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div className="space-y-2">
+                        <label className="text-[10px] font-bold text-white uppercase tracking-[0.2em] ml-1">New Prototype</label>
+                        <div className="relative group">
+                            <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-white group-focus-within:text-indigo-400 transition-colors" size={18} />
                             <input
                                 type="password"
                                 name="password"
                                 placeholder="••••••••"
-                                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+                                className="w-full pl-12 pr-4 py-3 bg-white/5 border border-white/10 rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500/50 outline-none text-white transition-all font-mono"
                             />
                         </div>
                     </div>
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">Confirm Password</label>
-                        <div className="relative">
-                            <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
+                    <div className="space-y-2">
+                        <label className="text-[10px] font-bold text-white uppercase tracking-[0.2em] ml-1">Confirmation</label>
+                        <div className="relative group">
+                            <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-white group-focus-within:text-indigo-400 transition-colors" size={18} />
                             <input
                                 type="password"
                                 name="confirmPassword"
                                 placeholder="••••••••"
-                                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+                                className="w-full pl-12 pr-4 py-3 bg-white/5 border border-white/10 rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500/50 outline-none text-white transition-all font-mono"
                             />
                         </div>
                     </div>
                 </div>
             </div>
 
-            <div className="pt-4">
+            <div className="pt-6 border-t border-white/5 flex justify-end">
                 <button
                     type="submit"
                     disabled={loading}
-                    className="flex items-center px-6 py-2.5 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50"
+                    className="flex items-center justify-center px-10 py-4 bg-indigo-600 text-white rounded-2xl hover:bg-indigo-500 disabled:opacity-50 text-sm font-bold transition-all shadow-xl shadow-indigo-600/20"
                 >
-                    <Save size={18} className="mr-2" />
-                    {loading ? "Saving..." : "Save Changes"}
+                    {loading ? <Loader2 className="animate-spin mr-3" size={20} /> : <Save className="mr-3" size={20} />}
+                    Synchronize Identity
                 </button>
             </div>
         </form>

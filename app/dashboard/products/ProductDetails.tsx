@@ -27,9 +27,9 @@ export default function ProductDetails({ product, backUrl = "/dashboard/products
     };
 
     return (
-        <div className="max-w-6xl mx-auto pb-10">
+        <div className="w-full pb-10">
             <div className="mb-6">
-                <Link href={backUrl} className="text-gray-500 hover:text-gray-900 inline-flex items-center">
+                <Link href={backUrl} className="text-white hover:text-gray-900 inline-flex items-center">
                     <ArrowLeft size={20} className="mr-2" /> Back
                 </Link>
             </div>
@@ -42,7 +42,7 @@ export default function ProductDetails({ product, backUrl = "/dashboard/products
                             {selectedImage ? (
                                 <Image src={selectedImage} alt={product.name} fill className="object-contain" unoptimized />
                             ) : (
-                                <div className="w-full h-full flex items-center justify-center text-gray-300">No Image</div>
+                                <div className="w-full h-full flex items-center justify-center text-white">No Image</div>
                             )}
                         </div>
                         {product.images && product.images.length > 1 && (
@@ -65,13 +65,13 @@ export default function ProductDetails({ product, backUrl = "/dashboard/products
                         <h1 className="text-3xl font-bold text-gray-900 mb-2">{product.name}</h1>
                         <div className="text-2xl font-bold text-emerald-600 mb-6">{formatPrice(product.price)}</div>
 
-                        <div className="prose prose-sm text-gray-600 mb-8 flex-1">
+                        <div className="prose prose-sm text-white mb-8 flex-1">
                             <p>{product.description || "No description available."}</p>
                         </div>
 
                         <div className="mt-auto border-t border-gray-100 pt-6">
                             <div className="flex items-center justify-between mb-4">
-                                <span className="text-sm font-medium text-gray-500">
+                                <span className="text-sm font-medium text-white">
                                     Availability:
                                     <span className={(product.stock || 0) > 0 ? "text-emerald-600 ml-1" : "text-red-500 ml-1"}>
                                         {(product.stock || 0) > 0 ? "In Stock" : "Out of Stock"}

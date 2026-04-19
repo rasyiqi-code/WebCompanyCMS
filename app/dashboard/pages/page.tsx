@@ -2,15 +2,42 @@
 
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
-import { Loader2, Plus, Edit, Trash2, ExternalLink } from "lucide-react";
+import { 
+    Loader2, 
+    Plus, 
+    Edit, 
+    Trash2, 
+    ExternalLink, 
+    Layout, 
+    LayoutPanelLeft, 
+    FileText,
+    Eye,
+    Settings
+} from "lucide-react";
 import { useRouter } from "next/navigation";
+import { 
+    PageHeader,
+    TableContainer,
+    THead,
+    TBody,
+    TR,
+    TH,
+    TD, 
+    StatusBadge, 
+    ActionButton,
+    TableSkeleton
+} from "@/components/dashboard/ui/DataTable";
 
 type Page = {
     id: string;
     path: string;
     title?: string;
+    description?: string;
     isPublished: boolean;
     updatedAt: string;
+    body?: string;
+    data?: any;
+    useBuilder: boolean;
 };
 
 export default function PagesDashboard() {
@@ -23,9 +50,7 @@ export default function PagesDashboard() {
     }, []);
 
     const loadPages = () => {
-        // We can reuse the Puck API route or create a specific one for listing.
-        // Usually Puck has /api/puck, but let's check what we have.
-        // We might need a dedicated listing endpoint: /api/pages
+        setLoading(true);
         fetch("/api/pages")
             .then(res => res.json())
             .then(data => {
@@ -36,6 +61,14 @@ export default function PagesDashboard() {
                 console.error(err);
                 setLoading(false);
             });
+    };
+
+    const getVisualBuilderPath = (path: string) => {
+        return path === "/" ? "/credbuild" : `/credbuild${path}`;
+    };
+
+    const getStandardEditorPath = (path: string) => {
+        return `/dashboard/pages/editor?path=${path}`;
     };
 
     const deletePage = async (path: string) => {
@@ -58,92 +91,120 @@ export default function PagesDashboard() {
         }
     };
 
-    const createPage = () => {
-        const path = prompt("Enter new page path (e.g., /about):");
-        if (!path) return;
-
-        const cleanPath = path.startsWith("/") ? path : `/${path}`;
-
-        // Navigate to editor with new path - Puck handles creation on save
-        // But for better UX we might want to pre-create or just go there.
-        // Navigate to standard editor
-        router.push(`/dashboard/pages/editor?path=${cleanPath}`);
-    };
-
-    if (loading) return <div className="p-10"><Loader2 className="animate-spin" /></div>;
+    if (loading) return (
+        <div className="w-full animate-in fade-in duration-700 pb-20 px-4">
+            <PageHeader 
+                title="Pages" 
+                subtitle="Design and structure your site's architecture with visual or standard editors."
+            />
+            <TableSkeleton cols={5} rows={5} />
+        </div>
+    );
 
     return (
-        <div className="max-w-6xl mx-auto py-10 px-4">
-            <div className="flex justify-between items-center mb-8">
-                <div>
-                    <h1 className="text-2xl font-bold text-gray-900">Pages</h1>
-                    <p className="text-gray-500 text-sm mt-1">Manage static content pages.</p>
-                </div>
-                <div className="flex gap-2">
-                    <Link
-                        href="/edit"
-                        className="flex items-center px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 font-medium transition-colors"
-                    >
-                        <ExternalLink size={18} className="mr-2" /> Visual Editor
-                    </Link>
-                    <button
-                        onClick={createPage}
-                        className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium transition-colors"
-                    >
-                        <Plus size={18} className="mr-2" /> Create New Page
+        <div className="w-full animate-in fade-in duration-700 pb-20 px-4">
+            <PageHeader 
+                title="Pages" 
+                subtitle="Design and structure your site's architecture with visual or standard editors."
+            >
+                <div className="relative group">
+                    <button className="flex items-center px-4 py-1.5 bg-[#2eaadc] text-white rounded text-xs font-bold hover:bg-[#1a99cc] transition-all shadow-lg shadow-[#2eaadc]/10">
+                        <Plus size={14} className="mr-2" />
+                        Create Page
                     </button>
+                    <div className="absolute right-0 top-full mt-2 w-48 bg-[#202020] border border-[#2f2f2f] rounded-lg shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50 overflow-hidden">
+                        <Link href="/dashboard/pages/editor" className="flex items-center px-4 py-3 text-xs font-bold text-white hover:bg-white/5 border-b border-[#2f2f2f] transition-colors">
+                            <FileText size={14} className="mr-3 text-gray-500" /> Standard Editor
+                        </Link>
+                        <Link href="/credbuild" className="flex items-center px-4 py-3 text-xs font-bold text-white hover:bg-white/5 transition-colors">
+                            <LayoutPanelLeft size={14} className="mr-3 text-[#2eaadc]" /> Visual Builder
+                        </Link>
+                    </div>
                 </div>
-            </div>
+            </PageHeader>
 
-            <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-                <table className="min-w-full divide-y divide-gray-200">
-                    <thead className="bg-gray-50">
-                        <tr>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Title / Path</th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Last Updated</th>
-                            <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody className="bg-white divide-y divide-gray-200">
-                        {pages.map((page) => (
-                            <tr key={page.id} className="hover:bg-gray-50">
-                                <td className="px-6 py-4 whitespace-nowrap">
-                                    <div className="text-sm font-medium text-gray-900">{page.title || "Untitled"}</div>
-                                    <div className="text-sm text-gray-500 font-mono">{page.path}</div>
-                                </td>
-                                <td className="px-6 py-4 whitespace-nowrap">
-                                    <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${page.isPublished ? "bg-green-100 text-green-800" : "bg-yellow-100 text-yellow-800"}`}>
-                                        {page.isPublished ? "Published" : "Draft"}
-                                    </span>
-                                </td>
-                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                    {new Date(page.updatedAt).toLocaleDateString()}
-                                </td>
-                                <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                    <div className="flex justify-end gap-3">
-                                        <Link href={`/dashboard/pages/editor?path=${page.path}`} className="text-indigo-600 hover:text-indigo-900" title="Edit Content">
-                                            <Edit size={18} />
-                                        </Link>
-                                        <a href={`/page${page.path}`} target="_blank" rel="noreferrer" className="text-gray-400 hover:text-gray-600" title="View Page">
-                                            <ExternalLink size={18} />
-                                        </a>
-                                        <button onClick={() => deletePage(page.path)} className="text-red-400 hover:text-red-600" title="Delete">
-                                            <Trash2 size={18} />
-                                        </button>
+            <TableContainer>
+                <THead>
+                    <TR>
+                        <TH>Interface</TH>
+                        <TH>Page Identity</TH>
+                        <TH>Path</TH>
+                        <TH align="center">Visibility</TH>
+                        <TH align="right">Actions</TH>
+                    </TR>
+                </THead>
+                <TBody>
+                    {pages.length === 0 ? (
+                        <TR>
+                            <TD colSpan={5} align="center" className="py-20 text-white text-xs italic">
+                                No pages found in the architecture.
+                            </TD>
+                        </TR>
+                    ) : (
+                        pages.map((page) => (
+                            <TR key={page.id}>
+                                <TD>
+                                    <div className="flex items-center">
+                                        {page.useBuilder ? (
+                                            <div title="Visual Builder Mode">
+                                                <LayoutPanelLeft size={16} className="text-[#2eaadc]" />
+                                            </div>
+                                        ) : (
+                                            <div title="Standard Mode">
+                                                <FileText size={16} className="text-gray-500" />
+                                            </div>
+                                        )}
+                                        <div className="ml-3">
+                                            <StatusBadge 
+                                                type={page.useBuilder ? "primary" : "neutral"} 
+                                                label={page.useBuilder ? "Visual" : "Shell"} 
+                                            />
+                                        </div>
                                     </div>
-                                </td>
-                            </tr>
-                        ))}
-                        {pages.length === 0 && (
-                            <tr>
-                                <td colSpan={4} className="px-6 py-10 text-center text-gray-500 italic">
-                                    No pages found. Create one to get started.
-                                </td>
-                            </tr>
-                        )}
-                    </tbody>
-                </table>
+                                </TD>
+                                <TD>
+                                    <div className="text-xs font-bold text-white tracking-tight">{page.title || "Untitled Page"}</div>
+                                    <div className="text-[10px] text-gray-400 mt-0.5 max-w-[200px] truncate">{page.description || "No SEO description set"}</div>
+                                </TD>
+                                <TD>
+                                    <code className="text-[10px] font-mono text-[#2eaadc] bg-[#2eaadc]/5 px-1.5 py-0.5 rounded border border-[#2eaadc]/10 italic">
+                                        {page.path}
+                                    </code>
+                                </TD>
+                                <TD align="center">
+                                    <StatusBadge 
+                                        type={page.isPublished ? "success" : "neutral"} 
+                                        label={page.isPublished ? "Live" : "Draft"} 
+                                    />
+                                </TD>
+                                <TD align="right">
+                                    <div className="flex justify-end gap-3 items-center">
+                                        <Link href={page.path} target="_blank" className="p-1 text-white hover:text-[#2eaadc] transition-colors" title="View Public Page">
+                                            <ExternalLink size={14} />
+                                        </Link>
+                                        <Link href={getStandardEditorPath(page.path)} className="p-1 text-white hover:text-white transition-colors" title={page.useBuilder ? "Metadata Editor" : "Standard Editor"}>
+                                            <Edit size={14} />
+                                        </Link>
+                                        {page.useBuilder && (
+                                            <Link href={getVisualBuilderPath(page.path)} className="p-1 text-[#2eaadc] hover:text-[#2eaadc] transition-colors" title="Open Visual Builder">
+                                                <LayoutPanelLeft size={14} />
+                                            </Link>
+                                        )}
+                                        <ActionButton variant="danger" title="Delete Page" onClick={() => deletePage(page.path)}>
+                                            <Trash2 size={14} />
+                                        </ActionButton>
+                                    </div>
+                                </TD>
+                            </TR>
+                        ))
+                    )}
+                </TBody>
+            </TableContainer>
+
+            {/* Hint Section */}
+            <div className="mt-8 flex items-center gap-3 px-6 py-4 bg-white/[0.02] border border-[#2f2f2f] rounded-xl text-[10px] text-gray-500 font-medium uppercase tracking-widest">
+                <Settings size={14} className="text-[#2eaadc]" />
+                <span>Tip: Hover over operation icons to identify specialized editor modes.</span>
             </div>
         </div>
     );

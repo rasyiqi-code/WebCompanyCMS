@@ -10,7 +10,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     }
 
     // Fetch all published pages
-    const pagesData = await db.puckPage.findMany({
+    const pagesData = await db.credBuildPage.findMany({
         where: { isPublished: true },
         orderBy: { updatedAt: 'desc' },
         select: {

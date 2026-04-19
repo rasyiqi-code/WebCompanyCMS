@@ -1,10 +1,19 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { Save, CreditCard } from "lucide-react";
+import { Save, CreditCard, Loader2 } from "lucide-react";
+import { 
+    PageHeader,
+    Skeleton,
+    FormSection,
+    FormInput,
+    FormSelect,
+    FormTextArea
+} from "@/components/dashboard/ui/DataTable";
 
 export default function PaymentSettingsPage() {
     const [isLoading, setIsLoading] = useState(false);
+    const [initialLoading, setInitialLoading] = useState(true);
     const [saved, setSaved] = useState(false);
     const [formData, setFormData] = useState({
         bankName: "",
@@ -16,6 +25,7 @@ export default function PaymentSettingsPage() {
 
     useEffect(() => {
         // Fetch existing settings
+        setInitialLoading(true);
         fetch("/api/settings/payments")
             .then(res => res.json())
             .then(data => {
@@ -28,8 +38,12 @@ export default function PaymentSettingsPage() {
                         instructions: data.instructions || "",
                     });
                 }
+                setInitialLoading(false);
             })
-            .catch(err => console.error(err));
+            .catch(err => {
+                console.error(err);
+                setInitialLoading(false);
+            });
     }, []);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -62,89 +76,67 @@ export default function PaymentSettingsPage() {
         }
     };
 
-    return (
-        <div className="max-w-2xl">
-            <h1 className="text-2xl font-bold text-gray-900 mb-6">Payment Settings</h1>
-
-            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-                <h2 className="text-lg font-semibold text-gray-800 mb-4 flex items-center">
-                    <CreditCard className="mr-2 text-indigo-600" size={20} />
-                    Bank Transfer Information
-                </h2>
-                <p className="text-sm text-gray-500 mb-6">
-                    This information will be displayed to customers during checkout for manual bank transfers.
-                </p>
-
-                <form onSubmit={handleSubmit} className="space-y-4">
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">Store Currency</label>
-                        <select
-                            name="currency"
-                            value={formData.currency}
-                            onChange={(e) => setFormData({ ...formData, currency: e.target.value })}
-                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none bg-white"
-                        >
-                            <option value="USD">USD ($)</option>
-                            <option value="IDR">IDR (Rp)</option>
-                            <option value="EUR">EUR (€)</option>
-                            <option value="GBP">GBP (£)</option>
-                            <option value="SGD">SGD (S$)</option>
-                            <option value="AUD">AUD (A$)</option>
-                        </select>
-                        <p className="text-xs text-gray-500 mt-1">This currency will be used for all products.</p>
-                    </div>
-
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">Bank Name</label>
-                        <input
-                            type="text" name="bankName" required
-                            value={formData.bankName} onChange={handleChange}
-                            placeholder="e.g. Bank Central Asia (BCA)"
-                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none"
-                        />
-                    </div>
-                    <div className="grid grid-cols-2 gap-4">
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">Account Number</label>
-                            <input
-                                type="text" name="accountNumber" required
-                                value={formData.accountNumber} onChange={handleChange}
-                                placeholder="e.g. 1234567890"
-                                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none"
-                            />
-                        </div>
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">Account Holder</label>
-                            <input
-                                type="text" name="accountHolder" required
-                                value={formData.accountHolder} onChange={handleChange}
-                                placeholder="e.g. PT Example Indo"
-                                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none"
-                            />
-                        </div>
-                    </div>
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">Payment Instructions</label>
-                        <textarea
-                            name="instructions" rows={4}
-                            value={formData.instructions} onChange={handleChange}
-                            placeholder="Additional instructions for the customer..."
-                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none resize-none"
-                        />
-                    </div>
-
-                    <div className="pt-4">
-                        <button
-                            type="submit"
-                            disabled={isLoading}
-                            className="px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 font-medium flex items-center shadow-lg shadow-indigo-600/20 active:scale-95 transition-all"
-                        >
-                            {isLoading ? "Saving..." : <><Save size={18} className="mr-2" /> Save Settings</>}
-                        </button>
-                        {saved && <span className="ml-4 text-green-600 text-sm font-medium animate-fade-in">Settings saved successfully!</span>}
-                    </div>
-                </form>
+    if (initialLoading) return (
+        <div className="w-full animate-in fade-in duration-700 pb-20 px-4 space-y-8">
+            <PageHeader title="Payments" subtitle="Configure your bank transfer details and currency." />
+            <div className="bg-[#202020] rounded border border-[#2f2f2f] p-6 space-y-6">
+                <Skeleton className="h-40 w-full" />
+                <Skeleton className="h-40 w-full" />
             </div>
         </div>
+    );
+
+    return (
+        <form onSubmit={handleSubmit} className="w-full pb-20 px-4 space-y-8 animate-in fade-in duration-700">
+            <PageHeader 
+                title="Payments" 
+                subtitle="Configure your bank transfer details and foundational currency for the platform." 
+            />
+
+            <FormSection 
+                title="Bank Details" 
+                description="These details will be shown to customers during the final stages of the checkout ecosystem."
+            >
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <FormSelect 
+                        label="Currency" 
+                        name="currency" 
+                        value={formData.currency} 
+                        onChange={(e) => setFormData({ ...formData, currency: e.target.value })}
+                        options={[
+                            { label: "USD ($)", value: "USD" },
+                            { label: "IDR (Rp)", value: "IDR" },
+                            { label: "EUR (€)", value: "EUR" },
+                            { label: "GBP (£)", value: "GBP" },
+                            { label: "SGD (S$)", value: "SGD" },
+                            { label: "AUD (A$)", value: "AUD" }
+                        ]}
+                    />
+
+                    <FormInput label="Bank Name" name="bankName" value={formData.bankName} onChange={handleChange} required placeholder="Bank Central Asia (BCA)" />
+                    <FormInput label="Account Number" name="accountNumber" value={formData.accountNumber} onChange={handleChange} required className="font-mono" />
+                    <FormInput label="Account Holder" name="accountHolder" value={formData.accountHolder} onChange={handleChange} required />
+                    
+                    <FormTextArea label="Payment Instructions" name="instructions" value={formData.instructions} onChange={handleChange} rows={3} className="md:col-span-2" />
+                </div>
+
+                <div className="flex items-center justify-between pt-4">
+                    <button
+                        type="submit"
+                        disabled={isLoading}
+                        className="flex items-center justify-center px-6 py-2 bg-[#2eaadc] text-white rounded hover:bg-[#1a99cc] disabled:opacity-50 text-xs font-bold transition-colors"
+                    >
+                        {isLoading ? <Loader2 size={14} className="animate-spin mr-2" /> : <Save size={14} className="mr-2" />} 
+                        Save Payments
+                    </button>
+                </div>
+            </FormSection>
+
+            {saved && (
+                <div className="fixed bottom-8 right-8 px-6 py-3 bg-[#2eaadc] text-white rounded-lg shadow-2xl text-xs font-bold border border-[#2eaadc]/20 animate-in slide-in-from-bottom-4 duration-500 z-50">
+                    Payment Gateway Synchronized
+                </div>
+            )}
+        </form>
     );
 }

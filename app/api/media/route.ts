@@ -8,9 +8,16 @@ import path from "path";
 
 export const dynamic = 'force-dynamic';
 
-export async function GET() {
+export async function GET(req: Request) {
     try {
+        const { searchParams } = new URL(req.url);
+        const folderId = searchParams.get("folderId") || null;
+
         const items = await db.mediaItem.findMany({
+            where: {
+                // @ts-ignore
+                folderId: folderId === "root" ? null : folderId
+            },
             orderBy: { createdAt: 'desc' }
         });
         return NextResponse.json(items);
@@ -28,6 +35,7 @@ export async function POST(req: Request) {
 
         const formData = await req.formData();
         const file = formData.get("file") as File;
+        const folderId = formData.get("folderId") as string | null;
 
         if (!file) {
             return new NextResponse("File required", { status: 400 });
@@ -83,6 +91,8 @@ export async function POST(req: Request) {
                 url: url,
                 mimeType: mimeType,
                 size: size,
+                // @ts-ignore
+                folderId: folderId && folderId !== "root" ? folderId : null,
             }
         });
 

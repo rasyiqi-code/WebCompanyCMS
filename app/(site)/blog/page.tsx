@@ -6,7 +6,7 @@ import { Metadata } from "next";
 
 export const metadata: Metadata = {
     title: "Blog",
-    description: "Read the latest articles, tutorials, and updates from the Builder team.",
+    description: "Read the latest articles, tutorials, and updates from the Next CMS team.",
 };
 
 export default async function BlogIndexPage() {

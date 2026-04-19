@@ -1,7 +1,7 @@
-import { Client } from "./[...puckPath]/client";
+import { Client } from "./[...credbuildPath]/client";
 import { Metadata } from "next";
 import { getPage } from "../../lib/get-page";
-
+import TiptapRenderer from "@/components/TiptapRenderer";
 import { getSiteSettings } from "../../lib/settings";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -9,7 +9,7 @@ export async function generateMetadata(): Promise<Metadata> {
     const settings = await getSiteSettings();
 
     const title = pageData?.title || pageData?.data?.root?.props?.title;
-    const siteTitle = settings.siteName || "Builder";
+    const siteTitle = settings.siteName || "Next CMS";
     const tagline = settings.tagline || settings.description;
 
     // For homepage: "SiteName - Tagline"
@@ -24,7 +24,7 @@ export async function generateMetadata(): Promise<Metadata> {
         description: pageData?.description || settings.description,
         openGraph: {
             title: tagline ? `${siteTitle} - ${tagline}` : siteTitle,
-            description: pageData?.description || settings.description,
+            description: pageData?.description || settings.description || "Built with Next CMS",
             images: pageData?.imageUrl ? [{ url: pageData.imageUrl }] : (settings.seoImage ? [{ url: settings.seoImage }] : undefined),
         },
     };
@@ -40,20 +40,22 @@ export default async function Page() {
         // Let's return a default "Welcome" if not found to avoid 404 on clean install
         return (
             <div className="min-h-screen bg-white flex flex-col items-center justify-center">
-                <h1 className="text-4xl font-bold mb-4">Welcome to Builder</h1>
+                <h1 className="text-4xl font-bold mb-4">Welcome to Next CMS</h1>
                 <p className="text-gray-600">Please create a page with path <code>/</code> to customize this homepage.</p>
             </div>
         );
     }
 
+    if (data.useBuilder) {
+        return <Client data={data.data} />;
+    }
+
     if (data.body) {
         return (
             <div className="min-h-screen bg-white">
-                {/* Homepage specific layout if needed, otherwise standard container */}
                 <div className="max-w-7xl mx-auto px-6 py-12 lg:px-8">
-                    {/* Hide title on homepage usually, or make optional. For now render if present */}
                     {data.title && <h1 className="text-center text-4xl font-extrabold text-gray-900 sm:text-5xl mb-10">{data.title}</h1>}
-                    <div className="prose prose-lg mx-auto text-gray-600" dangerouslySetInnerHTML={{ __html: data.body }} />
+                    <TiptapRenderer content={data.body} />
                 </div>
             </div>
         );

@@ -1,7 +1,7 @@
-
 import React from "react";
 import Link from "next/link";
-import { Plus, Edit, Trash2, ShoppingCart } from "lucide-react";
+import { Plus, Edit, ShoppingCart } from "lucide-react";
+import Image from "next/image";
 import { ProductGridItem } from "./ProductGridItem";
 import { ArchiveProductButton } from "@/components/ArchiveProductButton";
 import { db } from "../../../lib/db";
@@ -10,7 +10,19 @@ import { authOptions } from "@/lib/auth";
 import { serializeProducts } from "../../../lib/serialize";
 import { getPaymentSettings } from "@/lib/settings";
 import { formatPrice } from "@/lib/currency";
-import Image from "next/image";
+import { 
+    PageHeader,
+    TableContainer,
+    THead,
+    TBody,
+    TR,
+    TH,
+    TD,
+    StatusBadge,
+    ActionButton,
+    EmptyState
+} from "@/components/dashboard/ui/DataTable";
+
 
 export default async function ProductsPage() {
     const session = await getServerSession(authOptions);
@@ -30,26 +42,21 @@ export default async function ProductsPage() {
     const serializedProducts = serializeProducts(allProducts);
 
     return (
-        <div>
-            <div className="flex justify-between items-center mb-6">
-                <div>
-                    <h1 className="text-2xl font-bold text-gray-900">
-                        {isAdminOrEditor ? "Products" : "Marketplace"}
-                    </h1>
-                    <p className="text-gray-500 mt-1">
-                        {isAdminOrEditor ? "Manage your store inventory." : "Browse our latest products."}
-                    </p>
-                </div>
+        <div className="space-y-6 animate-in fade-in duration-700">
+            <PageHeader 
+                title={isAdminOrEditor ? "Inventory" : "Products"} 
+                subtitle={isAdminOrEditor ? "Manage and curate your product catalog." : "Browse the latest available items."}
+            >
                 {isAdminOrEditor && (
                     <Link
                         href="/dashboard/products/new"
-                        className="flex items-center px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors font-medium shadow-sm"
+                        className="px-3 py-1.5 bg-[#2eaadc] text-white rounded text-xs font-bold hover:bg-[#1a99cc] transition-colors"
                     >
-                        <Plus size={18} className="mr-2" />
-                        Add Product
+                        <Plus size={14} className="mr-2 inline" />
+                        New Product
                     </Link>
                 )}
-            </div>
+            </PageHeader>
 
             {!isAdminOrEditor ? (
                 // USER VIEW: GRID
@@ -60,81 +67,78 @@ export default async function ProductsPage() {
                 </div>
             ) : (
                 // ADMIN VIEW: TABLE
-                <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
-                    <table className="w-full text-left">
-                        <thead>
-                            <tr className="bg-gray-50 border-b border-gray-100">
-                                <th className="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wilder">Product</th>
-                                <th className="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wilder">Price</th>
-                                <th className="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wilder">Stock</th>
-                                <th className="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wilder text-right">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody className="divide-y divide-gray-100">
-                            {serializedProducts.length === 0 ? (
-                                <tr>
-                                    <td colSpan={4} className="px-6 py-12 text-center text-gray-500">
-                                        No products found. Start by creating one.
-                                    </td>
-                                </tr>
-                            ) : (
-                                serializedProducts.map((product) => (
-                                    <tr key={product.id} className={`hover:bg-gray-50 transition-colors group ${product.isArchived ? 'bg-gray-50/50 grayscale-[0.5]' : ''}`}>
-                                        <td className="px-6 py-4">
-                                            <div className="flex items-center">
-                                                {// Optional: Thumbnail
-                                                    product.images && product.images[0] ? (
-                                                        <div className="w-10 h-10 rounded-md overflow-hidden mr-3 border border-gray-200 relative">
-                                                            <Image src={product.images[0]} alt={product.name} fill className="object-cover" unoptimized />
-                                                        </div>
-                                                    ) : (
-                                                        <div className="w-10 h-10 rounded-md bg-gray-100 mr-3"></div>
-                                                    )
-                                                }
-                                                <div>
-                                                    <div className="flex items-center gap-2">
-                                                        <div className="font-medium text-gray-900">{product.name}</div>
-                                                        {product.isArchived && (
-                                                            <span className="px-1.5 py-0.5 rounded text-[10px] font-bold bg-gray-200 text-gray-600 border border-gray-300">
-                                                                ARCHIVED
-                                                            </span>
-                                                        )}
-                                                    </div>
-                                                    <div className="text-xs text-gray-500 font-mono">/{product.slug}</div>
+                <TableContainer>
+                    <THead>
+                        <TR>
+                            <TH>Product</TH>
+                            <TH>Price</TH>
+                            <TH>In Stock</TH>
+                            <TH align="right">Actions</TH>
+                        </TR>
+                    </THead>
+                    <TBody>
+                        {serializedProducts.length === 0 ? (
+                            <TR>
+                                <TD colSpan={4} className="p-0 border-none">
+                                    <EmptyState 
+                                        icon={<ShoppingCart size={32} />} 
+                                        message="No assets detected. Empty catalog." 
+                                    />
+                                </TD>
+                            </TR>
+                        ) : (
+                            serializedProducts.map((product) => (
+                                <TR key={product.id} className={product.isArchived ? 'opacity-60' : ''}>
+                                    <TD>
+                                        <div className="flex items-center">
+                                            {product.images && product.images[0] ? (
+                                                <div className="w-8 h-8 rounded border border-[#2f2f2f] mr-3 relative overflow-hidden bg-white/5">
+                                                    <Image src={product.images[0]} alt={product.name} fill className="object-cover" unoptimized />
                                                 </div>
+                                            ) : (
+                                                <div className="w-8 h-8 rounded bg-white/[0.02] border border-[#2f2f2f] mr-3 flex items-center justify-center text-gray-700">
+                                                    <ShoppingCart size={12} />
+                                                </div>
+                                            )}
+                                            <div>
+                                                <div className="flex items-center gap-2">
+                                                    <div className="text-sm font-bold text-white tracking-tight">{product.name}</div>
+                                                    {product.isArchived && (
+                                                        <StatusBadge type="neutral" label="ARCHIVED" />
+                                                    )}
+                                                </div>
+                                                <div className="text-[10px] text-white font-medium">/{product.slug}</div>
                                             </div>
-                                        </td>
-                                        <td className="px-6 py-4 text-sm font-medium text-gray-900">
-                                            {formatPrice(product.price, currency)}
-                                        </td>
-                                        <td className="px-6 py-4 text-sm text-gray-500">
-                                            <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${(product.stock || 0) > 0 ? "bg-emerald-100 text-emerald-800" : "bg-red-100 text-red-800"
-                                                }`}>
-                                                {product.stock} in stock
-                                            </span>
-                                        </td>
-                                        <td className="px-6 py-4 text-right">
-                                            <div className="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                                                <Link
-                                                    href={`/dashboard/products/${product.id}`}
-                                                    className="p-1 text-gray-400 hover:text-blue-600 transition-colors"
-                                                    title="Edit Product"
-                                                >
-                                                    <Edit size={16} />
-                                                </Link>
+                                        </div>
+                                    </TD>
+                                    <TD className="text-sm font-bold text-white">
+                                        {formatPrice(product.price, currency)}
+                                    </TD>
+                                    <TD>
+                                        <StatusBadge 
+                                            type={(product.stock || 0) > 0 ? "success" : "error"} 
+                                            label={product.stock?.toString() || "0"} 
+                                        />
+                                    </TD>
+                                    <TD align="right">
+                                        <div className="flex justify-end gap-3 items-center">
+                                            <Link href={`/dashboard/products/${product.id}`} className="p-1 text-white hover:text-white transition-colors" title="Edit">
+                                                <Edit size={14} />
+                                            </Link>
+                                            <div className="p-1">
                                                 <ArchiveProductButton
                                                     productId={product.id}
                                                     productName={product.name}
                                                     isArchived={product.isArchived}
                                                 />
                                             </div>
-                                        </td>
-                                    </tr>
-                                ))
-                            )}
-                        </tbody>
-                    </table>
-                </div>
+                                        </div>
+                                    </TD>
+                                </TR>
+                            ))
+                        )}
+                    </TBody>
+                </TableContainer>
             )}
         </div>
     );

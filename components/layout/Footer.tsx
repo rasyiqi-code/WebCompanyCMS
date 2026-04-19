@@ -66,6 +66,7 @@ export default function Footer({ initialSettings }: FooterProps) {
                                 height={48}
                                 width={192}
                                 className="h-12 w-auto object-contain"
+                                style={{ height: '48px', width: 'auto' }}
                             />
                         ) : (
                             <span className="text-2xl font-bold">{settings?.siteName || "Logo"}</span>

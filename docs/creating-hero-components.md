@@ -1,13 +1,13 @@
 # 📖 Creating New Hero Components - Developer Guide
 
-Complete guide for developers to create new Hero component variants for the Puck page builder.
+Complete guide for developers to create new Hero component variants for the CredBuild page builder.
 
 ---
 
 ## 📋 **Prerequisites**
 
 - Understanding of React & TypeScript
-- Familiarity with Puck's ComponentConfig API
+- Familiarity with CredBuild's ComponentConfig API
 - Basic knowledge of inline styling (or CSS-in-JS)
 
 ---
@@ -16,17 +16,17 @@ Complete guide for developers to create new Hero component variants for the Puck
 
 ### **Step 1: Create New Layout File**
 
-Create a new file in `components/puck/Hero/layouts/`:
+Create a new file in `components/credbuild/Hero/layouts/`:
 
 ```bash
 # Example: Creating a Restaurant Hero
-touch components/puck/Hero/layouts/RestaurantLayout.tsx
+touch components/credbuild/Hero/layouts/RestaurantLayout.tsx
 ```
 
 ### **Step 2: Define Props Type**
 
 ```tsx
-import type { ComponentConfig } from "@measured/puck";
+import type { ComponentConfig } from "@credbuild/core";
 
 export type HeroRestaurantProps = {
   // Required fields
@@ -259,17 +259,17 @@ render: ({ title, subtitle, ctaText, ctaLink, menuImageUrl, chefImageUrl, backgr
 ),
 ```
 
-### **Step 5: Register in Puck Config**
+### **Step 5: Register in CredBuild Config**
 
 #### A. Export from Hero/index.ts
 
-Add to `components/puck/Hero/index.ts`:
+Add to `components/credbuild/Hero/index.ts`:
 
 ```tsx
 export { HeroRestaurant, type HeroRestaurantProps } from './layouts/RestaurantLayout';
 ```
 
-#### B. Import in puck.config.tsx
+#### B. Import in credbuild.config.tsx
 
 Add to imports:
 
@@ -277,7 +277,7 @@ Add to imports:
 import {
   // ... existing imports
   HeroRestaurant, type HeroRestaurantProps,
-} from "./components/puck";
+} from "./components/credbuild";
 ```
 
 #### C. Add to Props Type
@@ -482,7 +482,7 @@ Add visual flair:
 
 ✅ Check:
 1. Exported from `Hero/index.ts`?
-2. Imported in `puck.config.tsx`?
+2. Imported in `credbuild.config.tsx`?
 3. Added to `Props` type?
 4. Registered in `categories` AND `components`?
 5. Component name matches everywhere?
@@ -543,7 +543,7 @@ Before committing your new Hero:
 - [ ] Image fallbacks provided
 - [ ] Color fallbacks provided
 - [ ] Exported from Hero/index.ts
-- [ ] Registered in puck.config.tsx (3 places!)
+- [ ] Registered in credbuild.config.tsx (3 places!)
 - [ ] Added to "🎬 Hero Sections" category
 - [ ] Tested in browser (/edit)
 - [ ] Build passes without errors
@@ -573,7 +573,7 @@ After creating your Hero:
 
 ## 🎓 **Learning Resources**
 
-- [Puck Documentation](https://puck.dev)
+- [CredBuild Documentation](https://build.crediblemark.com)
 - [React Inline Styles](https://react.dev/reference/react-dom/components/common#applying-css-styles)
 - [CSS Grid Guide](https://css-tricks.com/snippets/css/complete-guide-grid/)
 - [CSS Flexbox Guide](https://css-tricks.com/snippets/css/a-guide-to-flexbox/)

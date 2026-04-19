@@ -33,7 +33,7 @@ export function ProductGridItem({ product, baseUrl = "/dashboard/products" }: { 
                 {product.images && product.images[0] ? (
                     <Image src={product.images[0]} alt={product.name} fill className="object-cover" unoptimized />
                 ) : (
-                    <div className="w-full h-full flex items-center justify-center text-gray-400">No Image</div>
+                    <div className="w-full h-full flex items-center justify-center text-white">No Image</div>
                 )}
             </Link>
             <div className="p-4">

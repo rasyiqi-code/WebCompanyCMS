@@ -22,6 +22,10 @@ module.exports = {
         hostname: "cdn.univedpress.id",
       },
       {
+        protocol: "https",
+        hostname: "ui-avatars.com",
+      },
+      {
         protocol: "http",
         hostname: appHostname,
       },
@@ -30,5 +34,7 @@ module.exports = {
         hostname: appHostname,
       },
     ],
+    dangerouslyAllowSVG: true,
+    contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
   },
 };

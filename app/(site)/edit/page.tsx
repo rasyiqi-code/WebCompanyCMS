@@ -5,5 +5,5 @@ import { redirect } from "next/navigation";
  * to the CMS dashboard management page.
  */
 export default function EditRedirect() {
-  redirect("/dashboard/pages");
+  redirect("/credbuild");
 }
