@@ -6,29 +6,34 @@ export type MenuWithItems = Prisma.MenuGetPayload<{
 }>;
 
 export const getMenu = async (slug: string): Promise<MenuWithItems | null> => {
-    const menu = await db.menu.findUnique({
-        where: { slug },
-        include: {
-            items: {
-                orderBy: { order: 'asc' }
+    try {
+        const menu = await db.menu.findUnique({
+            where: { slug },
+            include: {
+                items: {
+                    orderBy: { order: 'asc' }
+                }
             }
-        }
-    });
-
-    // If menu doesn't exist, create it dynamically (lazy init for 'main' and 'footer')
-    if (!menu && (slug === 'main' || slug === 'footer')) {
-        const newMenu = await db.menu.create({
-            data: {
-                name: slug === 'main' ? 'Main Menu' : 'Footer Menu',
-                slug
-            },
-            include: { items: true } // Return empty items
         });
 
-        return newMenu;
-    }
+        // If menu doesn't exist, create it dynamically (lazy init for 'main' and 'footer')
+        if (!menu && (slug === 'main' || slug === 'footer')) {
+            const newMenu = await db.menu.create({
+                data: {
+                    name: slug === 'main' ? 'Main Menu' : 'Footer Menu',
+                    slug
+                },
+                include: { items: true } // Return empty items
+            });
 
-    return menu;
+            return newMenu;
+        }
+
+        return menu;
+    } catch (error) {
+        console.error(`Database connection error in getMenu for slug ${slug}:`, error);
+        return null;
+    }
 };
 
 export const updateMenu = async (slug: string, items: { label: string; url: string; order: number; target?: string }[]) => {

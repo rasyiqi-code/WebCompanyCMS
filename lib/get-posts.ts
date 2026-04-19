@@ -1,10 +1,15 @@
 import { db } from "./db";
 
 export const getPosts = async () => {
-    const allPosts = await db.post.findMany({
-        where: { published: true },
-        orderBy: { createdAt: 'desc' }
-    });
+    try {
+        const allPosts = await db.post.findMany({
+            where: { published: true },
+            orderBy: { createdAt: 'desc' }
+        });
 
-    return allPosts;
+        return allPosts;
+    } catch (error) {
+        console.error("Error fetching posts:", error);
+        return [];
+    }
 };

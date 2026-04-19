@@ -10,14 +10,19 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     }
 
     // Fetch all published pages
-    const pagesData = await db.credBuildPage.findMany({
-        where: { isPublished: true },
-        orderBy: { updatedAt: 'desc' },
-        select: {
-            path: true,
-            updatedAt: true
-        }
-    });
+    let pagesData = [];
+    try {
+        pagesData = await db.credBuildPage.findMany({
+            where: { isPublished: true },
+            orderBy: { updatedAt: 'desc' },
+            select: {
+                path: true,
+                updatedAt: true
+            }
+        });
+    } catch (error) {
+        console.error("Database connection error in sitemap.ts:", error);
+    }
 
     const pages = pagesData.map((page) => ({
         url: `${baseUrl}/page${page.path}`,
