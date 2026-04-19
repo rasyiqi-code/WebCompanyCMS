@@ -26,7 +26,7 @@
       "outputs": [".next/**", "!.next/cache/**"]
     },
     "//#build:next": {
-      "dependsOn": ["build", "//#prisma:generate"],
+      "dependsOn": ["^build", "//#prisma:generate"],
       "outputs": [".next/**", "!.next/cache/**"]
     },
     "lint": {
