@@ -1,11 +1,16 @@
 
 import { NextResponse } from "next/server";
 import { db } from "../../../lib/db";
+import { hooks } from "../../../lib/hooks";
 
 export async function GET() {
     try {
         const pages = await db.credBuildPage.findMany({
-            orderBy: { updatedAt: 'desc' }
+            orderBy: { updatedAt: 'desc' },
+            include: {
+                metaData: true,
+                seoMeta: true,
+            }
         });
         return NextResponse.json(pages);
     } catch (error) {
@@ -34,7 +39,7 @@ export async function DELETE(req: Request) {
 export async function POST(req: Request) {
     try {
         const body = await req.json();
-        const { id, path, title, description, imageUrl, body: contentBody, isPublished, useBuilder } = body;
+        const { id, path, title, description, imageUrl, body: contentBody, isPublished, useBuilder, metaData } = body;
 
         if (!path) return NextResponse.json({ error: "Missing path" }, { status: 400 });
 
@@ -97,6 +102,34 @@ export async function POST(req: Request) {
                     data: {},
                 }
             });
+        }
+
+        // Handle MetaData Synchronization
+        if (id && metaData && Array.isArray(metaData)) {
+            // Simple sync: delete existing for this page and recreate
+            // (In a more complex app, we might want to update by ID to keep history)
+            await db.metaData.deleteMany({
+                where: { pageId: id }
+            });
+
+            if (metaData.length > 0) {
+                await db.metaData.createMany({
+                    data: metaData.map((m: any) => ({
+                        key: m.key,
+                        value: m.value,
+                        type: m.type || "text",
+                        pageId: id,
+                    }))
+                });
+            }
+        }
+
+        const page = await db.credBuildPage.findFirst({
+            where: { path: path }
+        });
+
+        if (page) {
+            hooks.doAction("page_saved", page);
         }
 
         return NextResponse.json({ success: true });

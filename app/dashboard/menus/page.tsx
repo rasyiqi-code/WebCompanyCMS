@@ -5,7 +5,8 @@ import { Loader2, Plus, Trash2, GripVertical, Save, Settings } from "lucide-reac
 import { 
     PageHeader,
     Skeleton,
-    TableSkeleton
+    TableSkeleton,
+    CustomSelect
 } from "@/components/dashboard/ui/DataTable";
 
 type MenuItem = {
@@ -55,8 +56,7 @@ export default function MenusPage() {
     }, [menuSlug]);
 
 
-    const addPageItem = (e: React.ChangeEvent<HTMLSelectElement>) => {
-        const pagePath = e.target.value;
+    const addPageItem = (pagePath: string) => {
         if (!pagePath) return;
 
         const page = publishedPages.find(p => p.path === pagePath);
@@ -65,7 +65,6 @@ export default function MenusPage() {
             const url = `${page.path}`;
             setItems([...items, { label: page.title || "Page", url, target: "_self", order: items.length }]);
         }
-        e.target.value = "";
     };
 
     const addItem = () => {
@@ -122,14 +121,15 @@ export default function MenusPage() {
                 subtitle="Design and structure your site's operational flow."
             >
                 <div className="flex items-center gap-2">
-                    <select
-                        className="px-2 py-1.5 bg-white/5 border border-[#2f2f2f] text-white rounded text-xs outline-none focus:border-gray-500 cursor-pointer appearance-none min-w-[140px]"
+                    <CustomSelect
+                        options={[
+                            { label: "Main Navigation", value: "main" },
+                            { label: "Footer Links", value: "footer" }
+                        ]}
                         value={menuSlug}
-                        onChange={(e) => setMenuSlug(e.target.value)}
-                    >
-                        <option value="main" className="bg-[#191919]">Main Navigation</option>
-                        <option value="footer" className="bg-[#191919]">Footer Links</option>
-                    </select>
+                        onChange={(val) => setMenuSlug(val)}
+                        className="min-w-[160px]"
+                    />
                 </div>
             </PageHeader>
 
@@ -139,18 +139,14 @@ export default function MenusPage() {
                     <h3 className="text-sm font-bold text-white mb-0.5">Quick Add</h3>
                     <p className="text-white text-xs">Instantly bind a published page to this menu.</p>
                 </div>
-                <select
-                    className="w-full md:w-auto px-2 py-1.5 bg-white/5 border border-[#2f2f2f] text-[#2eaadc] rounded outline-none focus:border-gray-500 text-xs cursor-pointer"
+                <CustomSelect
+                    placeholder="Select Page..."
+                    options={publishedPages.map(page => ({ label: page.title, value: page.path }))}
                     onChange={addPageItem}
-                    defaultValue=""
-                >
-                    <option value="" disabled className="bg-[#191919]">Select Page...</option>
-                    {publishedPages.map(page => (
-                        <option key={page.id} value={page.path} className="bg-[#191919]">
-                            {page.title}
-                        </option>
-                    ))}
-                </select>
+                    value=""
+                    variant="primary"
+                    className="w-full md:w-64"
+                />
             </div>
 
             <div className="bg-[#202020] rounded border border-[#2f2f2f] overflow-hidden">

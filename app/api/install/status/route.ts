@@ -1,12 +1,13 @@
 import { NextResponse } from "next/server";
 import { isFileSystemWritable } from "../../../../lib/env-manager";
-import { checkDatabaseConnection } from "../../../../lib/install";
+import { checkDatabaseConnection, checkTablesExist } from "../../../../lib/install";
 
 export async function GET() {
     try {
         const isWritable = await isFileSystemWritable();
         const dbUrlExists = !!process.env.DATABASE_URL;
         const dbConnection = await checkDatabaseConnection();
+        const tablesExist = dbConnection.success ? await checkTablesExist() : false;
 
         return NextResponse.json({
             success: true,
@@ -14,6 +15,7 @@ export async function GET() {
                 isWritable,
                 dbUrlExists,
                 dbConnected: dbConnection.success,
+                tablesExist,
                 dbError: dbConnection.error || null,
                 nodeEnv: process.env.NODE_ENV,
                 isVercel: !!process.env.VERCEL

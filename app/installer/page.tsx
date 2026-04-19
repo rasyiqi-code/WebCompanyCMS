@@ -27,6 +27,7 @@ export default function InstallerPage() {
     // Status indicators
     const [dbTestStatus, setDbTestStatus] = useState<null | "testing" | "success" | "error">(null);
     const [r2TestStatus, setR2TestStatus] = useState<null | "testing" | "success" | "error">(null);
+    const [isSyncing, setIsSyncing] = useState(false);
     const [testError, setTestError] = useState("");
 
     // Infrastructure Configuration
@@ -108,6 +109,29 @@ export default function InstallerPage() {
         } catch (err) {
             setDbTestStatus("error");
             setTestError("Network failure while testing database.");
+        }
+    };
+
+    const handleSyncSchema = async () => {
+        setIsSyncing(true);
+        setError("");
+        try {
+            const res = await fetch("/api/install/sync-db", { method: "POST" });
+            const data = await res.json();
+            if (res.ok) {
+                // Refresh status after sync
+                const statusRes = await fetch("/api/install/status");
+                const statusData = await statusRes.json();
+                if (statusData.success) {
+                    setSystemStatus(statusData.status);
+                }
+            } else {
+                setError(data.details || data.error);
+            }
+        } catch (err) {
+            setError("Failed to communicate with synchronization engine.");
+        } finally {
+            setIsSyncing(false);
         }
     };
 
@@ -240,11 +264,26 @@ export default function InstallerPage() {
                                         value={envConfig.databaseUrl}
                                         onChange={(e) => setEnvConfig({...envConfig, databaseUrl: e.target.value})}
                                         className="w-full px-3 py-2 bg-[#191919] border border-[#2f2f2f] rounded-lg text-xs text-white placeholder-gray-700 outline-none focus:border-[#2eaadc] transition-colors"
-                                        placeholder={isPreConfigured ? "Using system environment variable" : "postgresql://user:pass@host:port/db"}
-                                        disabled={isPreConfigured && !envConfig.databaseUrl}
                                     />
                                     {dbTestStatus === "success" && <p className="text-[10px] text-emerald-500 font-bold uppercase tracking-tighter">✔ Handshake Successful</p>}
                                     {dbTestStatus === "error" && <p className="text-[10px] text-red-500 font-bold uppercase tracking-tighter">✘ {testError}</p>}
+                                    
+                                    {/* Schema Sync block */}
+                                    {dbTestStatus === "success" && systemStatus && !systemStatus.tablesExist && (
+                                        <div className="mt-4 p-3 bg-indigo-500/5 border border-indigo-500/20 rounded-lg flex items-center justify-between animate-in zoom-in duration-300">
+                                            <div>
+                                                <p className="text-[10px] text-indigo-400 font-bold uppercase tracking-widest">Action Required: Initialize Schema</p>
+                                                <p className="text-[9px] text-gray-500 mt-1">Found connected database but required tables are missing.</p>
+                                            </div>
+                                            <button 
+                                                onClick={handleSyncSchema}
+                                                disabled={isSyncing}
+                                                className="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white text-[9px] font-bold uppercase tracking-widest rounded-lg transition-all disabled:opacity-50"
+                                            >
+                                                {isSyncing ? "INITIALIZING..." : "SYNC SCHEMA NOW"}
+                                            </button>
+                                        </div>
+                                    )}
                                 </div>
 
                                 {/* R2 Section */}
@@ -334,12 +373,16 @@ export default function InstallerPage() {
                             <div className="pt-6 mt-auto">
                                 <button
                                     onClick={handleNext}
-                                    disabled={dbTestStatus !== "success"}
+                                    disabled={dbTestStatus !== "success" || (systemStatus && !systemStatus.tablesExist)}
                                     className="w-full flex items-center justify-center gap-2 py-3 bg-[#2eaadc] hover:bg-[#1a99cc] disabled:opacity-30 text-white rounded-xl font-bold text-sm transition-all"
                                 >
                                     Proceed to Site Identity <ChevronRight size={18} />
                                 </button>
-                                {dbTestStatus !== "success" && <p className="text-center text-[10px] text-gray-600 mt-3 font-bold uppercase">DATABASE VERIFICATION REQUIRED</p>}
+                                {(dbTestStatus !== "success" || (systemStatus && !systemStatus.tablesExist)) && (
+                                    <p className="text-center text-[10px] text-gray-600 mt-3 font-bold uppercase">
+                                        {dbTestStatus !== "success" ? "DATABASE VERIFICATION REQUIRED" : "SCHEMA INITIALIZATION REQUIRED"}
+                                    </p>
+                                )}
                             </div>
                         </div>
                     )}

@@ -16,7 +16,8 @@ import {
     User,
     X,
     Search,
-    Bell
+    Bell,
+    Layers
 } from "lucide-react";
 import { signOut, useSession } from "next-auth/react";
 import { usePathname } from "next/navigation";
@@ -78,6 +79,7 @@ export default function DashboardShell({
                 { href: "/dashboard/media", icon: <ImageIcon size={18} />, label: "Media Library", roles: ["admin", "editor"] },
                 { href: "/dashboard/gallery", icon: <FileText size={18} />, label: "Gallery", roles: ["admin", "editor"] },
                 { href: "/dashboard/portfolios", icon: <Briefcase size={18} />, label: "Portfolio", roles: ["admin", "editor"] },
+                { href: "/dashboard/taxonomies", icon: <Layers size={18} />, label: "Categories & Tags", roles: ["admin", "editor"] },
                 { href: "/dashboard/inbox", icon: <FileText size={18} />, label: "Inbox / Messages", roles: ["admin", "editor"] },
                 { href: "/dashboard/testimonials", icon: <Users size={18} />, label: "Testimonials", roles: ["admin", "editor"] },
             ]
@@ -113,7 +115,7 @@ export default function DashboardShell({
                 </button>
             </div>
 
-            <nav className="flex-1 p-2 space-y-4 overflow-y-auto scrollbar-hide">
+            <nav className="flex-1 p-2 space-y-4 overflow-y-auto custom-scrollbar pr-1">
                 {navItems.map((section, i) => {
                     const visibleItems = section.items.filter(item =>
                         !item.roles || item.roles.includes(session?.user?.role || "user")

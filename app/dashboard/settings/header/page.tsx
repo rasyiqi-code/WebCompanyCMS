@@ -89,11 +89,12 @@ export default function HeaderSettingsPage() {
                         name="headerStyle" 
                         value={settings.headerStyle || "simple"} 
                         onChange={handleChange}
-                    >
-                        <option value="simple" className="bg-[#191919]">Canonical (Logo L, Menu R)</option>
-                        <option value="centered" className="bg-[#191919]">Symmetric (Logo C, Menu Split)</option>
-                        <option value="minimal" className="bg-[#191919]">Minimalist (Logo L, Hidden Menu)</option>
-                    </FormSelect>
+                        options={[
+                            { label: "Canonical (Logo L, Menu R)", value: "simple" },
+                            { label: "Symmetric (Logo C, Menu Split)", value: "centered" },
+                            { label: "Minimalist (Logo L, Hidden Menu)", value: "minimal" }
+                        ]}
+                    />
                 </div>
             </FormSection>
 

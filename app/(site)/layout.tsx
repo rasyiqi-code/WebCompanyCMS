@@ -1,12 +1,6 @@
-import Link from "next/link";
-import Header from "../../components/layout/Header";
-import Footer from "../../components/layout/Footer";
-// import { CartProvider } from "@/components/providers/cart-provider";
-import CartDrawer from "../../components/shop/CartDrawer";
-import FloatingChat from "../../components/ui/FloatingChat";
-
 import { getSiteSettings } from "../../lib/settings";
 import { getMenu } from "../../lib/menus";
+import { getThemeLayout } from "../../lib/themes";
 
 export default async function SiteLayout({
     children,
@@ -15,16 +9,13 @@ export default async function SiteLayout({
 }) {
     const settings = await getSiteSettings();
     const mainMenu = await getMenu("main");
+    
+    // Dynamically load the layout based on the active theme
+    const ThemeLayout = getThemeLayout(settings.activeTheme || "default");
 
     return (
-        <div className="flex flex-col min-h-screen">
-            <Header initialSettings={settings} initialMenuItems={mainMenu?.items || []} />
-            <main className="flex-grow">
-                {children}
-            </main>
-            <Footer initialSettings={settings} />
-            <CartDrawer />
-            <FloatingChat settings={settings} />
-        </div>
+        <ThemeLayout settings={settings} mainMenu={mainMenu}>
+            {children}
+        </ThemeLayout>
     );
 }

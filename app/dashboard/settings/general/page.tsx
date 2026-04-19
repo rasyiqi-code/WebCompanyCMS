@@ -53,7 +53,7 @@ export default function GeneralSettingsPage() {
         }
     };
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
         if (!settings) return;
         setSettings({ ...settings, [e.target.name]: e.target.value });
     };
@@ -87,6 +87,28 @@ export default function GeneralSettingsPage() {
                     <FormInput label="Brand Logo URL" name="logoUrl" value={settings.logoUrl || ""} onChange={handleChange} placeholder="https://..." />
                     <FormInput label="Contact Email" name="contactEmail" value={settings.contactEmail || ""} onChange={handleChange} />
                     <FormTextArea label="Description" name="description" value={settings.description || ""} onChange={handleChange} className="md:col-span-2" />
+                </div>
+            </FormSection>
+
+            {/* Theme Selection */}
+            <FormSection 
+                title="Visual Engine" 
+                description="Select the architectural theme that defines your site's presentation layer."
+            >
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="space-y-1.5">
+                        <label className="text-[10px] font-bold text-white/40 uppercase tracking-widest ml-1">Active Theme</label>
+                        <select 
+                            name="activeTheme"
+                            value={settings.activeTheme || "default"}
+                            onChange={handleChange}
+                            className="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg focus:ring-2 focus:ring-[#2eaadc]/20 focus:border-[#2eaadc]/50 outline-none text-xs text-white transition-all appearance-none cursor-pointer"
+                        >
+                            <option value="default" className="bg-[#202020]">Default (Standard Next)</option>
+                            <option value="luxury" className="bg-[#202020]">Luxury Dark (Premium Serif)</option>
+                        </select>
+                        <p className="text-[9px] text-gray-500 mt-1 italic">Switching themes instantly modifies fonts, colors, and layouts across the public site.</p>
+                    </div>
                 </div>
             </FormSection>
 

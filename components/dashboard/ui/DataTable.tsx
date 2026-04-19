@@ -1,6 +1,8 @@
 "use client";
 
-import React from "react";
+import React, { useState, useRef, useEffect } from "react";
+import { Search, ChevronDown, Check } from "lucide-react";
+import Link from "next/link";
 
 /**
  * PageHeader
@@ -10,16 +12,16 @@ export function PageHeader({
     title, 
     subtitle, 
     children 
-}: { 
+    }: { 
     title: string; 
     subtitle?: string; 
     children?: React.ReactNode 
-}) {
+    }) {
     return (
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6 pb-4 border-b border-white/5">
             <div>
-                <h1 className="text-2xl font-bold text-white tracking-tight">{title}</h1>
-                {subtitle && <p className="text-white text-sm mt-0.5">{subtitle}</p>}
+                <h1 className="text-3xl font-extrabold text-white tracking-tight">{title}</h1>
+                {subtitle && <p className="text-gray-400 text-sm mt-1">{subtitle}</p>}
             </div>
             {children && (
                 <div className="flex items-center gap-3">
@@ -36,7 +38,7 @@ export function PageHeader({
  */
 export function TableContainer({ children }: { children: React.ReactNode }) {
     return (
-        <div className="bg-[#202020] rounded border border-[#2f2f2f] overflow-hidden w-full transition-all">
+        <div className="bg-[#202020] rounded-xl border border-[#2f2f2f] overflow-hidden w-full transition-all">
             <div className="overflow-x-auto">
                 <table className="min-w-full divide-y divide-[#2f2f2f]">
                     {children}
@@ -114,7 +116,7 @@ export function StatusBadge({
     };
 
     return (
-        <span className={`inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold uppercase tracking-widest border ${variants[type]}`}>
+        <span className={`inline-flex items-center px-1.5 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-widest border ${variants[type]}`}>
             {label}
         </span>
     );
@@ -124,8 +126,6 @@ export function StatusBadge({
  * SearchInput
  * A standardized search field with a search icon and consistent styling.
  */
-import { Search } from "lucide-react";
-
 export function SearchInput({ 
     value, 
     onChange, 
@@ -136,15 +136,91 @@ export function SearchInput({
     placeholder?: string;
 }) {
     return (
-        <div className="relative mb-6">
+        <div className="relative mb-5">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-[#373838]" size={14} />
             <input
                 type="text"
                 placeholder={placeholder}
                 value={value}
                 onChange={(e) => onChange(e.target.value)}
-                className="w-full pl-9 pr-4 py-1.5 bg-white/5 border border-[#2f2f2f] rounded text-sm text-white outline-none focus:border-gray-500 transition-colors"
+                className="w-full pl-9 pr-4 py-1.5 bg-white/5 border border-[#2f2f2f] rounded-lg text-sm text-white outline-none focus:border-gray-500 transition-colors"
             />
+        </div>
+    );
+}
+
+/**
+ * CustomSelect
+ * A premium, OS-independent dropdown component.
+ */
+export function CustomSelect({ 
+    options, 
+    value, 
+    onChange, 
+    placeholder = "Select...",
+    className = "",
+    variant = "default"
+}: { 
+    options: { label: string | React.ReactNode; value: string }[]; 
+    value: string; 
+    onChange: (val: string) => void;
+    placeholder?: string;
+    className?: string;
+    variant?: "default" | "primary";
+}) {
+    const [isOpen, setIsOpen] = useState(false);
+    const containerRef = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
+                setIsOpen(false);
+            }
+        };
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => document.removeEventListener("mousedown", handleClickOutside);
+    }, []);
+
+    const selectedOption = options.find(opt => opt.value === value);
+
+    const toggleOpen = () => setIsOpen(!isOpen);
+
+    const handleSelect = (val: string) => {
+        onChange(val);
+        setIsOpen(false);
+    };
+
+    const colorClass = variant === "primary" ? "text-[#2eaadc]" : "text-white";
+
+    return (
+        <div ref={containerRef} className={`relative min-w-[140px] ${className}`}>
+            <button
+                type="button"
+                onClick={toggleOpen}
+                className={`w-full flex items-center justify-between px-3 py-1.5 bg-white/5 border border-[#2f2f2f] rounded-lg text-xs outline-none transition-all hover:bg-white/10 ${isOpen ? 'border-gray-500' : ''} ${colorClass}`}
+            >
+                <span className="truncate">{selectedOption ? selectedOption.label : placeholder}</span>
+                <ChevronDown size={14} className={`ml-2 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`} />
+            </button>
+
+            {isOpen && (
+                <div className="absolute z-[100] mt-1 w-full bg-[#191919] border border-[#2f2f2f] rounded-lg shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-100 max-h-60 overflow-y-auto custom-scrollbar">
+                    {options.length === 0 ? (
+                        <div className="px-3 py-2 text-[10px] text-gray-500 italic">No options available</div>
+                    ) : (
+                        options.map((opt) => (
+                            <div
+                                key={opt.value}
+                                onClick={() => handleSelect(opt.value)}
+                                className={`flex items-center justify-between px-3 py-2 text-xs cursor-pointer transition-colors ${value === opt.value ? 'bg-[#2eaadc]/10 text-[#2eaadc]' : 'text-gray-300 hover:bg-white/5 hover:text-white'}`}
+                            >
+                                <span className={value === opt.value ? "font-bold" : ""}>{opt.label}</span>
+                                {value === opt.value && <Check size={12} />}
+                            </div>
+                        ))
+                    )}
+                </div>
+            )}
         </div>
     );
 }
@@ -239,8 +315,8 @@ export function FormSection({
     children: React.ReactNode 
 }) {
     return (
-        <div className="bg-[#202020] rounded border border-[#2f2f2f] overflow-hidden">
-            <div className="p-6 space-y-6">
+        <div className="bg-[#202020] rounded-xl border border-[#2f2f2f] overflow-hidden">
+            <div className="p-5 space-y-4">
                 <div>
                     <h2 className="text-base font-bold text-white tracking-tight">{title}</h2>
                     {description && <p className="text-white text-xs">{description}</p>}
@@ -286,7 +362,7 @@ export function FormInput({
                 onChange={onChange}
                 placeholder={placeholder}
                 required={required}
-                className="w-full px-2.5 py-1.5 bg-white/5 border border-[#2f2f2f] rounded text-sm text-white outline-none focus:border-gray-500 transition-all placeholder:text-gray-700"
+                className="w-full px-2.5 py-1.5 bg-white/5 border border-[#2f2f2f] rounded-lg text-sm text-white outline-none focus:border-gray-500 transition-all placeholder:text-gray-700"
             />
         </div>
     );
@@ -301,34 +377,29 @@ export function FormSelect({
     name, 
     value, 
     onChange, 
-    children,
+    options,
     className = ""
 }: { 
     label: string; 
     name?: string;
     value?: string;
-    onChange?: (e: React.ChangeEvent<HTMLSelectElement>) => void;
-    children: React.ReactNode;
+    onChange?: (val: any) => void;
+    options: { label: string; value: string }[];
     className?: string;
 }) {
     return (
         <div className={`space-y-1.5 ${className}`}>
             <label className="text-[10px] font-bold text-white uppercase tracking-widest pl-0.5">{label}</label>
-            <div className="relative">
-                <select
-                    name={name}
-                    value={value}
-                    onChange={onChange}
-                    className="w-full px-2.5 py-1.5 bg-white/5 border border-[#2f2f2f] rounded text-sm text-white outline-none focus:border-gray-500 transition-all cursor-pointer appearance-none [&>option]:bg-[#202020] [&>option]:text-white"
-                >
-                    {children}
-                </select>
-                <div className="absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none text-gray-700">
-                    <svg width="10" height="6" viewBox="0 0 10 6" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M1 1L5 5L9 1" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                    </svg>
-                </div>
-            </div>
+            <CustomSelect
+                options={options}
+                value={value || ""}
+                onChange={(val) => {
+                    if (onChange) {
+                        onChange({ target: { name, value: val } } as any);
+                    }
+                }}
+                className="w-full"
+            />
         </div>
     );
 }
@@ -363,7 +434,7 @@ export function FormTextArea({
                 onChange={onChange}
                 placeholder={placeholder}
                 rows={rows}
-                className="w-full px-2.5 py-1.5 bg-white/5 border border-[#2f2f2f] rounded text-sm text-white outline-none focus:border-gray-500 transition-all placeholder:text-gray-700 resize-none"
+                className="w-full px-2.5 py-1.5 bg-white/5 border border-[#2f2f2f] rounded-lg text-sm text-white outline-none focus:border-gray-500 transition-all placeholder:text-gray-700 resize-none"
             />
         </div>
     );
@@ -376,19 +447,23 @@ export function FormTextArea({
 export function StatCard({ 
     title, 
     value, 
-    icon 
+    icon,
+    description
 }: { 
     title: string; 
     value: string | number; 
-    icon?: React.ReactNode 
+    icon?: React.ReactNode;
+    description?: string;
 }) {
     return (
-        <div className="bg-[#202020] p-4 rounded border border-[#2f2f2f] hover:border-gray-700 transition-colors">
+        <div className="relative overflow-hidden bg-[#202020] p-5 rounded-xl border border-[#2f2f2f] hover:border-[#2eaadc]/30 transition-all group">
+            <div className="absolute top-0 right-0 w-24 h-24 bg-[#2eaadc]/5 rounded-full -translate-y-12 translate-x-12 blur-3xl group-hover:bg-[#2eaadc]/10 transition-all" />
             <div className="flex items-center justify-between mb-2">
-                <span className="text-[10px] font-bold text-white uppercase tracking-widest">{title}</span>
-                {icon && <div className="text-white opacity-50">{icon}</div>}
+                <span className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">{title}</span>
+                {icon && <div className="text-[#2eaadc]">{icon}</div>}
             </div>
-            <h4 className="text-xl font-bold text-white tracking-tight">{value}</h4>
+            <h4 className="text-2xl font-black text-white tracking-tighter mb-1">{value}</h4>
+            {description && <p className="text-[10px] text-gray-400 font-medium uppercase tracking-tight">{description}</p>}
         </div>
     );
 }
@@ -397,8 +472,6 @@ export function StatCard({
  * QuickAction
  * Compact action items for navigations.
  */
-import Link from "next/link";
-
 export function QuickAction({ 
     href, 
     label, 
@@ -455,7 +528,7 @@ export function EmptyState({
     className?: string;
 }) {
     return (
-        <div className={`bg-[#202020] py-16 rounded border border-[#2f2f2f] text-center w-full ${className}`}>
+        <div className={`bg-[#202020] py-10 rounded-xl border border-[#2f2f2f] text-center w-full ${className}`}>
             {icon && <div className="mx-auto mb-4 text-gray-800 flex justify-center">{icon}</div>}
             <p className="text-white text-xs font-medium italic opacity-60 tracking-tight">{message}</p>
         </div>

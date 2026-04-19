@@ -18,8 +18,7 @@
   "license": "MIT",
   "scripts": {
     "lint": "eslint \"**/*.ts*\"",
-    "build": "rm -rf dist && tsup index.ts",
-    "prepare": "yarn build"
+    "build": "rm -rf dist && tsup index.ts"
   },
   "files": [
     "dist"

@@ -2,7 +2,7 @@
 "use client";
 
 import { useState } from "react";
-import { Save, Lock, User } from "lucide-react";
+import { Save, Lock, User, Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 export function ProfileForm({ user }: { user: any }) {

@@ -84,7 +84,7 @@ const ComponentList = ({
             {id.toLowerCase().includes("layout") && <Box size={12} strokeWidth={2.5} />}
             {id.toLowerCase().includes("basic") && <Settings size={12} strokeWidth={2.5} />}
             {id === "other" && <Layers size={12} strokeWidth={2.5} />}
-            <div>{title?.replace(/[\u{1F300}-\u{1F9FF}]|[\u{2600}-\u{26FF}]|[\u{2700}-\u{27BF}]/gu, "").trim()}</div>
+            <div>{title?.replace(/[\u2600-\u27BF]|[\uD83C][\uDF00-\uDFFF]|[\uD83D][\uDC00-\uDE4F]|[\uD83D][\uDE80-\uDEFF]/g, "").trim()}</div>
           </div>
           <div className={getClassName("titleIcon")}>
             {expanded ? <ChevronUp size={12} /> : <ChevronDown size={12} />}

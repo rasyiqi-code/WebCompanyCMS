@@ -15,6 +15,7 @@ import { notFound } from "next/navigation";
 import { Metadata } from "next";
 import { getPage } from "../../../lib/get-page";
 import TiptapRenderer from "@/components/TiptapRenderer";
+import { hooks } from "../../../lib/hooks";
 
 export async function generateMetadata({
   params,
@@ -46,7 +47,10 @@ export default async function Page({
 }) {
   const { credbuildPath = [] } = await params;
   const path = `/${credbuildPath.join("/")}`;
-  const data = await getPage(path);
+  let data = await getPage(path);
+
+  // Apply filters to page data
+  data = hooks.applyFilters("page_data", data, { path });
 
   if (!data) {
     return notFound();

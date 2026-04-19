@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Loader2, Save, ArrowLeft } from "lucide-react";
+import { Loader2, Save, ArrowLeft, Trash2, Plus } from "lucide-react";
 import Link from "next/link";
 import TiptapEditor from "@/components/TiptapEditor";
 
@@ -23,7 +23,8 @@ function PageEditorContent() {
         body: "",
         isPublished: true,
         useBuilder: false,
-        data: null
+        data: null,
+        metaData: [] as any[]
     });
 
     useEffect(() => {
@@ -42,7 +43,8 @@ function PageEditorContent() {
                             body: page.body || "",
                             isPublished: page.isPublished,
                             useBuilder: page.useBuilder,
-                            data: page.data
+                            data: page.data,
+                            metaData: page.metaData || []
                         });
                     }
                     setLoading(false);
@@ -146,6 +148,73 @@ function PageEditorContent() {
                                     setFormData(prev => ({ ...prev, body: content }));
                                 }}
                             />
+                        </div>
+
+                        {/* Custom Fields (ACF Style) */}
+                        <div className="bg-[#202020] rounded border border-[#2f2f2f] overflow-hidden shadow-sm">
+                            <div className="px-4 py-2 bg-white/5 border-b border-[#2f2f2f] flex justify-between items-center">
+                                <span className="text-[10px] font-bold text-white uppercase tracking-widest">Custom Fields (ACF Style)</span>
+                                <button
+                                    type="button"
+                                    onClick={() => {
+                                        setFormData(prev => ({
+                                            ...prev,
+                                            metaData: [...prev.metaData, { key: "", value: "", type: "text" }]
+                                        }));
+                                    }}
+                                    className="text-[9px] font-bold bg-[#2eaadc] text-white px-2 py-0.5 rounded hover:bg-[#1a99cc] transition-colors flex items-center gap-1"
+                                >
+                                    <Plus size={10} /> Add Field
+                                </button>
+                            </div>
+                            <div className="p-4 space-y-3">
+                                {formData.metaData.length === 0 ? (
+                                    <div className="py-6 flex flex-col items-center justify-center border border-dashed border-white/5 rounded-lg text-center">
+                                        <p className="text-[10px] text-gray-500 font-medium italic">No custom fields defined.</p>
+                                        <p className="text-[9px] text-gray-600 mt-0.5">Define unique page attributes like "Subtitle", "Event Date", or "Price".</p>
+                                    </div>
+                                ) : (
+                                    formData.metaData.map((meta, index) => (
+                                        <div key={index} className="flex gap-3 items-start animate-in fade-in zoom-in-95 duration-200">
+                                            <div className="flex-1 space-y-1">
+                                                <input
+                                                    value={meta.key}
+                                                    onChange={(e) => {
+                                                        const newMeta = [...formData.metaData];
+                                                        newMeta[index].key = e.target.value;
+                                                        setFormData({ ...formData, metaData: newMeta });
+                                                    }}
+                                                    className="w-full px-3 py-1.5 bg-[#191919] border border-[#2f2f2f] rounded text-[11px] text-white outline-none focus:border-[#2eaadc]/50 placeholder:text-gray-700"
+                                                    placeholder="Meta Key (e.g. subtitle)"
+                                                />
+                                            </div>
+                                            <div className="flex-[2] space-y-1">
+                                                <input
+                                                    value={meta.value}
+                                                    onChange={(e) => {
+                                                        const newMeta = [...formData.metaData];
+                                                        newMeta[index].value = e.target.value;
+                                                        setFormData({ ...formData, metaData: newMeta });
+                                                    }}
+                                                    className="w-full px-3 py-1.5 bg-[#191919] border border-[#2f2f2f] rounded text-[11px] text-white outline-none focus:border-[#2eaadc]/50 placeholder:text-gray-700"
+                                                    placeholder="Value"
+                                                />
+                                            </div>
+                                            <button
+                                                type="button"
+                                                onClick={() => {
+                                                    const newMeta = formData.metaData.filter((_, i) => i !== index);
+                                                    setFormData({ ...formData, metaData: newMeta });
+                                                }}
+                                                className="mt-1.5 p-1 text-gray-600 hover:text-red-500 transition-colors"
+                                                title="Remove Field"
+                                            >
+                                                <Trash2 size={12} />
+                                            </button>
+                                        </div>
+                                    ))
+                                )}
+                            </div>
                         </div>
                     </div>
                 </div>

@@ -4,6 +4,7 @@
   "author": "Rasyiqi Crediblemark",
   "homepage": "https://build.crediblemark.com",
   "private": true,
+  "workspaces": ["packages/*"],
   "scripts": {
     "dev": "next dev",
     "build": "prisma generate && next build",

@@ -71,21 +71,41 @@ export default async function DashboardPage() {
     const data = await getStats();
     const paymentSettings = await getPaymentSettings();
     const currency = paymentSettings.currency || "USD";
-    const totalRevenue = data.recentOrders.reduce((acc, o) => acc + Number(o.total), 0); // Partial for demo since we only fetched 5, but let's assume total logic
+    const totalRevenue = data.recentOrders.reduce((acc, o) => acc + Number(o.total), 0);
 
     return (
         <div className="w-full animate-in fade-in duration-700 pb-20 px-4 space-y-8 text-white">
             <PageHeader 
                 title="Workspace" 
-                subtitle="Summary of your digital assets and operations." 
+                subtitle="High-level telemetry and asset operations." 
             />
 
             {/* Main Stats Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                <StatCard title="Revenue" value={formatPrice(totalRevenue, currency)} icon={<ShoppingBag size={14} />} />
-                <StatCard title="Total Views" value={data.views.toLocaleString()} icon={<Eye size={14} />} />
-                <StatCard title="Orders" value={data.counts.orders.toString()} icon={<ShoppingBag size={14} />} />
-                <StatCard title="Customers" value={data.counts.users.toString()} icon={<ShoppingBag size={14} />} />
+                <StatCard 
+                    title="Gross Revenue" 
+                    value={formatPrice(totalRevenue, currency)} 
+                    icon={<ShoppingBag size={14} />} 
+                    description="Recent 5 Transactions"
+                />
+                <StatCard 
+                    title="Traffic Overview" 
+                    value={data.views.toLocaleString()} 
+                    icon={<Eye size={14} />} 
+                    description="Total Lifetime Views"
+                />
+                <StatCard 
+                    title="Infrastructure" 
+                    value={data.counts.media.toString()} 
+                    icon={<ImageIcon size={14} />} 
+                    description={`${(data.storageUsed / 1024 / 1024).toFixed(2)} MB Storage Used`}
+                />
+                <StatCard 
+                    title="Active Identity" 
+                    value={data.counts.users.toString()} 
+                    icon={<Plus size={14} />} 
+                    description="Registered Console Users"
+                />
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">

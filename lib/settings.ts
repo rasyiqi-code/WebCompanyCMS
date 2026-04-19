@@ -7,6 +7,7 @@ export interface SiteSettings {
     tagline: string | null;
     description: string | null;
     logoUrl: string | null;
+    activeTheme?: string | null;
     brandColor?: string | null;
     brandPrimaryColor?: string | null;
     brandSecondaryColor?: string | null;
@@ -60,6 +61,8 @@ export const getSiteSettings = async (): Promise<SiteSettings> => {
             data: {
                 siteName: "My Awesome Site",
                 description: "Welcome to my website",
+                // @ts-ignore
+                activeTheme: "default",
                 footerCopyright: `© ${new Date().getFullYear()} All Rights Reserved.`,
             }
         });
@@ -73,6 +76,7 @@ export const getSiteSettings = async (): Promise<SiteSettings> => {
             tagline: "Welcome",
             description: "Built with Next CMS",
             logoUrl: null,
+            activeTheme: "default",
             seoTitle: null,
             seoKeywords: null,
             seoImage: null,

@@ -28,3 +28,15 @@ export const checkDatabaseConnection = async () => {
         };
     }
 };
+
+export const checkTablesExist = async () => {
+    try {
+        // Check for core table 'SiteSettings'
+        // Using raw query for maximum compatibility across providers
+        await db.$queryRaw`SELECT id FROM "SiteSettings" LIMIT 1`;
+        return true;
+    } catch (error) {
+        // If query fails, usually means table doesn't exist
+        return false;
+    }
+};
