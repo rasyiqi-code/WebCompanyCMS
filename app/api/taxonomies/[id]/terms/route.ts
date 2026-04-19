@@ -4,11 +4,12 @@ import { db } from "../../../../../lib/db";
 
 export async function GET(
     req: Request,
-    { params }: { params: { id: string } }
+    { params }: { params: Promise<{ id: string }> }
 ) {
+    const { id } = await params;
     try {
         const terms = await db.term.findMany({
-            where: { taxonomyId: params.id },
+            where: { taxonomyId: id },
             orderBy: { name: 'asc' }
         });
         return NextResponse.json(terms);
@@ -19,8 +20,9 @@ export async function GET(
 
 export async function POST(
     req: Request,
-    { params }: { params: { id: string } }
+    { params }: { params: Promise<{ id: string }> }
 ) {
+    const { id } = await params;
     try {
         const body = await req.json();
         const { name, slug, description, parentId } = body;
@@ -34,7 +36,7 @@ export async function POST(
                 name,
                 slug,
                 description,
-                taxonomyId: params.id,
+                taxonomyId: id,
                 parentId: parentId || null
             }
         });
