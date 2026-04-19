@@ -1,4 +1,0 @@
-This Pull Request fixes the deployment issues on Vercel:
-- Added globalPassThroughEnv to turbo.json to allow critical environment variables (DATABASE_URL, R2_*, NEXTAUTH_*) to reach the build process.
-- Explicitly defined and triggered the root //#build:next task to ensure the Next.js .next output directory is generated and captured by Vercel.
-- Updated the main build script to properly orchestrate the monorepo build flow.
