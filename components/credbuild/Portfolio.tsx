@@ -81,5 +81,5 @@ export const Portfolio: ComponentConfig<PortfolioProps> = {
         title: "Karya Pilihan",
         subtitle: "Portofolio proyek terbaru yang telah kami kerjakan dengan sepenuh hati.",
     },
-    render: (props) => <PortfolioRender {...props} />,
+    render: PortfolioRender,
 };

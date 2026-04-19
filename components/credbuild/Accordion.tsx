@@ -199,5 +199,5 @@ export const Accordion: ComponentConfig<AccordionProps> = {
         activeColor: "#2563eb",
         textColor: "#475569",
     },
-    render: (props) => <AccordionRender {...props} />,
+    render: AccordionRender,
 };

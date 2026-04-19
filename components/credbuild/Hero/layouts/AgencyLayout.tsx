@@ -404,5 +404,5 @@ export const HeroAgency: ComponentConfig<HeroAgencyProps> = {
         paddingTop: { desktop: 100 },
         paddingBottom: { desktop: 80 },
     },
-    render: (props) => <HeroAgencyRender {...props} />,
+    render: HeroAgencyRender,
 };

@@ -307,5 +307,5 @@ export const IconGrid: ComponentConfig<IconGridProps> = {
         itemDescriptionSize: { desktop: 16, tablet: 15, mobile: 14 },
         itemTextColor: "#ffffff",
     },
-    render: (props) => <IconGridRender {...props} />,
+    render: IconGridRender,
 };

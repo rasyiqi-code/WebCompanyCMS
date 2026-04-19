@@ -93,5 +93,5 @@ export const ContactForm: ComponentConfig<ContactFormProps> = {
         submitText: "Kirim Pesan",
         emailTo: "info@example.com",
     },
-    render: (props) => <ContactFormRender {...props} />,
+    render: ContactFormRender,
 };

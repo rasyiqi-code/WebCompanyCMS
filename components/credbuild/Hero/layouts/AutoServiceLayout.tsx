@@ -368,5 +368,5 @@ export const HeroAutoService: ComponentConfig<HeroAutoServiceProps> = {
         btnPaddingHorizontal: "40px",
         btnPaddingVertical: "14px",
     },
-    render: (props) => <HeroAutoServiceRender {...props} />,
+    render: HeroAutoServiceRender,
 };

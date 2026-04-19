@@ -406,5 +406,5 @@ export const HeroDental: ComponentConfig<HeroDentalProps> = {
         paddingTop: { desktop: 80 },
         paddingBottom: { desktop: 60 },
     },
-    render: (props) => <HeroDentalRender {...props} />,
+    render: HeroDentalRender,
 };

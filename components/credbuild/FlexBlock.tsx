@@ -321,5 +321,5 @@ export const FlexBlock: ComponentConfig<FlexBlockProps> = {
         borderWidth: "0px",
         borderColor: "transparent",
     },
-    render: (props) => <FlexBlockRender {...props} />,
+    render: FlexBlockRender,
 };

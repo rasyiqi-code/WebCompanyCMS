@@ -311,5 +311,5 @@ export const PricingGradient: ComponentConfig<PricingGradientProps> = {
             }
         ],
     },
-    render: (props) => <PricingGradientRender {...props} />,
+    render: PricingGradientRender,
 };

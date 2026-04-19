@@ -405,5 +405,5 @@ export const HeroMedical: ComponentConfig<HeroMedicalProps> = {
         btnPaddingHorizontal: "40px",
         btnPaddingVertical: "14px",
     },
-    render: (props) => <HeroMedicalRender {...props} />,
+    render: HeroMedicalRender,
 };

@@ -473,5 +473,5 @@ export const PricingSimple: ComponentConfig<PricingSimpleProps> = {
             },
         ],
     },
-    render: (props) => <PricingSimpleRender {...props} />,
+    render: PricingSimpleRender,
 };

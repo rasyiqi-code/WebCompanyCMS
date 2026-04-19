@@ -303,5 +303,5 @@ export const HeroFitness: ComponentConfig<HeroFitnessProps> = {
         paddingTop: { desktop: 80 },
         paddingBottom: { desktop: 80 },
     },
-    render: (props) => <HeroFitnessRender {...props} />,
+    render: HeroFitnessRender,
 };

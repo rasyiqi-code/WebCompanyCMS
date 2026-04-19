@@ -293,5 +293,5 @@ export const PricingBox: ComponentConfig<PricingBoxProps> = {
             }
         ],
     },
-    render: (props) => <PricingBoxRender {...props} />,
+    render: PricingBoxRender,
 };

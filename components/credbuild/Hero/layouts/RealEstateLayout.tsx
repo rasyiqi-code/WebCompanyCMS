@@ -404,5 +404,5 @@ export const HeroRealEstate: ComponentConfig<HeroRealEstateProps> = {
         paddingTop: { desktop: 80 },
         paddingBottom: { desktop: 80 },
     },
-    render: (props) => <HeroRealEstateRender {...props} />,
+    render: HeroRealEstateRender,
 };

@@ -221,5 +221,5 @@ export const HeroPublisher: ComponentConfig<HeroPublisherProps> = {
         paddingTop: { desktop: 60 },
         paddingBottom: { desktop: 60 },
     },
-    render: (props) => <HeroPublisherRender {...props} />,
+    render: HeroPublisherRender,
 };

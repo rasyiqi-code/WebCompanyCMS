@@ -416,5 +416,5 @@ export const HeroYoga: ComponentConfig<HeroYogaProps> = {
         btnPaddingHorizontal: "32px",
         btnPaddingVertical: "12px",
     },
-    render: (props) => <HeroYogaRender {...props} />,
+    render: HeroYogaRender,
 };

@@ -417,5 +417,5 @@ export const Container: ComponentConfig<ContainerProps> = {
         borderStyle: "none",
         borderWidth: "0px",
     },
-    render: (props) => <ContainerRender {...props} />,
+    render: ContainerRender,
 };

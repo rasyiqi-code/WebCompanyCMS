@@ -134,5 +134,5 @@ export const ProductList: ComponentConfig<ProductListProps> = {
         columns: 4,
         backgroundColor: "#ffffff",
     },
-    render: (props) => <ProductListRender {...props} />,
+    render: ProductListRender,
 };

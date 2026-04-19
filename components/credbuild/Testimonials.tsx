@@ -349,5 +349,5 @@ export const Testimonials: ComponentConfig<TestimonialsProps> = {
         authorColor: "#1e293b",
         roleColor: "#94a3b8",
     },
-    render: (props) => <TestimonialsRender {...props} />,
+    render: TestimonialsRender,
 };

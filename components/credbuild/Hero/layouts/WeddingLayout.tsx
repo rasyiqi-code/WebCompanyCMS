@@ -390,5 +390,5 @@ export const HeroWedding: ComponentConfig<HeroWeddingProps> = {
         paddingBottom: { desktop: 60 },
         imageOverlap: { desktop: 40 },
     },
-    render: (props) => <HeroWeddingRender {...props} />,
+    render: HeroWeddingRender,
 };

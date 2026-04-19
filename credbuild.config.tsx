@@ -72,7 +72,7 @@ type Props = {
 export const config: Config<Props> = {
   root: {
     render: ({ children }) => (
-      <div>
+      <div id="credbuild-root">
         {children}
       </div>
     )
@@ -133,11 +133,13 @@ export const config: Config<Props> = {
         paddingTop: 64,
         paddingBottom: 64,
       },
-      render: ({ title, font, paddingTop, paddingBottom }) => (
-        <div style={{ padding: 64, paddingTop, paddingBottom }}>
-          <h1 style={{ fontFamily: font !== 'inherit' ? `"${font}", sans-serif` : 'inherit' }}>{title}</h1>
-        </div>
-      ),
+      render: function HeadingBlockRender({ title, font, paddingTop, paddingBottom }) {
+        return (
+          <div style={{ padding: 64, paddingTop, paddingBottom }}>
+            <h1 style={{ fontFamily: font !== 'inherit' ? `"${font}", sans-serif` : 'inherit' }}>{title}</h1>
+          </div>
+        );
+      },
     },
     HeroPublisher: { ...HeroPublisher, label: "Book Publisher" },
     HeroPublisherTwo: { ...HeroPublisherTwo, label: "Elite Publisher" },

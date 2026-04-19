@@ -245,5 +245,5 @@ export const Stats: ComponentConfig<StatsProps> = {
         paddingTop: "60px",
         paddingBottom: "60px",
     },
-    render: (props) => <StatsRender {...props} />,
+    render: StatsRender,
 };

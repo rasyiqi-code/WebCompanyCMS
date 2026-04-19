@@ -216,5 +216,5 @@ export const CTA: ComponentConfig<CTAProps> = {
         buttonColor: "#ffffff",
         buttonTextColor: "#dc2626",
     },
-    render: (props) => <CTARender {...props} />,
+    render: CTARender,
 };

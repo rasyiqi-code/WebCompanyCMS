@@ -149,5 +149,5 @@ export const AboutCompany: ComponentConfig<AboutCompanyProps> = {
         gap: { desktop: 32, tablet: 24, mobile: 16 },
         fontSize: { desktop: 18, tablet: 16, mobile: 16 },
     },
-    render: (props) => <AboutCompanyRender {...props} />,
+    render: AboutCompanyRender,
 };

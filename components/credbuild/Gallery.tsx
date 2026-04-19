@@ -257,5 +257,5 @@ export const Gallery: ComponentConfig<GalleryProps> = {
         columnsTablet: 3,
         columnsMobile: 2,
     },
-    render: (props) => <GalleryRender {...props} />,
+    render: GalleryRender,
 };

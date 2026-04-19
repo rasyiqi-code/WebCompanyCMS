@@ -386,5 +386,5 @@ export const HeroSecurity: ComponentConfig<HeroSecurityProps> = {
         btnPaddingHorizontal: "40px",
         btnPaddingVertical: "14px",
     },
-    render: (props) => <HeroSecurityRender {...props} />,
+    render: HeroSecurityRender,
 };

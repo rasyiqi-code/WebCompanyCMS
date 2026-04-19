@@ -129,5 +129,5 @@ export const LogoMarquee: ComponentConfig<LogoMarqueeProps> = {
         titleSize: "1.5rem",
         grayscale: false,
     },
-    render: (props) => <LogoMarqueeRender {...props} />,
+    render: LogoMarqueeRender,
 };

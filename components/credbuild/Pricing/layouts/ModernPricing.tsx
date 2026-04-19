@@ -330,5 +330,5 @@ export const PricingModern: ComponentConfig<PricingModernProps> = {
             }
         ],
     },
-    render: (props) => <PricingModernRender {...props} />,
+    render: PricingModernRender,
 };

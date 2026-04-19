@@ -340,5 +340,5 @@ export const PricingImage: ComponentConfig<PricingImageProps> = {
             },
         ],
     },
-    render: (props) => <PricingImageRender {...props} />,
+    render: PricingImageRender,
 };
