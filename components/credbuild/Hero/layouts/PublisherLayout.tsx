@@ -5,6 +5,12 @@ import { ColorPickerField } from "../../fields/ColorPickerField";
 import React, { useId } from "react";
 import Image from "next/image";
 
+const RenderField1 = ({ value, onChange }: any) => <ResponsiveSliderField value={value} onChange={onChange} unit="rem" max={6} step={0.1} defaultValue={3} />;
+const RenderField2 = ({ value, onChange }: any) => <ResponsiveSliderField value={value} onChange={onChange} unit="rem" max={2} step={0.1} defaultValue={1} />;
+const RenderField3 = ({ value, onChange }: any) => <ColorPickerField value={value} onChange={onChange} />;
+const RenderField4 = ({ value, onChange }: any) => <ResponsiveSliderField value={value} onChange={onChange} unit="px" max={200} defaultValue={60} />;
+
+
 export type HeroPublisherProps = {
     title: string;
     description: string;
@@ -135,12 +141,11 @@ const HeroPublisherRender = ({
                 <div className="image-container" style={{ position: 'relative', borderRadius: '20px', overflow: 'hidden', aspectRatio: '4/3' }}>
                     <Image 
                         src={imageUrl} 
-                        alt="Hero" 
+                        alt="Hero Publisher" 
                         fill 
                         priority={true}
                         sizes="(max-width: 768px) 100vw, 50vw"
                         className="object-cover" 
-                        unoptimized 
                     />
                 </div>
             </div>
@@ -168,7 +173,7 @@ export const HeroPublisher: ComponentConfig<HeroPublisherProps> = {
         },
         titleSize: {
             type: "custom", label: "Title Size (rem)",
-            render: ({ value, onChange }) => <ResponsiveSliderField value={value} onChange={onChange} unit="rem" max={6} step={0.1} defaultValue={3} />
+            render: RenderField1
         },
         titleWeight: {
             type: "select", label: "Title Weight",
@@ -186,23 +191,23 @@ export const HeroPublisher: ComponentConfig<HeroPublisherProps> = {
         },
         subtitleSize: {
             type: "custom", label: "Body Size (rem)",
-            render: ({ value, onChange }) => <ResponsiveSliderField value={value} onChange={onChange} unit="rem" max={2} step={0.1} defaultValue={1} />
+            render: RenderField2
         },
         backgroundColor: {
             type: "custom", label: "Background Color",
-            render: ({ value, onChange }) => <ColorPickerField value={value} onChange={onChange} />
+            render: RenderField3
         },
         textColor: {
             type: "custom", label: "Text Color",
-            render: ({ value, onChange }) => <ColorPickerField value={value} onChange={onChange} />
+            render: RenderField3
         },
         paddingTop: {
             type: "custom", label: "Padding Top",
-            render: ({ value, onChange }) => <ResponsiveSliderField value={value} onChange={onChange} unit="px" max={200} defaultValue={60} />
+            render: RenderField4
         },
         paddingBottom: {
             type: "custom", label: "Padding Bottom",
-            render: ({ value, onChange }) => <ResponsiveSliderField value={value} onChange={onChange} unit="px" max={200} defaultValue={60} />
+            render: RenderField4
         },
     },
     defaultProps: {

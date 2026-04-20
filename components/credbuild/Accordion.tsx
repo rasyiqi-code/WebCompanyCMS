@@ -2,6 +2,8 @@ import type { ComponentConfig } from "@credbuild/core";
 import { ColorPickerField } from "./fields/ColorPickerField";
 import React, { useId } from "react";
 
+const RenderColor = ({ value, onChange }: any) => <ColorPickerField value={value} onChange={onChange} />;
+
 export type AccordionProps = {
     title: string;
     titleFont?: string;
@@ -163,27 +165,27 @@ export const Accordion: ComponentConfig<AccordionProps> = {
         backgroundColor: {
             type: "custom",
             label: "Section Background",
-            render: ({ value, onChange }) => <ColorPickerField value={value} onChange={onChange} />
+            render: RenderColor
         },
         titleColor: {
             type: "custom",
             label: "Title Color",
-            render: ({ value, onChange }) => <ColorPickerField value={value} onChange={onChange} />
+            render: RenderColor
         },
         itemBgColor: {
             type: "custom",
             label: "Item Background",
-            render: ({ value, onChange }) => <ColorPickerField value={value} onChange={onChange} />
+            render: RenderColor
         },
         textColor: {
             type: "custom",
             label: "Text Color",
-            render: ({ value, onChange }) => <ColorPickerField value={value} onChange={onChange} />
+            render: RenderColor
         },
         activeColor: {
             type: "custom",
             label: "Active Icon Color",
-            render: ({ value, onChange }) => <ColorPickerField value={value} onChange={onChange} />
+            render: RenderColor
         },
     },
     defaultProps: {

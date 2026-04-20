@@ -357,20 +357,25 @@ function AutoFrame({
       const doc = frameRef.current.contentDocument;
       const win = frameRef.current.contentWindow;
 
-      setCtx({
-        document: doc || undefined,
-        window: win || undefined,
-      });
+      if (ctx.document !== (doc || undefined) || ctx.window !== (win || undefined)) {
+        setCtx({
+          document: doc || undefined,
+          window: win || undefined,
+        });
+      }
 
-      setMountTarget(
-        frameRef.current.contentDocument?.getElementById("frame-root")
-      );
+      const newMountTarget = doc?.getElementById("frame-root");
+      if (mountTarget !== newMountTarget) {
+        setMountTarget(newMountTarget);
+      }
 
       if (doc && win && stylesLoaded) {
         onReady();
+      } else {
+        onNotReady();
       }
     }
-  }, [frameRef, loaded, stylesLoaded, onReady, onNotReady]);
+  }, [frameRef, loaded, stylesLoaded, onReady, onNotReady, ctx.document, ctx.window, mountTarget]);
 
   return (
     <iframe

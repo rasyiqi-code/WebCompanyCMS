@@ -5,6 +5,11 @@ import type { ComponentConfig } from "@credbuild/core";
 import { ColorPickerField } from "./fields/ColorPickerField";
 import { ResponsiveSliderField, type ResponsiveValue } from "./fields/ResponsiveSliderField";
 
+const RenderColor = ({ value, onChange }: any) => <ColorPickerField value={value} onChange={onChange} />;
+const RenderPadding = ({ value, onChange }: any) => <ResponsiveSliderField value={value} onChange={onChange} min={0} max={200} step={4} />;
+const RenderGap = ({ value, onChange }: any) => <ResponsiveSliderField value={value} onChange={onChange} min={0} max={100} step={4} defaultValue={{ desktop: 32, tablet: 24, mobile: 16 }} />;
+const RenderFontSize = ({ value, onChange }: any) => <ResponsiveSliderField value={value} onChange={onChange} min={10} max={40} step={1} defaultValue={{ desktop: 18, tablet: 16, mobile: 16 }} />;
+
 export type AboutCompanyProps = {
     imageUrl: string;
     content: string;
@@ -93,7 +98,7 @@ const AboutCompanyRender = ({
                         width={600}
                         height={400}
                         className="w-full h-auto object-cover"
-                        unoptimized
+                        sizes="(max-width: 768px) 100vw, 600px"
                     />
                 </div>
                 <div className="leading-relaxed about-text" style={{ color: textColor }}>
@@ -117,27 +122,27 @@ export const AboutCompany: ComponentConfig<AboutCompanyProps> = {
         backgroundColor: {
             type: "custom",
             label: "Background Color",
-            render: ({ value, onChange }) => <ColorPickerField value={value} onChange={onChange} />
+            render: RenderColor
         },
         padding: {
             type: "custom",
             label: "Section Padding (px)",
-            render: ({ value, onChange }) => <ResponsiveSliderField value={value} onChange={onChange} min={0} max={200} step={4} />
+            render: RenderPadding
         },
         textColor: {
             type: "custom",
             label: "Text Color",
-            render: ({ value, onChange }) => <ColorPickerField value={value} onChange={onChange} />
+            render: RenderColor
         },
         gap: {
             type: "custom",
             label: "Gap (px)",
-            render: ({ value, onChange }) => <ResponsiveSliderField value={value} onChange={onChange} min={0} max={100} step={4} defaultValue={{ desktop: 32, tablet: 24, mobile: 16 }} />
+            render: RenderGap
         },
         fontSize: {
             type: "custom",
             label: "Font Size (px)",
-            render: ({ value, onChange }) => <ResponsiveSliderField value={value} onChange={onChange} min={10} max={40} step={1} defaultValue={{ desktop: 18, tablet: 16, mobile: 16 }} />
+            render: RenderFontSize
         },
     },
     defaultProps: {

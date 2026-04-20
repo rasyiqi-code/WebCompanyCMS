@@ -69,13 +69,15 @@ type Props = {
   RichText: RichTextProps;
 };
 
+const CredBuildRoot = ({ children, editMode, credbuild, ...props }: any) => (
+  <div id="credbuild-root" {...props}>
+    {children}
+  </div>
+);
+
 export const config: Config<Props> = {
   root: {
-    render: ({ children }) => (
-      <div id="credbuild-root">
-        {children}
-      </div>
-    )
+    render: CredBuildRoot
   },
   categories: {
     "Hero Sections": {

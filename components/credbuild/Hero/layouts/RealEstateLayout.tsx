@@ -5,6 +5,15 @@ import { ColorPickerField } from "../../fields/ColorPickerField";
 import React, { useId } from "react";
 import Image from "next/image";
 
+const RenderField1 = ({ value, onChange }: any) => <ResponsiveSliderField value={value} onChange={onChange} unit="rem" max={6} step={0.1} defaultValue={3.5} />;
+const RenderField2 = ({ value, onChange }: any) => <ColorPickerField value={value} onChange={onChange} />;
+const RenderField3 = ({ value, onChange }: any) => <SliderField value={value} onChange={onChange} unit="px" max={50} defaultValue={12} />;
+const RenderField4 = ({ value, onChange }: any) => <SliderField value={value} onChange={onChange} unit="px" max={50} defaultValue={8} />;
+const RenderField5 = ({ value, onChange }: any) => <SliderField value={value} onChange={onChange} unit="px" max={50} defaultValue={24} />;
+const RenderField6 = ({ value, onChange }: any) => <ResponsiveSliderField value={value} onChange={onChange} unit="px" max={100} defaultValue={60} />;
+const RenderField7 = ({ value, onChange }: any) => <ResponsiveSliderField value={value} onChange={onChange} unit="px" max={200} defaultValue={80} />;
+
+
 export type HeroRealEstateProps = {
     title: string;
     description: string;
@@ -271,7 +280,14 @@ const HeroRealEstateRender = ({
                 <div>
                     <div className="image-container">
                         {imageUrl ? (
-                            <Image src={imageUrl} alt="House" fill className="object-cover" unoptimized />
+                            <Image 
+                                src={imageUrl} 
+                                alt="Real Estate Hero" 
+                                fill 
+                                priority={true}
+                                sizes="(max-width: 768px) 100vw, 40vw"
+                                className="object-cover" 
+                            />
                         ) : (
                             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', fontSize: '6rem' }}>🏘️</div>
                         )}
@@ -312,7 +328,7 @@ export const HeroRealEstate: ComponentConfig<HeroRealEstateProps> = {
         stat3Label: { type: "text", label: "📊 Stat 3 Label" },
         titleSize: {
             type: "custom", label: "Title Size",
-            render: ({ value, onChange }) => <ResponsiveSliderField value={value} onChange={onChange} unit="rem" max={6} step={0.1} defaultValue={3.5} />
+            render: RenderField1
         },
         titleWeight: {
             type: "select", label: "Title Weight",
@@ -325,55 +341,55 @@ export const HeroRealEstate: ComponentConfig<HeroRealEstateProps> = {
         },
         backgroundColor: {
             type: "custom", label: "Background Color",
-            render: ({ value, onChange }) => <ColorPickerField value={value} onChange={onChange} />
+            render: RenderField2
         },
         titleColor: {
             type: "custom", label: "Title Color",
-            render: ({ value, onChange }) => <ColorPickerField value={value} onChange={onChange} />
+            render: RenderField2
         },
         descriptionColor: {
             type: "custom", label: "Description Color",
-            render: ({ value, onChange }) => <ColorPickerField value={value} onChange={onChange} />
+            render: RenderField2
         },
         primaryColor: {
             type: "custom", label: "Primary/Search Color",
-            render: ({ value, onChange }) => <ColorPickerField value={value} onChange={onChange} />
+            render: RenderField2
         },
         btnTextColor: {
             type: "custom", label: "Button Text Color",
-            render: ({ value, onChange }) => <ColorPickerField value={value} onChange={onChange} />
+            render: RenderField2
         },
         secondaryColor: {
             type: "custom", label: "Secondary/Avatar Bg",
-            render: ({ value, onChange }) => <ColorPickerField value={value} onChange={onChange} />
+            render: RenderField2
         },
         avatarRingColor: {
             type: "custom", label: "Avatar Ring Color",
-            render: ({ value, onChange }) => <ColorPickerField value={value} onChange={onChange} />
+            render: RenderField2
         },
         searchRadius: {
             type: "custom", label: "Search Box Radius",
-            render: ({ value, onChange }) => <SliderField value={value} onChange={onChange} unit="px" max={50} defaultValue={12} />
+            render: RenderField3
         },
         btnRadius: {
             type: "custom", label: "Btn Radius",
-            render: ({ value, onChange }) => <SliderField value={value} onChange={onChange} unit="px" max={50} defaultValue={8} />
+            render: RenderField4
         },
         imageRadius: {
             type: "custom", label: "Image Radius",
-            render: ({ value, onChange }) => <SliderField value={value} onChange={onChange} unit="px" max={50} defaultValue={24} />
+            render: RenderField5
         },
         gap: {
             type: "custom", label: "Grid Gap",
-            render: ({ value, onChange }) => <ResponsiveSliderField value={value} onChange={onChange} unit="px" max={100} defaultValue={60} />
+            render: RenderField6
         },
         paddingTop: {
             type: "custom", label: "Padding Top",
-            render: ({ value, onChange }) => <ResponsiveSliderField value={value} onChange={onChange} unit="px" max={200} defaultValue={80} />
+            render: RenderField7
         },
         paddingBottom: {
             type: "custom", label: "Padding Bottom",
-            render: ({ value, onChange }) => <ResponsiveSliderField value={value} onChange={onChange} unit="px" max={200} defaultValue={80} />
+            render: RenderField7
         },
     },
     defaultProps: {

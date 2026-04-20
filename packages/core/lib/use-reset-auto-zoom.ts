@@ -1,4 +1,4 @@
-import { RefObject } from "react";
+import { RefObject, useCallback } from "react";
 import { useAppStoreApi } from "../store";
 import { getZoomConfig } from "./get-zoom-config";
 import { UiState } from "../types";
@@ -14,17 +14,20 @@ type ResetAutoZoomOptions = {
 export const useResetAutoZoom = (frameRef: RefObject<HTMLElement | null>) => {
   const appStoreApi = useAppStoreApi();
 
-  const resetAutoZoom = (options?: ResetAutoZoomOptions) => {
-    const { state, zoomConfig, setZoomConfig } = appStoreApi.getState();
-    const { viewports } = state.ui;
-    const newViewports = options?.viewports || viewports;
+  const resetAutoZoom = useCallback(
+    (options?: ResetAutoZoomOptions) => {
+      const { state, zoomConfig, setZoomConfig } = appStoreApi.getState();
+      const { viewports } = state.ui;
+      const newViewports = options?.viewports || viewports;
 
-    if (frameRef.current) {
-      setZoomConfig(
-        getZoomConfig(newViewports?.current, frameRef.current, zoomConfig.zoom)
-      );
-    }
-  };
+      if (frameRef.current) {
+        setZoomConfig(
+          getZoomConfig(newViewports?.current, frameRef.current, zoomConfig.zoom)
+        );
+      }
+    },
+    [appStoreApi, frameRef]
+  );
 
   return resetAutoZoom;
 };

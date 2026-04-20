@@ -50,7 +50,7 @@ const PortfolioRender = ({ title, subtitle }: PortfolioProps) => {
                                         alt={item.title}
                                         fill
                                         className="object-cover transition-transform duration-700 group-hover:scale-110"
-                                        unoptimized
+                                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                                     />
                                 ) : (
                                     <div className="w-full h-full bg-gray-200 flex items-center justify-center text-4xl">🚀</div>

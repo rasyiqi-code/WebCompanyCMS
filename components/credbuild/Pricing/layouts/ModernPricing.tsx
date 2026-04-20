@@ -2,6 +2,9 @@ import type { ComponentConfig } from "@credbuild/core";
 import { ColorPickerField } from "../../fields/ColorPickerField";
 import React, { useId } from "react";
 
+const RenderField1 = ({ value, onChange }: any) => <ColorPickerField value={value} onChange={onChange} />;
+
+
 export type PricingModernProps = {
     title: string;
     description: string;
@@ -234,7 +237,7 @@ export const PricingModern: ComponentConfig<PricingModernProps> = {
         mainColor: {
             type: "custom",
             label: "🎨 Main Color",
-            render: ({ value, onChange }) => <ColorPickerField value={value} onChange={onChange} />
+            render: RenderField1
         },
         titleFont: {
             type: "select",

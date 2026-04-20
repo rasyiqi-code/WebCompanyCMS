@@ -5,6 +5,18 @@ import { ColorPickerField } from "../../fields/ColorPickerField";
 import React, { useId } from "react";
 import Image from "next/image";
 
+const RenderField1 = ({ value, onChange }: any) => <ResponsiveSliderField value={value} onChange={onChange} unit="rem" max={8} step={0.1} defaultValue={5} />;
+const RenderField2 = ({ value, onChange }: any) => <ColorPickerField value={value} onChange={onChange} />;
+const RenderField3 = ({ value, onChange }: any) => <ResponsiveSliderField value={value} onChange={onChange} unit="rem" max={2} step={0.1} defaultValue={1.1} />;
+const RenderField4 = ({ value, onChange }: any) => <SliderField value={value} onChange={onChange} unit="px" max={50} defaultValue={50} />;
+const RenderField5 = ({ value, onChange }: any) => <SliderField value={value} onChange={onChange} unit="px" max={40} defaultValue="16px" />;
+const RenderField6 = ({ value, onChange }: any) => <SliderField value={value} onChange={onChange} unit="px" max={80} defaultValue="40px" />;
+const RenderField7 = ({ value, onChange }: any) => <ResponsiveSliderField value={value} onChange={onChange} unit="px" max={60} defaultValue={24} />;
+const RenderField8 = ({ value, onChange }: any) => <SliderField value={value} onChange={onChange} unit="px" max={40} defaultValue={16} />;
+const RenderField9 = ({ value, onChange }: any) => <ResponsiveSliderField value={value} onChange={onChange} unit="px" max={200} defaultValue={100} />;
+const RenderField10 = ({ value, onChange }: any) => <ResponsiveSliderField value={value} onChange={onChange} unit="px" max={200} defaultValue={80} />;
+
+
 export type HeroAgencyProps = {
     title: string;
     subtitle: string;
@@ -265,7 +277,13 @@ const HeroAgencyRender = ({
                         {[project1ImageUrl, project2ImageUrl, project3ImageUrl].map((url, i) => (
                             <div key={i} className="project-card">
                                 {url ? (
-                                    <Image src={url} alt={`Project ${i + 1}`} fill className="project-img object-cover" unoptimized />
+                                    <Image 
+                                        src={url} 
+                                        alt={`Project ${i + 1}`} 
+                                        fill 
+                                        sizes="(max-width: 768px) 100vw, 33vw"
+                                        className="project-img object-cover" 
+                                    />
                                 ) : (
                                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', fontSize: '3rem', color: '#4b5563' }}>
                                         {i === 0 ? '🎨' : i === 1 ? '💻' : '🚀'}
@@ -301,7 +319,7 @@ export const HeroAgency: ComponentConfig<HeroAgencyProps> = {
         },
         titleSize: {
             type: "custom", label: "Title Size (rem)",
-            render: ({ value, onChange }) => <ResponsiveSliderField value={value} onChange={onChange} unit="rem" max={8} step={0.1} defaultValue={5} />
+            render: RenderField1
         },
         titleWeight: {
             type: "select", label: "Title Weight",
@@ -313,35 +331,35 @@ export const HeroAgency: ComponentConfig<HeroAgencyProps> = {
         },
         titleColor: {
             type: "custom", label: "Title Color",
-            render: ({ value, onChange }) => <ColorPickerField value={value} onChange={onChange} />
+            render: RenderField2
         },
         subtitleSize: {
             type: "custom", label: "Subtitle Size (rem)",
-            render: ({ value, onChange }) => <ResponsiveSliderField value={value} onChange={onChange} unit="rem" max={2} step={0.1} defaultValue={1.1} />
+            render: RenderField3
         },
         subtitleColor: {
             type: "custom", label: "Subtitle Color",
-            render: ({ value, onChange }) => <ColorPickerField value={value} onChange={onChange} />
+            render: RenderField2
         },
         backgroundColor: {
             type: "custom", label: "Background Color",
-            render: ({ value, onChange }) => <ColorPickerField value={value} onChange={onChange} />
+            render: RenderField2
         },
         accentColor: {
             type: "custom", label: "Accent Color",
-            render: ({ value, onChange }) => <ColorPickerField value={value} onChange={onChange} />
+            render: RenderField2
         },
         btnColor: {
             type: "custom", label: "Btn Color",
-            render: ({ value, onChange }) => <ColorPickerField value={value} onChange={onChange} />
+            render: RenderField2
         },
         btnTextColor: {
             type: "custom", label: "Btn Text Color",
-            render: ({ value, onChange }) => <ColorPickerField value={value} onChange={onChange} />
+            render: RenderField2
         },
         btnRadius: {
             type: "custom", label: "Btn Radius",
-            render: ({ value, onChange }) => <SliderField value={value} onChange={onChange} unit="px" max={50} defaultValue={50} />
+            render: RenderField4
         },
         btnOutline: {
             type: "radio", label: "Btn Style",
@@ -349,19 +367,19 @@ export const HeroAgency: ComponentConfig<HeroAgencyProps> = {
         },
         btnPaddingVertical: {
             type: "custom", label: "Button Padding (Vertical)",
-            render: ({ value, onChange }) => <SliderField value={value} onChange={onChange} unit="px" max={40} defaultValue="16px" />
+            render: RenderField5
         },
         btnPaddingHorizontal: {
             type: "custom", label: "Button Padding (Horizontal)",
-            render: ({ value, onChange }) => <SliderField value={value} onChange={onChange} unit="px" max={80} defaultValue="40px" />
+            render: RenderField6
         },
         projectGap: {
             type: "custom", label: "Project Gap",
-            render: ({ value, onChange }) => <ResponsiveSliderField value={value} onChange={onChange} unit="px" max={60} defaultValue={24} />
+            render: RenderField7
         },
         projectRadius: {
             type: "custom", label: "Project Radius",
-            render: ({ value, onChange }) => <SliderField value={value} onChange={onChange} unit="px" max={40} defaultValue={16} />
+            render: RenderField8
         },
         projectShadow: {
             type: "radio", label: "Project Shadow",
@@ -369,11 +387,11 @@ export const HeroAgency: ComponentConfig<HeroAgencyProps> = {
         },
         paddingTop: {
             type: "custom", label: "Padding Top",
-            render: ({ value, onChange }) => <ResponsiveSliderField value={value} onChange={onChange} unit="px" max={200} defaultValue={100} />
+            render: RenderField9
         },
         paddingBottom: {
             type: "custom", label: "Padding Bottom",
-            render: ({ value, onChange }) => <ResponsiveSliderField value={value} onChange={onChange} unit="px" max={200} defaultValue={80} />
+            render: RenderField10
         },
     },
     defaultProps: {

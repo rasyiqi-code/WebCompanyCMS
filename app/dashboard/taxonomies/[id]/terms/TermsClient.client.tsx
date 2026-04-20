@@ -34,7 +34,7 @@ export default function TermsClient({ taxonomyId }: { taxonomyId: string }) {
         description: ""
     });
 
-    const fetchTerms = async () => {
+    const fetchTerms = React.useCallback(async () => {
         try {
             const res = await fetch(`/api/taxonomies/${taxonomyId}/terms`);
             const data = await res.json();
@@ -44,11 +44,11 @@ export default function TermsClient({ taxonomyId }: { taxonomyId: string }) {
         } finally {
             setLoading(false);
         }
-    };
+    }, [taxonomyId]);
 
     useEffect(() => {
         fetchTerms();
-    }, [taxonomyId]);
+    }, [fetchTerms]);
 
     const handleCreate = async (e: React.FormEvent) => {
         e.preventDefault();

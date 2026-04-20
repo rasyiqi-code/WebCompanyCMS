@@ -1,4 +1,5 @@
 import React from "react";
+export const dynamic = "force-dynamic";
 import { FileText, ShoppingBag, Eye, Image as ImageIcon, Briefcase, Plus, MessageSquare } from "lucide-react";
 import Link from "next/link";
 import { db } from "@/lib/db";

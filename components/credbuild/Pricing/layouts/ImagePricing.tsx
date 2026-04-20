@@ -4,6 +4,9 @@ import { ResponsiveSliderField, ResponsiveValue } from "../../fields/ResponsiveS
 import React, { useId } from "react";
 import Image from "next/image";
 
+const RenderField1 = ({ value, onChange }: any) => <ColorPickerField value={value} onChange={onChange} />;
+
+
 export type PricingImageProps = {
     title: string;
     sectionBg?: string;
@@ -99,7 +102,6 @@ const ImageCard = ({
                     sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                     className={cardObjectFit === 'cover' ? 'object-cover' : 'object-contain'}
                     style={cardAspectRatio === 'auto' ? { width: '100%', height: 'auto', display: 'block' } : {}}
-                    unoptimized
                 />
             </div>
         </Wrapper>
@@ -200,12 +202,12 @@ export const PricingImage: ComponentConfig<PricingImageProps> = {
         sectionBg: {
             type: "custom",
             label: "Background Section",
-            render: ({ value, onChange }) => <ColorPickerField value={value} onChange={onChange} />
+            render: RenderField1
         },
         titleColor: {
             type: "custom",
             label: "Title Color",
-            render: ({ value, onChange }) => <ColorPickerField value={value} onChange={onChange} />
+            render: RenderField1
         },
         titleFont: {
             type: "select",

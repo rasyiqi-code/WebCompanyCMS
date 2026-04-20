@@ -114,12 +114,16 @@ export const Canvas = () => {
     const { height: frameHeight } = getFrameDimensions();
 
     if (viewports.current.height === "auto") {
-      setZoomConfig({
-        ...zoomConfig,
-        rootHeight: frameHeight / zoomConfig.zoom,
-      });
+      const newRootHeight = frameHeight / zoomConfig.zoom;
+
+      if (zoomConfig.rootHeight !== newRootHeight) {
+        setZoomConfig({
+          ...zoomConfig,
+          rootHeight: newRootHeight,
+        });
+      }
     }
-  }, [zoomConfig.zoom, getFrameDimensions, setZoomConfig, viewports, zoomConfig]);
+  }, [zoomConfig, getFrameDimensions, setZoomConfig, viewports]);
 
   // Zoom whenever state changes, even if external driver
   useEffect(() => {

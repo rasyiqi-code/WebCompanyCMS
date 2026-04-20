@@ -6,6 +6,9 @@ import { ArrowRight } from "lucide-react";
 import { ColorPickerField } from "./fields/ColorPickerField";
 import { ResponsiveSliderField, type ResponsiveValue } from "./fields/ResponsiveSliderField";
 
+const RenderColor = ({ value, onChange }: any) => <ColorPickerField value={value} onChange={onChange} />;
+const RenderPadding = ({ value, onChange }: any) => <ResponsiveSliderField value={value} onChange={onChange} min={0} max={200} step={4} />;
+
 export type BlogListProps = {
     title?: string;
     description?: string;
@@ -220,52 +223,52 @@ export const BlogList: ComponentConfig<BlogListProps> = {
         backgroundColor: {
             type: "custom",
             label: "Background Color",
-            render: ({ value, onChange }) => <ColorPickerField value={value} onChange={onChange} />
+            render: RenderColor
         },
         padding: {
             type: "custom",
             label: "Section Padding (px)",
-            render: ({ value, onChange }) => <ResponsiveSliderField value={value} onChange={onChange} min={0} max={200} step={4} />
+            render: RenderPadding
         },
         titleColor: {
             type: "custom",
             label: "Title Color",
-            render: ({ value, onChange }) => <ColorPickerField value={value} onChange={onChange} />
+            render: RenderColor
         },
         descriptionColor: {
             type: "custom",
             label: "Description Color",
-            render: ({ value, onChange }) => <ColorPickerField value={value} onChange={onChange} />
+            render: RenderColor
         },
         cardBackgroundColor: {
             type: "custom",
             label: "Card Background",
-            render: ({ value, onChange }) => <ColorPickerField value={value} onChange={onChange} />
+            render: RenderColor
         },
         cardBorderColor: {
             type: "custom",
             label: "Card Border Color",
-            render: ({ value, onChange }) => <ColorPickerField value={value} onChange={onChange} />
+            render: RenderColor
         },
         cardTitleColor: {
             type: "custom",
             label: "Card Title Color",
-            render: ({ value, onChange }) => <ColorPickerField value={value} onChange={onChange} />
+            render: RenderColor
         },
         cardTextColor: {
             type: "custom",
             label: "Card Text Color",
-            render: ({ value, onChange }) => <ColorPickerField value={value} onChange={onChange} />
+            render: RenderColor
         },
         cardDateColor: {
             type: "custom",
             label: "Card Date Color",
-            render: ({ value, onChange }) => <ColorPickerField value={value} onChange={onChange} />
+            render: RenderColor
         },
         linkColor: {
             type: "custom",
             label: "Link Color",
-            render: ({ value, onChange }) => <ColorPickerField value={value} onChange={onChange} />
+            render: RenderColor
         },
     },
     defaultProps: {

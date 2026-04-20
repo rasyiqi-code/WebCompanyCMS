@@ -1,7 +1,7 @@
 import styles from "./styles.module.css";
 import getClassNameFactory from "../../lib/get-class-name-factory";
 import { DragIcon } from "../DragIcon";
-import { ReactElement, ReactNode, Ref, useMemo, useState } from "react";
+import { ReactElement, ReactNode, Ref, useCallback, useMemo, useState } from "react";
 import { generateId } from "../../lib/generate-id";
 import { useDragListener } from "../DragDropContext";
 import { useSafeId } from "../../lib/use-safe-id";
@@ -124,13 +124,11 @@ const DrawerItem = ({
     );
   }
 
-  useDragListener(
-    "dragend",
-    () => {
-      setDynamicId(generateId(resolvedId));
-    },
-    [resolvedId]
-  );
+  const onDragEnd = useCallback(() => {
+    setDynamicId(generateId(resolvedId));
+  }, [resolvedId]);
+
+  useDragListener("dragend", onDragEnd, [resolvedId]);
 
   return (
     <div key={dynamicId}>

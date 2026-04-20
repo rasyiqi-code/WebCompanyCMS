@@ -4,6 +4,19 @@ import { SliderField } from "./fields/SliderField";
 import { ColorPickerField } from "./fields/ColorPickerField";
 import React, { useId } from "react";
 
+const RenderField1 = ({ value, onChange }: any) => <SliderField value={value} onChange={onChange} unit="px" max={2000} defaultValue="1140px" />;
+const RenderField2 = ({ value, onChange }: any) => <SliderField value={value} onChange={onChange} unit="px" max={1000} defaultValue="100px" />;
+const RenderField3 = ({ value, onChange }: any) => <SliderField value={value} onChange={onChange} unit="px" max={100} defaultValue="20px" />;
+const RenderField4 = ({ value, onChange }: any) => <SliderField value={value} onChange={onChange} unit="" max={12} min={1} defaultValue="3" useUnits={false} />;
+const RenderField5 = ({ value, onChange }: any) => <SliderField value={value} onChange={onChange} unit="" max={12} min={1} defaultValue="1" useUnits={false} />;
+const RenderField6 = ({ value, onChange }: any) => <ColorPickerField value={value} onChange={onChange} />;
+const RenderField7 = ({ value, onChange }: any) => <SliderField value={value} onChange={onChange} unit="px" max={20} defaultValue="0px" />;
+const RenderField8 = ({ value, onChange }: any) => <SliderField value={value} onChange={onChange} unit="px" max={100} defaultValue="0px" />;
+const RenderField9 = ({ value, onChange }: any) => <SliderField value={value} onChange={onChange} unit="px" max={200} step={1} defaultValue="0" />;
+const RenderField10 = ({ value, onChange }: any) => <SliderField value={value} onChange={onChange} unit="px" max={200} step={1} defaultValue="auto" />;
+const RenderField11 = ({ value, onChange }: any) => <SliderField value={value} onChange={onChange} unit="px" max={200} step={1} defaultValue="20px" />;
+
+
 export type ContainerProps = {
     // --- LAYOUT ---
     containerLayout: "flex" | "grid";
@@ -253,19 +266,19 @@ export const Container: ComponentConfig<ContainerProps> = {
         },
         width: {
             type: "custom", label: "Width",
-            render: ({ value, onChange }) => <SliderField value={value} onChange={onChange} unit="px" max={2000} defaultValue="1140px" />
+            render: RenderField1
         },
         minHeight: {
             type: "custom", label: "Min Height",
-            render: ({ value, onChange }) => <SliderField value={value} onChange={onChange} unit="px" max={1000} defaultValue="100px" />
+            render: RenderField2
         },
         columnGap: {
             type: "custom", label: "Column Gap",
-            render: ({ value, onChange }) => <SliderField value={value} onChange={onChange} unit="px" max={100} defaultValue="20px" />
+            render: RenderField3
         },
         rowGap: {
             type: "custom", label: "Row Gap",
-            render: ({ value, onChange }) => <SliderField value={value} onChange={onChange} unit="px" max={100} defaultValue="20px" />
+            render: RenderField3
         },
         flexDirection: {
             type: "radio", label: "Direction",
@@ -280,11 +293,11 @@ export const Container: ComponentConfig<ContainerProps> = {
         },
         gridColumns: {
             type: "custom", label: "Columns",
-            render: ({ value, onChange }) => <SliderField value={value} onChange={onChange} unit="" max={12} min={1} defaultValue="3" useUnits={false} />
+            render: RenderField4
         },
         gridRows: {
             type: "custom", label: "Rows",
-            render: ({ value, onChange }) => <SliderField value={value} onChange={onChange} unit="" max={12} min={1} defaultValue="1" useUnits={false} />
+            render: RenderField5
         },
         gridAutoFlow: {
             type: "select", label: "Auto Flow",
@@ -317,7 +330,7 @@ export const Container: ComponentConfig<ContainerProps> = {
         },
         backgroundColor: {
             type: "custom", label: "Background Color",
-            render: ({ value, onChange }) => <ColorPickerField value={value} onChange={onChange} />
+            render: RenderField6
         },
         backgroundImage: { type: "text", label: "Image URL" },
         backgroundSize: {
@@ -326,7 +339,7 @@ export const Container: ComponentConfig<ContainerProps> = {
         },
         overlayColor: {
             type: "custom", label: "Overlay Color",
-            render: ({ value, onChange }) => <ColorPickerField value={value} onChange={onChange} />
+            render: RenderField6
         },
         borderStyle: {
             type: "select", label: "Border Type",
@@ -334,20 +347,20 @@ export const Container: ComponentConfig<ContainerProps> = {
         },
         borderWidth: {
             type: "custom", label: "Border Width",
-            render: ({ value, onChange }) => <SliderField value={value} onChange={onChange} unit="px" max={20} defaultValue="0px" />
+            render: RenderField7
         },
         borderColor: {
             type: "custom", label: "Border Color",
-            render: ({ value, onChange }) => <ColorPickerField value={value} onChange={onChange} />
+            render: RenderField6
         },
         borderRadius: {
             type: "custom", label: "Border Radius",
-            render: ({ value, onChange }) => <SliderField value={value} onChange={onChange} unit="px" max={100} defaultValue="0px" />
+            render: RenderField8
         },
         boxShadow: { type: "text", label: "Box Shadow" },
         textColor: {
             type: "custom", label: "Text Color",
-            render: ({ value, onChange }) => <ColorPickerField value={value} onChange={onChange} />
+            render: RenderField6
         },
         textAlign: {
             type: "radio", label: "Text Align",
@@ -355,35 +368,35 @@ export const Container: ComponentConfig<ContainerProps> = {
         },
         marginTop: {
             type: "custom", label: "Margin Top",
-            render: ({ value, onChange }) => <SliderField value={value} onChange={onChange} unit="px" max={200} step={1} defaultValue="0" />
+            render: RenderField9
         },
         marginBottom: {
             type: "custom", label: "Margin Bottom",
-            render: ({ value, onChange }) => <SliderField value={value} onChange={onChange} unit="px" max={200} step={1} defaultValue="0" />
+            render: RenderField9
         },
         marginLeft: {
             type: "custom", label: "Margin Left",
-            render: ({ value, onChange }) => <SliderField value={value} onChange={onChange} unit="px" max={200} step={1} defaultValue="auto" />
+            render: RenderField10
         },
         marginRight: {
             type: "custom", label: "Margin Right",
-            render: ({ value, onChange }) => <SliderField value={value} onChange={onChange} unit="px" max={200} step={1} defaultValue="auto" />
+            render: RenderField10
         },
         paddingTop: {
             type: "custom", label: "Padding Top",
-            render: ({ value, onChange }) => <SliderField value={value} onChange={onChange} unit="px" max={200} step={1} defaultValue="20px" />
+            render: RenderField11
         },
         paddingBottom: {
             type: "custom", label: "Padding Bottom",
-            render: ({ value, onChange }) => <SliderField value={value} onChange={onChange} unit="px" max={200} step={1} defaultValue="20px" />
+            render: RenderField11
         },
         paddingLeft: {
             type: "custom", label: "Padding Left",
-            render: ({ value, onChange }) => <SliderField value={value} onChange={onChange} unit="px" max={200} step={1} defaultValue="20px" />
+            render: RenderField11
         },
         paddingRight: {
             type: "custom", label: "Padding Right",
-            render: ({ value, onChange }) => <SliderField value={value} onChange={onChange} unit="px" max={200} step={1} defaultValue="20px" />
+            render: RenderField11
         },
         zIndex: { type: "number", label: "Z-Index" },
         overflow: {

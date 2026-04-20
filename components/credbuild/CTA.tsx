@@ -3,6 +3,12 @@ import type { ComponentConfig } from "@credbuild/core";
 import { ColorPickerField } from "./fields/ColorPickerField";
 import { ResponsiveSliderField, type ResponsiveValue } from "./fields/ResponsiveSliderField";
 
+const RenderField1 = ({ value, onChange }: any) => <ColorPickerField value={value} onChange={onChange} />;
+const RenderField2 = ({ value, onChange }: any) => <ResponsiveSliderField value={value} onChange={onChange} min={0} max={200} step={4} />;
+const RenderField3 = ({ value, onChange }: any) => <ResponsiveSliderField value={value} onChange={onChange} min={16} max={96} step={2} />;
+const RenderField4 = ({ value, onChange }: any) => <ResponsiveSliderField value={value} onChange={onChange} min={12} max={48} step={1} />;
+
+
 export type CTAProps = {
     title: string;
     subtitle: string;
@@ -164,42 +170,42 @@ export const CTA: ComponentConfig<CTAProps> = {
         backgroundColor: {
             type: "custom",
             label: "Background Color",
-            render: ({ value, onChange }) => <ColorPickerField value={value} onChange={onChange} />
+            render: RenderField1
         },
         padding: {
             type: "custom",
             label: "Padding (px)",
-            render: ({ value, onChange }) => <ResponsiveSliderField value={value} onChange={onChange} min={0} max={200} step={4} />
+            render: RenderField2
         },
         titleSize: {
             type: "custom",
             label: "Title Size (px)",
-            render: ({ value, onChange }) => <ResponsiveSliderField value={value} onChange={onChange} min={16} max={96} step={2} />
+            render: RenderField3
         },
         titleColor: {
             type: "custom",
             label: "Title Color",
-            render: ({ value, onChange }) => <ColorPickerField value={value} onChange={onChange} />
+            render: RenderField1
         },
         descriptionSize: {
             type: "custom",
             label: "Description Size (px)",
-            render: ({ value, onChange }) => <ResponsiveSliderField value={value} onChange={onChange} min={12} max={48} step={1} />
+            render: RenderField4
         },
         descriptionColor: {
             type: "custom",
             label: "Description Color",
-            render: ({ value, onChange }) => <ColorPickerField value={value} onChange={onChange} />
+            render: RenderField1
         },
         buttonColor: {
             type: "custom",
             label: "Button Color",
-            render: ({ value, onChange }) => <ColorPickerField value={value} onChange={onChange} />
+            render: RenderField1
         },
         buttonTextColor: {
             type: "custom",
             label: "Button Text Color",
-            render: ({ value, onChange }) => <ColorPickerField value={value} onChange={onChange} />
+            render: RenderField1
         },
     },
     defaultProps: {

@@ -3,6 +3,9 @@ import { ColorPickerField } from "../../fields/ColorPickerField";
 import { ResponsiveSliderField, ResponsiveValue } from "../../fields/ResponsiveSliderField";
 import React, { useId } from "react";
 
+const RenderField1 = ({ value, onChange }: any) => <ColorPickerField value={value} onChange={onChange} />;
+
+
 export type PricingSimpleProps = {
     title: string;
     mainColor?: string;
@@ -345,27 +348,27 @@ export const PricingSimple: ComponentConfig<PricingSimpleProps> = {
         mainColor: {
             type: "custom",
             label: "🎨 Main Color",
-            render: ({ value, onChange }) => <ColorPickerField value={value} onChange={onChange} />
+            render: RenderField1
         },
         sectionBg: {
             type: "custom",
             label: "Background Section",
-            render: ({ value, onChange }) => <ColorPickerField value={value} onChange={onChange} />
+            render: RenderField1
         },
         cardBg: {
             type: "custom",
             label: "Background Card",
-            render: ({ value, onChange }) => <ColorPickerField value={value} onChange={onChange} />
+            render: RenderField1
         },
         titleColor: {
             type: "custom",
             label: "Title Color",
-            render: ({ value, onChange }) => <ColorPickerField value={value} onChange={onChange} />
+            render: RenderField1
         },
         textColor: {
             type: "custom",
             label: "Text Color",
-            render: ({ value, onChange }) => <ColorPickerField value={value} onChange={onChange} />
+            render: RenderField1
         },
         titleFont: {
             type: "select",

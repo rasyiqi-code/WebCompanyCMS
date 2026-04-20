@@ -67,6 +67,13 @@ export function useDragListener(
         ...old,
         [type]: [...(old[type] || []), fn],
       }));
+
+      return () => {
+        setDragListeners((old) => ({
+          ...old,
+          [type]: (old[type] || []).filter((l) => l !== fn),
+        }));
+      };
     }
   }, [type, fn, setDragListeners]);
 }

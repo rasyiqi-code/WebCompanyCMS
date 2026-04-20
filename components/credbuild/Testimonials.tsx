@@ -3,6 +3,9 @@ import type { ComponentConfig } from "@credbuild/core";
 import { ColorPickerField } from "./fields/ColorPickerField";
 import { ResponsiveSliderField, type ResponsiveValue } from "./fields/ResponsiveSliderField";
 
+const RenderColor = ({ value, onChange }: any) => <ColorPickerField value={value} onChange={onChange} />;
+const RenderPadding = ({ value, onChange }: any) => <ResponsiveSliderField value={value} onChange={onChange} min={0} max={200} step={4} />;
+
 export type TestimonialsProps = {
     title: string;
     description?: string;
@@ -289,47 +292,47 @@ export const Testimonials: ComponentConfig<TestimonialsProps> = {
         backgroundColor: {
             type: "custom",
             label: "Background Color",
-            render: ({ value, onChange }) => <ColorPickerField value={value} onChange={onChange} />
+            render: RenderColor
         },
         padding: {
             type: "custom",
             label: "Section Padding (px)",
-            render: ({ value, onChange }) => <ResponsiveSliderField value={value} onChange={onChange} min={0} max={200} step={4} />
+            render: RenderPadding
         },
         cardBackgroundColor: {
             type: "custom",
             label: "Card Background",
-            render: ({ value, onChange }) => <ColorPickerField value={value} onChange={onChange} />
+            render: RenderColor
         },
         cardBorderColor: {
             type: "custom",
             label: "Card Border Color",
-            render: ({ value, onChange }) => <ColorPickerField value={value} onChange={onChange} />
+            render: RenderColor
         },
         titleColor: {
             type: "custom",
             label: "Title Color",
-            render: ({ value, onChange }) => <ColorPickerField value={value} onChange={onChange} />
+            render: RenderColor
         },
         descriptionColor: {
             type: "custom",
             label: "Description Color",
-            render: ({ value, onChange }) => <ColorPickerField value={value} onChange={onChange} />
+            render: RenderColor
         },
         quoteColor: {
             type: "custom",
             label: "Quote Text Color",
-            render: ({ value, onChange }) => <ColorPickerField value={value} onChange={onChange} />
+            render: RenderColor
         },
         authorColor: {
             type: "custom",
             label: "Author Name Color",
-            render: ({ value, onChange }) => <ColorPickerField value={value} onChange={onChange} />
+            render: RenderColor
         },
         roleColor: {
             type: "custom",
             label: "Role Color",
-            render: ({ value, onChange }) => <ColorPickerField value={value} onChange={onChange} />
+            render: RenderColor
         },
     },
     defaultProps: {

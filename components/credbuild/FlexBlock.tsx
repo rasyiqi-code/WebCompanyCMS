@@ -5,6 +5,18 @@ import { ColorPickerField } from "./fields/ColorPickerField";
 import React, { useId } from "react";
 import Image from "next/image";
 
+const RenderField1 = ({ value, onChange }: any) => <ResponsiveSliderField value={value} onChange={onChange} unit="%" max={100} defaultValue={100} />;
+const RenderField2 = ({ value, onChange }: any) => <ResponsiveSliderField value={value} onChange={onChange} unit="px" max={800} defaultValue={0} />;
+const RenderField3 = ({ value, onChange }: any) => <ResponsiveSliderField value={value} onChange={onChange} unit="px" max={200} defaultValue={40} />;
+const RenderField4 = ({ value, onChange }: any) => <ResponsiveSliderField value={value} onChange={onChange} unit="px" max={200} defaultValue={20} />;
+const RenderField5 = ({ value, onChange }: any) => <ResponsiveSliderField value={value} onChange={onChange} unit="px" max={200} defaultValue={0} />;
+const RenderField6 = ({ value, onChange }: any) => <ResponsiveSliderField value={value} onChange={onChange} unit="rem" max={10} step={0.1} defaultValue={2.5} />;
+const RenderField7 = ({ value, onChange }: any) => <ColorPickerField value={value} onChange={onChange} />;
+const RenderField8 = ({ value, onChange }: any) => <ResponsiveSliderField value={value} onChange={onChange} unit="rem" max={5} step={0.1} defaultValue={1.1} />;
+const RenderField9 = ({ value, onChange }: any) => <SliderField value={value} onChange={onChange} unit="px" max={100} defaultValue="0px" />;
+const RenderField10 = ({ value, onChange }: any) => <SliderField value={value} onChange={onChange} unit="px" max={20} defaultValue="0px" />;
+
+
 export type FlexBlockProps = {
     // Content
     title: string;
@@ -151,7 +163,7 @@ const FlexBlockRender = ({
                             style={{
                                 borderRadius: 'calc(' + borderRadius + ' / 2)'
                             }}
-                            unoptimized
+                            sizes="(max-width: 1200px) 100vw, 1200px"
                         />
                     </div>
                 )}
@@ -200,35 +212,35 @@ export const FlexBlock: ComponentConfig<FlexBlockProps> = {
         },
         width: {
             type: "custom", label: "Width (%)",
-            render: ({ value, onChange }) => <ResponsiveSliderField value={value} onChange={onChange} unit="%" max={100} defaultValue={100} />
+            render: RenderField1
         },
         minHeight: {
             type: "custom", label: "Min Height (px)",
-            render: ({ value, onChange }) => <ResponsiveSliderField value={value} onChange={onChange} unit="px" max={800} defaultValue={0} />
+            render: RenderField2
         },
         paddingTop: {
             type: "custom", label: "Padding Top",
-            render: ({ value, onChange }) => <ResponsiveSliderField value={value} onChange={onChange} unit="px" max={200} defaultValue={40} />
+            render: RenderField3
         },
         paddingBottom: {
             type: "custom", label: "Padding Bottom",
-            render: ({ value, onChange }) => <ResponsiveSliderField value={value} onChange={onChange} unit="px" max={200} defaultValue={40} />
+            render: RenderField3
         },
         paddingLeft: {
             type: "custom", label: "Padding Left",
-            render: ({ value, onChange }) => <ResponsiveSliderField value={value} onChange={onChange} unit="px" max={200} defaultValue={20} />
+            render: RenderField4
         },
         paddingRight: {
             type: "custom", label: "Padding Right",
-            render: ({ value, onChange }) => <ResponsiveSliderField value={value} onChange={onChange} unit="px" max={200} defaultValue={20} />
+            render: RenderField4
         },
         marginTop: {
             type: "custom", label: "Margin Top",
-            render: ({ value, onChange }) => <ResponsiveSliderField value={value} onChange={onChange} unit="px" max={200} defaultValue={0} />
+            render: RenderField5
         },
         marginBottom: {
             type: "custom", label: "Margin Bottom",
-            render: ({ value, onChange }) => <ResponsiveSliderField value={value} onChange={onChange} unit="px" max={200} defaultValue={0} />
+            render: RenderField5
         },
         titleFontFamily: {
             type: "select",
@@ -243,7 +255,7 @@ export const FlexBlock: ComponentConfig<FlexBlockProps> = {
         },
         titleSize: {
             type: "custom", label: "Title Size (rem)",
-            render: ({ value, onChange }) => <ResponsiveSliderField value={value} onChange={onChange} unit="rem" max={10} step={0.1} defaultValue={2.5} />
+            render: RenderField6
         },
         titleWeight: {
             type: "select",
@@ -258,7 +270,7 @@ export const FlexBlock: ComponentConfig<FlexBlockProps> = {
         },
         titleColor: {
             type: "custom", label: "Title Color",
-            render: ({ value, onChange }) => <ColorPickerField value={value} onChange={onChange} />
+            render: RenderField7
         },
         descFontFamily: {
             type: "select",
@@ -273,28 +285,28 @@ export const FlexBlock: ComponentConfig<FlexBlockProps> = {
         },
         descSize: {
             type: "custom", label: "Desc Size (rem)",
-            render: ({ value, onChange }) => <ResponsiveSliderField value={value} onChange={onChange} unit="rem" max={5} step={0.1} defaultValue={1.1} />
+            render: RenderField8
         },
         descColor: {
             type: "custom", label: "Desc Color",
-            render: ({ value, onChange }) => <ColorPickerField value={value} onChange={onChange} />
+            render: RenderField7
         },
         backgroundColor: {
             type: "custom", label: "Background Color",
-            render: ({ value, onChange }) => <ColorPickerField value={value} onChange={onChange} />
+            render: RenderField7
         },
         backgroundImage: { type: "text", label: "Background Image URL" },
         borderRadius: {
             type: "custom", label: "Border Radius",
-            render: ({ value, onChange }) => <SliderField value={value} onChange={onChange} unit="px" max={100} defaultValue="0px" />
+            render: RenderField9
         },
         borderWidth: {
             type: "custom", label: "Border Width",
-            render: ({ value, onChange }) => <SliderField value={value} onChange={onChange} unit="px" max={20} defaultValue="0px" />
+            render: RenderField10
         },
         borderColor: {
             type: "custom", label: "Border Color",
-            render: ({ value, onChange }) => <ColorPickerField value={value} onChange={onChange} />
+            render: RenderField7
         },
     },
     defaultProps: {

@@ -5,6 +5,16 @@ import { ColorPickerField } from "../../fields/ColorPickerField";
 import React, { useId } from "react";
 import Image from "next/image";
 
+const RenderField1 = ({ value, onChange }: any) => <ResponsiveSliderField value={value} onChange={onChange} unit="rem" max={6} step={0.1} defaultValue={3.5} />;
+const RenderField2 = ({ value, onChange }: any) => <ColorPickerField value={value} onChange={onChange} />;
+const RenderField3 = ({ value, onChange }: any) => <SliderField value={value} onChange={onChange} unit="px" max={50} defaultValue={12} />;
+const RenderField4 = ({ value, onChange }: any) => <SliderField value={value} onChange={onChange} unit="px" max={50} defaultValue={24} />;
+const RenderField5 = ({ value, onChange }: any) => <ResponsiveSliderField value={value} onChange={onChange} unit="px" max={100} defaultValue={60} />;
+const RenderField6 = ({ value, onChange }: any) => <ResponsiveSliderField value={value} onChange={onChange} unit="px" max={200} defaultValue={80} />;
+const RenderField7 = ({ value, onChange }: any) => <SliderField value={value} onChange={onChange} unit="px" max={60} defaultValue={40} />;
+const RenderField8 = ({ value, onChange }: any) => <SliderField value={value} onChange={onChange} unit="px" max={30} defaultValue={14} />;
+
+
 export type HeroMedicalProps = {
     title: string;
     description: string;
@@ -264,7 +274,14 @@ const HeroMedicalRender = ({
                     <div className="blob" />
                     <div className="image-container">
                         {imageUrl ? (
-                            <Image src={imageUrl} alt="Doctor" fill className="object-cover" unoptimized />
+                            <Image 
+                                src={imageUrl} 
+                                alt="Medical Hero" 
+                                fill 
+                                priority 
+                                sizes="(max-width: 768px) 100vw, 40vw"
+                                className="object-cover" 
+                            />
                         ) : (
                             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', fontSize: '6rem' }}>👨‍⚕️</div>
                         )}
@@ -302,7 +319,7 @@ export const HeroMedical: ComponentConfig<HeroMedicalProps> = {
         badge2Text: { type: "text", label: "💬 Badge 2 Text" },
         titleSize: {
             type: "custom", label: "Title Size",
-            render: ({ value, onChange }) => <ResponsiveSliderField value={value} onChange={onChange} unit="rem" max={6} step={0.1} defaultValue={3.5} />
+            render: RenderField1
         },
         titleWeight: {
             type: "select", label: "Title Weight",
@@ -315,67 +332,67 @@ export const HeroMedical: ComponentConfig<HeroMedicalProps> = {
         },
         backgroundColor: {
             type: "custom", label: "Background Color",
-            render: ({ value, onChange }) => <ColorPickerField value={value} onChange={onChange} />
+            render: RenderField2
         },
         titleColor: {
             type: "custom", label: "Title Color",
-            render: ({ value, onChange }) => <ColorPickerField value={value} onChange={onChange} />
+            render: RenderField2
         },
         descriptionColor: {
             type: "custom", label: "Description Color",
-            render: ({ value, onChange }) => <ColorPickerField value={value} onChange={onChange} />
+            render: RenderField2
         },
         primaryColor: {
             type: "custom", label: "Primary/Blob Color",
-            render: ({ value, onChange }) => <ColorPickerField value={value} onChange={onChange} />
+            render: RenderField2
         },
         btnTextColor: {
             type: "custom", label: "Primary Btn Text",
-            render: ({ value, onChange }) => <ColorPickerField value={value} onChange={onChange} />
+            render: RenderField2
         },
         secondaryColor: {
             type: "custom", label: "Secondary Btn Color",
-            render: ({ value, onChange }) => <ColorPickerField value={value} onChange={onChange} />
+            render: RenderField2
         },
         blobColor: {
             type: "custom", label: "Blob Back Color",
-            render: ({ value, onChange }) => <ColorPickerField value={value} onChange={onChange} />
+            render: RenderField2
         },
         badgeBgColor: {
             type: "custom", label: "Badge Background",
-            render: ({ value, onChange }) => <ColorPickerField value={value} onChange={onChange} />
+            render: RenderField2
         },
         badgeTextColor: {
             type: "custom", label: "Badge Text",
-            render: ({ value, onChange }) => <ColorPickerField value={value} onChange={onChange} />
+            render: RenderField2
         },
         btnRadius: {
             type: "custom", label: "Button Radius",
-            render: ({ value, onChange }) => <SliderField value={value} onChange={onChange} unit="px" max={50} defaultValue={12} />
+            render: RenderField3
         },
         imageRadius: {
             type: "custom", label: "Image Radius",
-            render: ({ value, onChange }) => <SliderField value={value} onChange={onChange} unit="px" max={50} defaultValue={24} />
+            render: RenderField4
         },
         gap: {
             type: "custom", label: "Grid Gap",
-            render: ({ value, onChange }) => <ResponsiveSliderField value={value} onChange={onChange} unit="px" max={100} defaultValue={60} />
+            render: RenderField5
         },
         paddingTop: {
             type: "custom", label: "Padding Top",
-            render: ({ value, onChange }) => <ResponsiveSliderField value={value} onChange={onChange} unit="px" max={200} defaultValue={80} />
+            render: RenderField6
         },
         paddingBottom: {
             type: "custom", label: "Padding Bottom",
-            render: ({ value, onChange }) => <ResponsiveSliderField value={value} onChange={onChange} unit="px" max={200} defaultValue={80} />
+            render: RenderField6
         },
         btnPaddingHorizontal: {
             type: "custom", label: "Button Padding X",
-            render: ({ value, onChange }) => <SliderField value={value} onChange={onChange} unit="px" max={60} defaultValue={40} />
+            render: RenderField7
         },
         btnPaddingVertical: {
             type: "custom", label: "Button Padding Y",
-            render: ({ value, onChange }) => <SliderField value={value} onChange={onChange} unit="px" max={30} defaultValue={14} />
+            render: RenderField8
         },
     },
     defaultProps: {

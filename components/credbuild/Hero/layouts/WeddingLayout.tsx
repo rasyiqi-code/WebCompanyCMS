@@ -5,6 +5,16 @@ import { ColorPickerField } from "../../fields/ColorPickerField";
 import React, { useId } from "react";
 import Image from "next/image";
 
+const RenderField1 = ({ value, onChange }: any) => <ResponsiveSliderField value={value} onChange={onChange} unit="rem" max={6} step={0.1} defaultValue={3.5} />;
+const RenderField2 = ({ value, onChange }: any) => <ColorPickerField value={value} onChange={onChange} />;
+const RenderField3 = ({ value, onChange }: any) => <ResponsiveSliderField value={value} onChange={onChange} unit="rem" max={2} step={0.1} defaultValue={1} />;
+const RenderField4 = ({ value, onChange }: any) => <SliderField value={value} onChange={onChange} unit="px" max={40} defaultValue="14px" />;
+const RenderField5 = ({ value, onChange }: any) => <SliderField value={value} onChange={onChange} unit="px" max={80} defaultValue="32px" />;
+const RenderField6 = ({ value, onChange }: any) => <ResponsiveSliderField value={value} onChange={onChange} unit="px" max={200} defaultValue={80} />;
+const RenderField7 = ({ value, onChange }: any) => <ResponsiveSliderField value={value} onChange={onChange} unit="px" max={200} defaultValue={60} />;
+const RenderField8 = ({ value, onChange }: any) => <ResponsiveSliderField value={value} onChange={onChange} unit="px" max={100} defaultValue={40} />;
+
+
 export type HeroWeddingProps = {
     title: string;
     subtitle: string;
@@ -234,7 +244,13 @@ const HeroWeddingRender = ({
                             <div className="client-avatars">
                                 {[1, 2, 3, 4].map((i) => (
                                     <div key={i} className="client-avatar">
-                                        <Image src={`https://i.pravatar.cc/100?img=${i + 10}`} alt={`Client ${i}`} fill className="object-cover rounded-full" unoptimized />
+                                        <Image 
+                                            src={`https://i.pravatar.cc/100?img=${i + 10}`} 
+                                            alt={`Client ${i}`} 
+                                            fill 
+                                            sizes="40px"
+                                            className="object-cover rounded-full" 
+                                        />
                                     </div>
                                 ))}
                                 <div className="client-avatar" style={{ backgroundColor: accentColor, color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '10px', fontWeight: 'bold' }}>2k+</div>
@@ -260,13 +276,35 @@ const HeroWeddingRender = ({
                         <div className="overlap-img-2" style={{
                             position: 'relative', width: '65%', aspectRatio: '3/4', borderRadius: '100px 100px 0 0', overflow: 'hidden', zIndex: 1, border: `4px solid white`, boxShadow: '0 20px 40px rgba(0,0,0,0.05)'
                         }}>
-                            {imageUrl2 ? <Image src={imageUrl2} alt="Wedding 2" fill className="object-cover" unoptimized /> : <div style={{ width: '100%', height: '100%', backgroundColor: '#eee' }} />}
+                            {imageUrl2 ? (
+                                <Image 
+                                    src={imageUrl2} 
+                                    alt="Wedding 2" 
+                                    fill 
+                                    priority
+                                    sizes="(max-width: 768px) 100vw, 30vw"
+                                    className="object-cover" 
+                                />
+                            ) : (
+                                <div style={{ width: '100%', height: '100%', backgroundColor: '#eee' }} />
+                            )}
                         </div>
 
                         <div className="overlap-img-1" style={{
                             position: 'absolute', left: 0, bottom: 0, width: '60%', aspectRatio: '1', borderRadius: '4px', overflow: 'hidden', zIndex: 2, border: `8px solid white`, boxShadow: '0 20px 40px rgba(0,0,0,0.1)'
                         }}>
-                            {imageUrl1 ? <Image src={imageUrl1} alt="Wedding 1" fill className="object-cover" unoptimized /> : <div style={{ width: '100%', height: '100%', backgroundColor: '#e2e8f0' }} />}
+                            {imageUrl1 ? (
+                                <Image 
+                                    src={imageUrl1} 
+                                    alt="Wedding 1" 
+                                    fill 
+                                    priority
+                                    sizes="(max-width: 768px) 100vw, 30vw"
+                                    className="object-cover" 
+                                />
+                            ) : (
+                                <div style={{ width: '100%', height: '100%', backgroundColor: '#e2e8f0' }} />
+                            )}
                         </div>
                     </div>
                 </div>
@@ -304,7 +342,7 @@ export const HeroWedding: ComponentConfig<HeroWeddingProps> = {
         },
         titleSize: {
             type: "custom", label: "Title Size (rem)",
-            render: ({ value, onChange }) => <ResponsiveSliderField value={value} onChange={onChange} unit="rem" max={6} step={0.1} defaultValue={3.5} />
+            render: RenderField1
         },
         titleWeight: {
             type: "select", label: "Title Weight",
@@ -317,47 +355,47 @@ export const HeroWedding: ComponentConfig<HeroWeddingProps> = {
         },
         titleColor: {
             type: "custom", label: "Title Color",
-            render: ({ value, onChange }) => <ColorPickerField value={value} onChange={onChange} />
+            render: RenderField2
         },
         subtitleSize: {
             type: "custom", label: "Subtitle Size (rem)",
-            render: ({ value, onChange }) => <ResponsiveSliderField value={value} onChange={onChange} unit="rem" max={2} step={0.1} defaultValue={1} />
+            render: RenderField3
         },
         subtitleColor: {
             type: "custom", label: "Subtitle Color",
-            render: ({ value, onChange }) => <ColorPickerField value={value} onChange={onChange} />
+            render: RenderField2
         },
         backgroundColor: {
             type: "custom", label: "Background Color",
-            render: ({ value, onChange }) => <ColorPickerField value={value} onChange={onChange} />
+            render: RenderField2
         },
         accentColor: {
             type: "custom", label: "Accent Color (Btn)",
-            render: ({ value, onChange }) => <ColorPickerField value={value} onChange={onChange} />
+            render: RenderField2
         },
         secondaryColor: {
             type: "custom", label: "Secondary Color",
-            render: ({ value, onChange }) => <ColorPickerField value={value} onChange={onChange} />
+            render: RenderField2
         },
         btnPaddingVertical: {
             type: "custom", label: "Button Padding (Vertical)",
-            render: ({ value, onChange }) => <SliderField value={value} onChange={onChange} unit="px" max={40} defaultValue="14px" />
+            render: RenderField4
         },
         btnPaddingHorizontal: {
             type: "custom", label: "Button Padding (Horizontal)",
-            render: ({ value, onChange }) => <SliderField value={value} onChange={onChange} unit="px" max={80} defaultValue="32px" />
+            render: RenderField5
         },
         paddingTop: {
             type: "custom", label: "Padding Top",
-            render: ({ value, onChange }) => <ResponsiveSliderField value={value} onChange={onChange} unit="px" max={200} defaultValue={80} />
+            render: RenderField6
         },
         paddingBottom: {
             type: "custom", label: "Padding Bottom",
-            render: ({ value, onChange }) => <ResponsiveSliderField value={value} onChange={onChange} unit="px" max={200} defaultValue={60} />
+            render: RenderField7
         },
         imageOverlap: {
             type: "custom", label: "Image Overlap",
-            render: ({ value, onChange }) => <ResponsiveSliderField value={value} onChange={onChange} unit="px" max={100} defaultValue={40} />
+            render: RenderField8
         },
     },
     defaultProps: {

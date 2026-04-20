@@ -24,7 +24,7 @@ const ansiColors = {
 
 // Lifted from https://github.com/vercel/next.js/blob/c2d7bbd1b82c71808b99e9a7944fb16717a581db/packages/create-next-app/helpers/get-pkg-manager.ts
 function getPkgManager() {
-  // eslint-disable-next-line turbo/no-undeclared-env-vars
+  // eslint-disable-next-line
   const userAgent = process.env.npm_config_user_agent || "";
 
   if (userAgent.startsWith("yarn")) {

@@ -2,6 +2,8 @@ import type { ComponentConfig } from "@credbuild/core";
 import { ColorPickerField } from "./fields/ColorPickerField";
 import React, { useId } from "react";
 
+const RenderColor = ({ value, onChange }: any) => <ColorPickerField value={value} onChange={onChange} />;
+
 export type StatsProps = {
     items: { value: string; label: string; valueColor?: string; labelColor?: string }[];
     mobileLayout: 'stack' | 'scroll' | 'grid-2';
@@ -169,8 +171,8 @@ export const Stats: ComponentConfig<StatsProps> = {
             arrayFields: {
                 value: { type: "text", label: "Value" },
                 label: { type: "text", label: "Label" },
-                valueColor: { type: "custom", label: "Custom Value Color", render: ({ value, onChange }) => <ColorPickerField value={value} onChange={onChange} /> },
-                labelColor: { type: "custom", label: "Custom Label Color", render: ({ value, onChange }) => <ColorPickerField value={value} onChange={onChange} /> }
+                valueColor: { type: "custom", label: "Custom Value Color", render: RenderColor },
+                labelColor: { type: "custom", label: "Custom Label Color", render: RenderColor }
             },
             getItemSummary: (item) => item.label || "Stat",
         },
@@ -185,23 +187,23 @@ export const Stats: ComponentConfig<StatsProps> = {
         },
         backgroundColor: {
             type: "custom", label: "Section Background",
-            render: ({ value, onChange }) => <ColorPickerField value={value} onChange={onChange} />
+            render: RenderColor
         },
         cardBgColor: {
             type: "custom", label: "Card Background",
-            render: ({ value, onChange }) => <ColorPickerField value={value} onChange={onChange} />
+            render: RenderColor
         },
         cardBorderColor: {
             type: "custom", label: "Card Border",
-            render: ({ value, onChange }) => <ColorPickerField value={value} onChange={onChange} />
+            render: RenderColor
         },
         valueColor: {
             type: "custom", label: "Default Value Color",
-            render: ({ value, onChange }) => <ColorPickerField value={value} onChange={onChange} />
+            render: RenderColor
         },
         labelColor: {
             type: "custom", label: "Default Label Color",
-            render: ({ value, onChange }) => <ColorPickerField value={value} onChange={onChange} />
+            render: RenderColor
         },
         valueFont: {
             type: "select",

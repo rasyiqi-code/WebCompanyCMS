@@ -7,6 +7,9 @@ import { ShoppingCart } from "lucide-react";
 import { useCurrency } from "@/hooks/use-currency";
 import { ColorPickerField } from "./fields/ColorPickerField";
 
+const RenderField1 = ({ value, onChange }: any) => <ColorPickerField value={value} onChange={onChange} />;
+
+
 export type ProductListProps = {
     title?: string;
     description?: string;
@@ -82,7 +85,6 @@ const ProductListRender = ({ title, description, limit = 4, columns = 4, backgro
                                             fill
                                             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
                                             className="object-cover group-hover:scale-105 transition-transform duration-500"
-                                            unoptimized
                                         />
                                     ) : (
                                         <div className="w-full h-full flex items-center justify-center text-gray-300">
@@ -124,7 +126,7 @@ export const ProductList: ComponentConfig<ProductListProps> = {
         backgroundColor: {
             type: "custom",
             label: "Background Color",
-            render: ({ value, onChange }) => <ColorPickerField value={value} onChange={onChange} />
+            render: RenderField1
         },
     },
     defaultProps: {

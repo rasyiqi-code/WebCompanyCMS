@@ -47,11 +47,7 @@ export default function MediaPage() {
     const [isCreatingFolder, setIsCreatingFolder] = useState(false);
     const [newFolderName, setNewFolderName] = useState("");
 
-    useEffect(() => {
-        fetchContent();
-    }, [currentFolderId]);
-
-    const fetchContent = async () => {
+    const fetchContent = React.useCallback(async () => {
         setLoading(true);
         try {
             const folderParam = currentFolderId === "root" ? "root" : currentFolderId;
@@ -71,7 +67,11 @@ export default function MediaPage() {
             console.error("Failed to fetch media content", error);
             setLoading(false);
         }
-    };
+    }, [currentFolderId]);
+
+    useEffect(() => {
+        fetchContent();
+    }, [fetchContent]);
 
     const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
         if (!e.target.files?.length) return;

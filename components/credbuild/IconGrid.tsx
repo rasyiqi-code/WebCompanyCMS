@@ -1,7 +1,14 @@
-import React, { useId } from "react";
 import type { ComponentConfig } from "@credbuild/core";
 import { ColorPickerField } from "./fields/ColorPickerField";
+import React, { useId } from "react";
 import { ResponsiveSliderField, type ResponsiveValue } from "./fields/ResponsiveSliderField";
+
+const RenderColor = ({ value, onChange }: any) => <ColorPickerField value={value} onChange={onChange} />;
+const RenderPadding = ({ value, onChange }: any) => <ResponsiveSliderField value={value} onChange={onChange} min={0} max={200} step={4} />;
+const RenderTitleSize = ({ value, onChange }: any) => <ResponsiveSliderField value={value} onChange={onChange} min={16} max={96} step={2} />;
+const RenderIconSize = ({ value, onChange }: any) => <ResponsiveSliderField value={value} onChange={onChange} min={16} max={128} step={4} />;
+const RenderItemTitleSize = ({ value, onChange }: any) => <ResponsiveSliderField value={value} onChange={onChange} min={12} max={48} step={1} />;
+const RenderItemDescSize = ({ value, onChange }: any) => <ResponsiveSliderField value={value} onChange={onChange} min={10} max={24} step={1} />;
 
 export type IconGridProps = {
     title: string;
@@ -234,57 +241,57 @@ export const IconGrid: ComponentConfig<IconGridProps> = {
         backgroundColor: {
             type: "custom",
             label: "Background Color",
-            render: ({ value, onChange }) => <ColorPickerField value={value} onChange={onChange} />
+            render: RenderColor
         },
         padding: {
             type: "custom",
             label: "Section Padding (px)",
-            render: ({ value, onChange }) => <ResponsiveSliderField value={value} onChange={onChange} min={0} max={200} step={4} />
+            render: RenderPadding
         },
         titleSize: {
             type: "custom",
             label: "Title Font Size (px)",
-            render: ({ value, onChange }) => <ResponsiveSliderField value={value} onChange={onChange} min={16} max={96} step={2} />
+            render: RenderTitleSize
         },
         titleColor: {
             type: "custom",
             label: "Title Color",
-            render: ({ value, onChange }) => <ColorPickerField value={value} onChange={onChange} />
+            render: RenderColor
         },
         iconSize: {
             type: "custom",
             label: "Icon Size (px)",
-            render: ({ value, onChange }) => <ResponsiveSliderField value={value} onChange={onChange} min={16} max={128} step={4} />
+            render: RenderIconSize
         },
         iconColor: {
             type: "custom",
             label: "Icon Color",
-            render: ({ value, onChange }) => <ColorPickerField value={value} onChange={onChange} />
+            render: RenderColor
         },
         cardBackgroundColor: {
             type: "custom",
             label: "Card Background",
-            render: ({ value, onChange }) => <ColorPickerField value={value} onChange={onChange} />
+            render: RenderColor
         },
         cardBorderColor: {
             type: "custom",
             label: "Card Border Color",
-            render: ({ value, onChange }) => <ColorPickerField value={value} onChange={onChange} />
+            render: RenderColor
         },
         itemTitleSize: {
             type: "custom",
             label: "Item Title Size (px)",
-            render: ({ value, onChange }) => <ResponsiveSliderField value={value} onChange={onChange} min={12} max={48} step={1} />
+            render: RenderItemTitleSize
         },
         itemDescriptionSize: {
             type: "custom",
             label: "Item Desc Size (px)",
-            render: ({ value, onChange }) => <ResponsiveSliderField value={value} onChange={onChange} min={10} max={24} step={1} />
+            render: RenderItemDescSize
         },
         itemTextColor: {
             type: "custom",
             label: "Item Text Color",
-            render: ({ value, onChange }) => <ColorPickerField value={value} onChange={onChange} />
+            render: RenderColor
         },
     },
     defaultProps: {

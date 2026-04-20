@@ -5,6 +5,14 @@ import { ColorPickerField } from "../../fields/ColorPickerField";
 import React, { useId } from "react";
 import Image from "next/image";
 
+const RenderTitleSize = ({ value, onChange }: any) => <ResponsiveSliderField value={value} onChange={onChange} unit="rem" max={6} step={0.1} defaultValue={3.5} />;
+const RenderSubtitleSize = ({ value, onChange }: any) => <ResponsiveSliderField value={value} onChange={onChange} unit="rem" max={4} step={0.1} defaultValue={1.1} />;
+const RenderColor = ({ value, onChange }: any) => <ColorPickerField value={value} onChange={onChange} />;
+const RenderImageRadius = ({ value, onChange }: any) => <SliderField value={value} onChange={onChange} unit="px" max={100} defaultValue={0} />;
+const RenderGap = ({ value, onChange }: any) => <ResponsiveSliderField value={value} onChange={onChange} unit="px" max={100} defaultValue={40} />;
+const RenderPaddingTop = ({ value, onChange }: any) => <ResponsiveSliderField value={value} onChange={onChange} unit="px" max={200} defaultValue={80} />;
+const RenderPaddingBottom = ({ value, onChange }: any) => <ResponsiveSliderField value={value} onChange={onChange} unit="px" max={200} defaultValue={120} />;
+
 export type HeroPublisherTwoProps = {
     title: string;
     description: string;
@@ -205,7 +213,6 @@ const HeroPublisherTwoRender = ({
                                 priority={true}
                                 sizes="(max-width: 768px) 100vw, 50vw"
                                 className={imageObjectFit === 'cover' ? 'object-cover' : 'object-contain'} 
-                                unoptimized 
                             />
                         </div>
                     ) : (
@@ -233,11 +240,11 @@ export const HeroPublisherTwo: ComponentConfig<HeroPublisherTwoProps> = {
         // Typography
         titleSize: {
             type: "custom", label: "Title Size",
-            render: ({ value, onChange }) => <ResponsiveSliderField value={value} onChange={onChange} unit="rem" max={6} step={0.1} defaultValue={3.5} />
+            render: RenderTitleSize
         },
         subtitleSize: {
             type: "custom", label: "Subtitle Size",
-            render: ({ value, onChange }) => <ResponsiveSliderField value={value} onChange={onChange} unit="rem" max={4} step={0.1} defaultValue={1.1} />
+            render: RenderSubtitleSize
         },
         titleFont: {
             type: "select",
@@ -276,25 +283,25 @@ export const HeroPublisherTwo: ComponentConfig<HeroPublisherTwoProps> = {
         // Colors
         backgroundColor: {
             type: "custom", label: "Background Color",
-            render: ({ value, onChange }) => <ColorPickerField value={value} onChange={onChange} />
+            render: RenderColor
         },
         textColor: {
             type: "custom", label: "Title Color",
-            render: ({ value, onChange }) => <ColorPickerField value={value} onChange={onChange} />
+            render: RenderColor
         },
         descriptionColor: {
             type: "custom", label: "Description Color",
-            render: ({ value, onChange }) => <ColorPickerField value={value} onChange={onChange} />
+            render: RenderColor
         },
         waveColor: {
             type: "custom", label: "Wave Divider Color",
-            render: ({ value, onChange }) => <ColorPickerField value={value} onChange={onChange} />
+            render: RenderColor
         },
 
         // Shapes & Image
         imageRadius: {
             type: "custom", label: "Image Radius",
-            render: ({ value, onChange }) => <SliderField value={value} onChange={onChange} unit="px" max={100} defaultValue={0} />
+            render: RenderImageRadius
         },
         imageWidth: {
             type: "text",
@@ -343,15 +350,15 @@ export const HeroPublisherTwo: ComponentConfig<HeroPublisherTwoProps> = {
         // Spacing
         gap: {
             type: "custom", label: "Grid Gap",
-            render: ({ value, onChange }) => <ResponsiveSliderField value={value} onChange={onChange} unit="px" max={100} defaultValue={40} />
+            render: RenderGap
         },
         paddingTop: {
             type: "custom", label: "Padding Top",
-            render: ({ value, onChange }) => <ResponsiveSliderField value={value} onChange={onChange} unit="px" max={200} defaultValue={80} />
+            render: RenderPaddingTop
         },
         paddingBottom: {
             type: "custom", label: "Padding Bottom",
-            render: ({ value, onChange }) => <ResponsiveSliderField value={value} onChange={onChange} unit="px" max={200} defaultValue={120} />
+            render: RenderPaddingBottom
         },
     },
     defaultProps: {

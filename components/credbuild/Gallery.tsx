@@ -5,6 +5,9 @@ import React from "react";
 import Image from "next/image";
 import { ColorPickerField } from "./fields/ColorPickerField";
 
+const RenderField1 = ({ value, onChange }: any) => <ColorPickerField value={value} onChange={onChange} />;
+
+
 export type GalleryProps = {
     title: string;
     variant: "red" | "white";
@@ -105,7 +108,7 @@ const GalleryRender = ({ title, variant, scrollMode, columnsDesktop, columnsTabl
                                                 alt={item.title}
                                                 fill
                                                 className={`object-${fit}`}
-                                                unoptimized
+                                                sizes="(max-width: 768px) 50vw, (max-width: 1024px) 33vw, 20vw"
                                             />
                                         ) : (
                                             <div style={{
@@ -173,7 +176,7 @@ const GalleryRender = ({ title, variant, scrollMode, columnsDesktop, columnsTabl
                                                 alt={item.title}
                                                 fill
                                                 className={`object-${fit}`}
-                                                unoptimized
+                                                sizes="(max-width: 768px) 50vw, (max-width: 1024px) 33vw, 20vw"
                                             />
                                         ) : (
                                             <div style={{
@@ -246,7 +249,7 @@ export const Gallery: ComponentConfig<GalleryProps> = {
         backgroundColor: {
             type: "custom",
             label: "Custom Background Color",
-            render: ({ value, onChange }) => <ColorPickerField value={value} onChange={onChange} />
+            render: RenderField1
         },
     },
     defaultProps: {

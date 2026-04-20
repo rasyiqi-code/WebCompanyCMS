@@ -137,6 +137,14 @@ export const Preview = ({ id = "credbuild-preview" }: { id?: string }) => {
     }
   }, [iframe.enabled, setStatus]);
 
+  const onReady = useCallback(() => {
+    setStatus("READY");
+  }, [setStatus]);
+
+  const onNotReady = useCallback(() => {
+    setStatus("MOUNTED");
+  }, [setStatus]);
+
   return (
     <div
       className={getClassName()}
@@ -158,12 +166,8 @@ export const Preview = ({ id = "credbuild-preview" }: { id?: string }) => {
           id="preview-frame"
           className={getClassName("frame")}
           data-rfd-iframe
-          onReady={() => {
-            setStatus("READY");
-          }}
-          onNotReady={() => {
-            setStatus("MOUNTED");
-          }}
+          onReady={onReady}
+          onNotReady={onNotReady}
           frameRef={ref}
         >
           <autoFrameContext.Consumer>

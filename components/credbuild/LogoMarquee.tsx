@@ -4,6 +4,9 @@ import type { ComponentConfig } from "@credbuild/core";
 import Image from "next/image";
 import { ColorPickerField } from "./fields/ColorPickerField";
 
+const RenderField1 = ({ value, onChange }: any) => <ColorPickerField value={value} onChange={onChange} />;
+
+
 export type LogoMarqueeProps = {
     title?: string;
     logos: { src: string; alt: string }[];
@@ -64,7 +67,6 @@ const LogoMarqueeRender = ({
                                     fill
                                     sizes="200px"
                                     className="object-contain"
-                                    unoptimized
                                     style={{
                                         filter: grayscale ? "grayscale(100%) opacity(0.7)" : "none",
                                         transition: "all 0.3s"
@@ -95,13 +97,13 @@ export const LogoMarquee: ComponentConfig<LogoMarqueeProps> = {
         backgroundColor: {
             type: "custom",
             label: "Background Color",
-            render: ({ value, onChange }) => <ColorPickerField value={value} onChange={onChange} />
+            render: RenderField1
         },
         padding: { type: "text", label: "Section Padding" },
         titleColor: {
             type: "custom",
             label: "Title Color",
-            render: ({ value, onChange }) => <ColorPickerField value={value} onChange={onChange} />
+            render: RenderField1
         },
         titleSize: { type: "text", label: "Title Font Size" },
         grayscale: {
